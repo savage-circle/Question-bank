@@ -1,15 +1,67 @@
-# Database Design
+# Database Structure
 
-## Overview
+## Levels
 
-PostgreSQL database managed via Prisma ORM.
+Stores difficulty levels for questions.
 
-## Schema
+| Field | Type | Description |
+|------|------|-------------|
+| Id | Integer | Primary Key |
+| Name | String | Level Name |
 
-> Document your Prisma schema and entity relationships here.
+---
 
-## Conventions
+# Categories
 
-- Table names: plural, snake_case (e.g. `question_banks`)
-- Primary keys: `id` (UUID)
-- Timestamps: `created_at`, `updated_at` on all tables
+Stores application categories.
+
+| Field | Type | Description |
+|------|------|-------------|
+| Id | Integer | Primary Key |
+| Name | String | Category Name |
+
+---
+
+# Topics
+
+Stores topics based on category.
+
+| Field | Type | Description |
+|------|------|-------------|
+| Id | Integer | Primary Key |
+| Name | String | Topic Name |
+| CategoryId | Integer | Reference to Categories table |
+
+# Questions
+
+Stores all questions.
+
+| Field | Type | Description |
+|------|------|-------------|
+| Id | Integer | Primary Key |
+| Description | Text | Question Description |
+| TopicId | Integer | Reference to Topics table |
+| LevelId | Integer | Reference to Levels table |
+| Extensions | Text | Stringified JSON Array of extension questions |
+
+---
+
+# Relationships
+
+- One Category can have many Topics
+- One Topic can have many Questions
+- One Level can have many Questions
+
+---
+
+# Extensions Format
+
+Extensions are stored as a stringified JSON array.
+
+Example:
+
+```json
+[
+  "First extension question",
+  "Second extension question"
+]
