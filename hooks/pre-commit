@@ -5,15 +5,17 @@ echo "-----------------------------------------------------------------"
 echo "---------------------* Testing *---------------------------------"
 echo "-----------------------------------------------------------------"
 
-deno lint --cwd backend
+cd backend
+
+deno lint
 
 echo "------------------* All lint passed ! *--------------------------"
 
-deno fmt --check --cwd backend
+deno fmt --check
 
 echo "------------------* format passed ! *--------------------------"
 
-deno run -A --cwd backend jsr:@ashishkujoy/deno-coverage-checker
+deno run -A jsr:@ashishkujoy/deno-coverage-checker
 
 echo "------------------* All test passed ! *--------------------------"
 
