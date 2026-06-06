@@ -4,10 +4,10 @@
 
 Stores difficulty levels for questions.
 
-| Field | Type | Description |
-|------|------|-------------|
-| Id | Integer | Primary Key |
-| Name | String | Level Name |
+| Field | Type    | Description |
+| ----- | ------- | ----------- |
+| Id    | Integer | Primary Key |
+| Name  | String  | Level Name  |
 
 ---
 
@@ -15,10 +15,10 @@ Stores difficulty levels for questions.
 
 Stores application categories.
 
-| Field | Type | Description |
-|------|------|-------------|
-| Id | Integer | Primary Key |
-| Name | String | Category Name |
+| Field | Type    | Description   |
+| ----- | ------- | ------------- |
+| Id    | Integer | Primary Key   |
+| Name  | String  | Category Name |
 
 ---
 
@@ -26,23 +26,23 @@ Stores application categories.
 
 Stores topics based on category.
 
-| Field | Type | Description |
-|------|------|-------------|
-| Id | Integer | Primary Key |
-| Name | String | Topic Name |
+| Field      | Type    | Description                   |
+| ---------- | ------- | ----------------------------- |
+| Id         | Integer | Primary Key                   |
+| Name       | String  | Topic Name                    |
 | CategoryId | Integer | Reference to Categories table |
 
 # Questions
 
 Stores all questions.
 
-| Field | Type | Description |
-|------|------|-------------|
-| Id | Integer | Primary Key |
-| Description | Text | Question Description |
-| TopicId | Integer | Reference to Topics table |
-| LevelId | Integer | Reference to Levels table |
-| Extensions | Text | Stringified JSON Array of extension questions |
+| Field       | Type    | Description                                   |
+| ----------- | ------- | --------------------------------------------- |
+| Id          | Integer | Primary Key                                   |
+| Description | Text    | Question Description                          |
+| TopicId     | Integer | Reference to Topics table                     |
+| LevelId     | Integer | Reference to Levels table                     |
+| Extensions  | Text    | Stringified JSON Array of extension questions |
 
 ---
 
@@ -65,3 +65,4 @@ Example:
   "First extension question",
   "Second extension question"
 ]
+```

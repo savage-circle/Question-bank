@@ -24,7 +24,7 @@ deno task dev
 
 ## Tasks
 
-| Task    | Command          | Description              |
-|---------|------------------|--------------------------|
-| `dev`   | `deno task dev`  | Start with file watching |
-| `start` | `deno task start`| Start production server  |
+| Task    | Command           | Description              |
+| ------- | ----------------- | ------------------------ |
+| `dev`   | `deno task dev`   | Start with file watching |
+| `start` | `deno task start` | Start production server  |

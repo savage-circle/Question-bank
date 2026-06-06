@@ -1,5 +1,5 @@
 import { describe, it } from "@std/testing";
-import {  assertEquals } from "@std/assert";
+import { assertEquals } from "@std/assert";
 
 describe("Sample Test", () => {
   it("should pass", () => {
