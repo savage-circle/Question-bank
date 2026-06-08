@@ -10,9 +10,11 @@
   "tasks": {
     "start": "deno run -A --env-file=.env main.ts",
     "test": "deno test -P --env-file=.env",
+    "test:ci": "deno test -P",
     "db:generate": "deno run -A npm:prisma generate",
     "db:migrate": "deno run -A npm:prisma migrate dev",
-    "db:apply": "deno run -A npm:prisma migrate deploy"
+    "db:apply": "deno run -A npm:prisma migrate deploy",
+    "db:seed": "deno run -A ./prisma/seed.ts"
   },
   "test": {
     "include": ["tests/**/*.ts"],

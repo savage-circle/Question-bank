@@ -21,6 +21,23 @@ permissions:
 jobs:
   backend-ci:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: question_bank
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d question_bank"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/question_bank
 
     defaults:
       run:
@@ -36,8 +53,17 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Generate Prisma client
+        run: deno task db:generate
+
+      - name: Apply migrations
+        run: deno task db:apply
+
+      - name: Seed database
+        run: deno task db:seed
+
       - name: Run linter
         run: deno lint
 
       - name: Run tests
-        run: deno task test
+        run: deno task test:ci
