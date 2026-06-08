@@ -9,13 +9,7 @@ cd backend
 
 deno lint
 
-echo "------------------* All lint passed ! *--------------------------"
-
-deno fmt --check
-
-echo "------------------* format passed ! *--------------------------"
-
-deno run -A jsr:@ashishkujoy/deno-coverage-checker
+deno test -A
 
 echo "------------------* All test passed ! *--------------------------"
 

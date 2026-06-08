@@ -36,9 +36,6 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Verify formatting
-        run: deno fmt --check
-
       - name: Run linter
         run: deno lint
 

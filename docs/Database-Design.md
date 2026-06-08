@@ -1,16 +1,5 @@
 # Database Structure
 
-## Levels
-
-Stores difficulty levels for questions.
-
-| Field | Type    | Description |
-| ----- | ------- | ----------- |
-| Id    | Integer | Primary Key |
-| Name  | String  | Level Name  |
-
----
-
 # Categories
 
 Stores application categories.
@@ -41,7 +30,7 @@ Stores all questions.
 | Id          | Integer | Primary Key                                   |
 | Description | Text    | Question Description                          |
 | TopicId     | Integer | Reference to Topics table                     |
-| LevelId     | Integer | Reference to Levels table                     |
+| LevelId     | Integer | Enum value ("Easy", "Medium", "Hard")         |
 | Extensions  | Text    | Stringified JSON Array of extension questions |
 
 ---

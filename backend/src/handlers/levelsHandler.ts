@@ -1,4 +1,4 @@
-import { Context, TypedResponse } from "jsr:@hono/hono";
+import { Context, TypedResponse } from "@hono/hono";
 import LevelType from "../enums/levelType.ts";
 import { Level } from "../types/level.ts";
 
