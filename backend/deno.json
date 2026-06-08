@@ -15,9 +15,6 @@
     "db:apply": "deno run -A --env-file=.env npm:prisma migrate deploy",
     "db:seed": "deno run -A --env-file=.env ./prisma/seed.ts"
   },
-  "test": {
-    "include": ["tests/**/*.ts"]
-  },
   "imports": {
     "@hono/hono": "jsr:@hono/hono@^4.12.23",
     "@hono/logger": "jsr:@hono/hono/logger",
