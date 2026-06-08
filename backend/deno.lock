@@ -11,6 +11,7 @@
     "npm:@prisma/adapter-pg@7": "7.8.0",
     "npm:@prisma/client@7": "7.8.0_prisma@7.8.0",
     "npm:@types/node@*": "22.15.15",
+    "npm:lodash@^4.18.1": "4.18.1",
     "npm:pg@*": "8.21.0",
     "npm:pg@^8.11.0": "8.21.0",
     "npm:prisma@*": "7.8.0",
@@ -445,6 +446,9 @@
     "json-schema-traverse@1.0.0": {
       "integrity": "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="
     },
+    "lodash@4.18.1": {
+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+    },
     "long@5.3.2": {
       "integrity": "sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA=="
     },
@@ -677,6 +681,7 @@
       "jsr:@std/testing@*",
       "npm:@prisma/adapter-pg@7",
       "npm:@prisma/client@7",
+      "npm:lodash@^4.18.1",
       "npm:pg@^8.11.0",
       "npm:prisma@7"
     ]

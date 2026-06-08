@@ -1,10 +1,11 @@
 import { Hono, Context } from "@hono/hono";
 import { logger } from "@hono/logger";
-import { CategoriesHandler } from "./handlers/CategoriesHandler.ts";
+import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { Handlers } from "./types/handler.ts";
-import { LevelsHandler } from "./handlers/LevelsHandler.ts";
+import { LevelHandler } from "./handlers/LevelHandler.ts";
+import { TopicHandler } from "./handlers/TopicHandler.ts";
 
-const createLevelRoutes = (levelsHandler: LevelsHandler) => {
+const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
 
   levelsApp.get("/", levelsHandler.getLevels);
@@ -12,7 +13,7 @@ const createLevelRoutes = (levelsHandler: LevelsHandler) => {
   return levelsApp;
 };
 
-const createCategoryRoute = (categoriesHandler: CategoriesHandler) => {
+const createCategoryRoute = (categoriesHandler: CategoryHandler) => {
   const categoriesApp = new Hono();
 
   categoriesApp.get("/", categoriesHandler.getCategories);
@@ -20,12 +21,21 @@ const createCategoryRoute = (categoriesHandler: CategoriesHandler) => {
   return categoriesApp;
 };
 
+const createTopicRoute = (topicHandler: TopicHandler) => {
+  const topicApp = new Hono();
+
+  topicApp.get("/", topicHandler.getTopics);
+  topicApp.post("/", topicHandler.addTopic);
+
+  return topicApp;
+};
+
 const createApiRoutes = (handlers: Handlers) => {
   const apiApp = new Hono();
 
   apiApp.route("/levels", createLevelRoutes(handlers.levelsHandler));
   apiApp.route("/categories", createCategoryRoute(handlers.categoriesHandler));
-
+  apiApp.route("/topics", createTopicRoute(handlers.topicHandler));
   return apiApp;
 };
 

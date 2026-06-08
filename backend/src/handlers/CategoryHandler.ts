@@ -1,10 +1,10 @@
 import { Context, TypedResponse } from "@hono/hono";
-import { CategoriesService } from "../services/categories.service.ts";
+import { CategoryService } from "../services/category.service.ts";
 import { Category } from "../types/category.ts";
 
-export class CategoriesHandler {
-  private readonly categoriesService: CategoriesService;
-  constructor(categoriesService: CategoriesService) {
+export class CategoryHandler {
+  private readonly categoriesService: CategoryService;
+  constructor(categoriesService: CategoryService) {
     this.categoriesService = categoriesService;
 
     // bind methods

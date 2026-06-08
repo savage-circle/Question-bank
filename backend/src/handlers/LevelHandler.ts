@@ -2,13 +2,13 @@ import { Context, TypedResponse } from "@hono/hono";
 import LevelType from "../enums/levelType.ts";
 import { Level } from "../types/level.ts";
 
-export class LevelsHandler {
+export class LevelHandler {
   constructor() {
     // bind methods
     this.getLevels = this.getLevels.bind(this);
   }
 
-  getLevels(c : Context): TypedResponse<Level[]> {
+  getLevels(c: Context): TypedResponse<Level[]> {
     const levelArray: Level[] = Object.keys(LevelType)
       .filter((key) => isNaN(Number(key)))
       .map(

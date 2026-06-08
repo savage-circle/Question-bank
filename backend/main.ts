@@ -1,19 +1,25 @@
 import { createApp } from "./src/app.ts";
-import { CategoriesHandler } from "./src/handlers/CategoriesHandler.ts";
-import { LevelsHandler } from "./src/handlers/LevelsHandler.ts";
+import { CategoryHandler } from "./src/handlers/CategoryHandler.ts";
+import { LevelHandler } from "./src/handlers/LevelHandler.ts";
+import { TopicHandler } from "./src/handlers/TopicHandler.ts";
 import prisma from "./src/lib/prisma.ts";
-import { CategoriesService } from "./src/services/categories.service.ts";
+import { CategoryService } from "./src/services/category.service.ts";
+import { TopicService } from "./src/services/topic.service.ts";
 import { Handlers } from "./src/types/handler.ts";
 
 export const getHandlers = (): Handlers => {
-  const levelsHandler = new LevelsHandler();
+  const levelsHandler = new LevelHandler();
 
-  const categoriesService = new CategoriesService(prisma);
-  const categoriesHandler = new CategoriesHandler(categoriesService);
+  const categoriesService = new CategoryService(prisma);
+  const categoriesHandler = new CategoryHandler(categoriesService);
+
+  const topicService = new TopicService(prisma);
+  const topicHandler = new TopicHandler(topicService, categoriesService);
 
   return {
     levelsHandler,
     categoriesHandler,
+    topicHandler,
   };
 };
 
