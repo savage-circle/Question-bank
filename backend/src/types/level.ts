@@ -1,4 +1,4 @@
-export interface Level {
+export type Level = {
   id: number;
   name: string;
 }
