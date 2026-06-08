@@ -51,7 +51,7 @@ After configuring the database URL, generate the Prisma client:
 ```bash
 cd backend
 
-deno task prisma:generate
+deno task db:generate
 ```
 
 (or use the project's configured Prisma generate command)
@@ -114,7 +114,7 @@ Generate a migration and update the database:
 ```bash
 cd backend
 
-deno task prisma:migrate --name add-user-table
+deno task db:migrate --name add-user-table
 ```
 
 (Replace `add-user-table` with a meaningful migration name.)
@@ -134,7 +134,7 @@ After schema changes:
 ```bash
 cd backend
 
-deno task prisma:generate
+deno task db:generate
 ```
 
 This updates the generated client in:
@@ -151,19 +151,19 @@ backend/src/generated
 To generate or update the Prisma client after schema changes:
 
 ```bash
-deno task prisma:generate
+deno task db:generate
 ```
 
 **Create & Apply Migration:**
 To create a new migration and apply it to the database:
 
 ```bash
-deno task prisma:migrate --name <migration-name>
+deno task db:migrate --name <migration-name>
 ```
 
 **Apply Existing Migrations:**
 If you have existing migrations that need to be applied, for example when we pull changes from the repository:
 
 ```bash
-deno task prisma:apply
+deno task db:apply
 ```
