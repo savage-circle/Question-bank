@@ -1,14 +1,21 @@
 import { createApp } from "./src/app.ts";
-import { LevelsHandler } from "./src/handlers/levelsHandler.ts";
-import { Handlers } from "./src/types/handlers.ts";
+import { CategoriesHandler } from "./src/handlers/CategoriesHandler.ts";
+import { LevelsHandler } from "./src/handlers/LevelsHandler.ts";
+import prisma from "./src/lib/prisma.ts";
+import { CategoriesService } from "./src/services/categories.service.ts";
+import { Handlers } from "./src/types/handler.ts";
 
-const getHandlers = (): Handlers => {
+export const getHandlers = (): Handlers => {
   const levelsHandler = new LevelsHandler();
 
+  const categoriesService = new CategoriesService(prisma);
+  const categoriesHandler = new CategoriesHandler(categoriesService);
+
   return {
-    levelsHandler
+    levelsHandler,
+    categoriesHandler,
   };
-}
+};
 
 const main = () => {
   const port = parseInt(Deno.env.get("PORT") ?? "8000");

@@ -1,13 +1,12 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing";
 import { createApp } from "../../src/app.ts";
-import { LevelsHandler } from "../../src/handlers/levelsHandler.ts";
+import { getHandlers } from "../../main.ts";
 
 describe("Levels API", () => {
   it("returns all supported levels", async () => {
-    const levelsHandler = new LevelsHandler();
 
-    const app = createApp({ levelsHandler });
+    const app = createApp(getHandlers());
     const response = await app.request("/api/levels", { method: "GET" });
 
     assertEquals(response.status, 200);

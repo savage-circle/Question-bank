@@ -1,7 +1,14 @@
-import  prisma  from "../lib/prisma.ts";
-import type { Categories } from "../types/categories.ts";
+import { PrismaClient } from "../generated/prisma/client.ts";
+import { Category } from "../types/category.ts";
 
-export const getCategories = async(): Promise<Categories[]> => {
-    const categories = await prisma.categories.findMany();
+export class CategoriesService {
+  private readonly prisma: PrismaClient;
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
+  async getCategories(): Promise<Category[]> {
+    const categories = await this.prisma.categories.findMany();
     return categories;
+  }
 }
