@@ -43,7 +43,7 @@ export class TopicHandler {
       );
 
       return c.json(topics);
-    } catch (e: any) {
+    } catch (_error) {
       return c.json({ error: "Failed to fetch topics" }, 500);
     }
   }
@@ -87,7 +87,7 @@ export class TopicHandler {
         Number(categoryId),
       );
       return c.json(newTopic, 201);
-    } catch (error) {
+    } catch (_error) {
       return c.json({ error: "Failed to add topic" }, 500);
     }
   }
