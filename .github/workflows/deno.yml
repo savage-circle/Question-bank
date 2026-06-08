@@ -53,11 +53,11 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Generate Prisma client
-        run: deno task db:generate
-
       - name: Apply migrations
         run: deno task db:apply
+
+      - name: Generate Prisma client
+        run: deno task db:generate
 
       - name: Seed database
         run: deno task db:seed
@@ -66,4 +66,4 @@ jobs:
         run: deno lint
 
       - name: Run tests
-        run: deno task test:ci
+        run: deno task tests

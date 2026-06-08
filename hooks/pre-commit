@@ -9,7 +9,7 @@ cd backend
 
 deno lint
 
-deno test -A
+deno task tests
 
 echo "------------------* All test passed ! *--------------------------"
 

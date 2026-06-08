@@ -1,7 +1,7 @@
 import  prisma  from "../src/lib/prisma.ts";
 
-async function main() {
-  await prisma.categories?.createMany({
+const main = async () => {
+  await prisma.categories.createMany({
     data: [
       { name: 'Maths' },
       { name: 'Coding' }
@@ -9,9 +9,9 @@ async function main() {
     skipDuplicates: true
   })
 
+  console.log("Database seeded successfully");
 }
-
 
 main()
   .catch(console.error)
-  .finally(() => prisma.$disconnect())
+  .finally(() => prisma.$disconnect());

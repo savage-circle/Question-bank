@@ -9,20 +9,14 @@
   },
   "tasks": {
     "start": "deno run -A --env-file=.env main.ts",
-    "test": "deno test -P --env-file=.env",
-    "test:ci": "deno test -P",
-    "db:generate": "deno run -A npm:prisma generate",
-    "db:migrate": "deno run -A npm:prisma migrate dev",
-    "db:apply": "deno run -A npm:prisma migrate deploy",
-    "db:seed": "deno run -A ./prisma/seed.ts"
+    "tests": "deno test -A --env-file=.env",
+    "db:generate": "deno run -A --env-file=.env npm:prisma generate",
+    "db:migrate": "deno run -A --env-file=.env npm:prisma migrate dev",
+    "db:apply": "deno run -A --env-file=.env npm:prisma migrate deploy",
+    "db:seed": "deno run -A --env-file=.env ./prisma/seed.ts"
   },
   "test": {
-    "include": ["tests/**/*.ts"],
-    "permissions": {
-      "read": true,
-      "net": ["localhost", "localhost:5432"],
-      "env": true
-    }
+    "include": ["tests/**/*.ts"]
   },
   "imports": {
     "@hono/hono": "jsr:@hono/hono@^4.12.23",
