@@ -1,7 +1,7 @@
 import  prisma  from "../src/lib/prisma.ts";
 
 async function main() {
-  const result = await prisma.Categories.createMany({
+  await prisma.Categories.createMany({
     data: [
       { name: 'Maths' },
       { name: 'Coding' }
@@ -9,7 +9,6 @@ async function main() {
     skipDuplicates: true
   })
 
-  console.log(result);
 }
 
 
