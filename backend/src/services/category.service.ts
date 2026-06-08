@@ -8,12 +8,12 @@ export class CategoryService {
   }
 
   async getCategories(): Promise<Category[]> {
-    const categories = await this.prisma.Category.findMany();
+    const categories = await this.prisma.category.findMany();
     return categories;
   }
 
   async categoryExists(id: number): Promise<boolean> {
-    const category = await this.prisma.Category.findUnique({
+    const category = await this.prisma.category.findUnique({
       where: { id },
       select: { id: true },
     });

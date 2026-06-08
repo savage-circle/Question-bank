@@ -8,12 +8,12 @@ export class TopicService {
   }
 
   getTopics(categoryId?: number): Promise<Topic[]> {
-    return this.prisma.Topic.findMany({
+    return this.prisma.topic.findMany({
       where: categoryId !== undefined ? { categoryId } : undefined,
     });
   }
-  addTopic(name: string, categoryId: number) : Promise<Topic> {
-    return this.prisma.Topic.create({
+  addTopic(name: string, categoryId: number): Promise<Topic> {
+    return this.prisma.topic.create({
       data: {
         name,
         categoryId,

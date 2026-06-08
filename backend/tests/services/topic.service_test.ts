@@ -12,7 +12,7 @@ describe("TopicService", () => {
       ];
 
       const prisma = {
-        Topic: {
+        topic: {
           findMany: () => Promise.resolve(topics),
         },
       } as unknown as PrismaClient;
@@ -38,7 +38,7 @@ describe("TopicService", () => {
       };
 
       const prisma = {
-        Topic: {
+        topic: {
           findMany: findManySpy,
         },
       } as unknown as PrismaClient;
@@ -71,7 +71,7 @@ describe("TopicService", () => {
       };
 
       const prisma = {
-        Topic: {
+        topic: {
           create: createSpy,
         },
       } as unknown as PrismaClient;
@@ -85,7 +85,7 @@ describe("TopicService", () => {
 
     it("should return the created topic", async () => {
       const prisma = {
-        Topic: {
+        topic: {
           create: () =>
             Promise.resolve({
               id: 10,

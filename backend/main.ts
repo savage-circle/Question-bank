@@ -1,4 +1,5 @@
 import { createApp } from "./src/app.ts";
+import { PrismaClient } from "./src/generated/prisma/client.ts";
 import { CategoryHandler } from "./src/handlers/CategoryHandler.ts";
 import { LevelHandler } from "./src/handlers/LevelHandler.ts";
 import { TopicHandler } from "./src/handlers/TopicHandler.ts";
@@ -33,3 +34,4 @@ const main = () => {
 };
 
 main();
+
