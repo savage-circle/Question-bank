@@ -1,7 +1,7 @@
 import  prisma  from "../src/lib/prisma.ts";
 
 async function main() {
-  await prisma.Categories.createMany({
+  await prisma.categories?.createMany({
     data: [
       { name: 'Maths' },
       { name: 'Coding' }

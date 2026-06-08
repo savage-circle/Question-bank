@@ -8,10 +8,19 @@
     "types": ["node"]
   },
   "tasks": {
-    "start": "deno run -A main.ts",
+    "start": "deno run -A --env-file=.env main.ts",
+    "test": "deno test -P --env-file=.env",
     "db:generate": "deno run -A npm:prisma generate",
     "db:migrate": "deno run -A npm:prisma migrate dev",
     "db:apply": "deno run -A npm:prisma migrate deploy"
+  },
+  "test": {
+    "include": ["tests/**/*.ts"],
+    "permissions": {
+      "read": true,
+      "net": ["localhost", "localhost:5432"],
+      "env": true
+    }
   },
   "imports": {
     "@hono/hono": "jsr:@hono/hono@^4.12.23",

@@ -1,7 +1,8 @@
-import { Hono } from "@hono/hono";
+import { Hono, Context } from "@hono/hono";
 import { logger } from "@hono/logger";
 import { LevelsHandler } from "./handlers/levelsHandler.ts";
 import { Handlers } from "./types/handlers.ts";
+import { getCategories } from "./services/categories.service.ts";
 
 const createLevelRoutes = (levelsHandler : LevelsHandler) => {
   const levelsApp = new Hono();
@@ -14,10 +15,10 @@ const createLevelRoutes = (levelsHandler : LevelsHandler) => {
 const createQuestionRoutes = () => {
   const questionApp = new Hono();
 
-  questionApp.get("/", (c) => c.text("Question route"));
-  questionApp.post("/", (c) => c.text("Create a new question"));
-  questionApp.put("/:id", (c) => c.text(`Update question with ID ${c.req.param("id")}`));
-  questionApp.delete("/:id", (c) => c.text(`Delete question with ID ${c.req.param("id")}`));  
+  questionApp.get("/", (c:Context) => c.text("Question route"));
+  questionApp.post("/", (c:Context) => c.text("Create a new question"));
+  questionApp.put("/:id", (c:Context) => c.text(`Update question with ID ${c.req.param("id")}`));
+  questionApp.delete("/:id", (c:Context) => c.text(`Delete question with ID ${c.req.param("id")}`));  
 
   return questionApp;
 }
@@ -26,11 +27,31 @@ const createQuestionRoutes = () => {
 const createTopicRoutes = () => {
   const topicApp = new Hono();
 
-  topicApp.get("/", (c) => c.text("Topic route"));
-  topicApp.post("/", (c) => c.text("Create a new topic"));
-  topicApp.delete("/:id", (c) => c.text(`Delete topic with ID ${c.req.param("id")}`));
+  topicApp.get("/", (c:Context) => c.text("Topic route"));
+  topicApp.post("/", (c:Context) => c.text("Create a new topic"));
+  topicApp.delete("/:id", (c:Context) => c.text(`Delete topic with ID ${c.req.param("id")}`));
 
   return topicApp;
+}
+
+const createCategoryRoute =()=>{
+  const categoriesApp = new Hono();
+  categoriesApp.get("/", async (context: Context) => {
+  const categories = await getCategories();
+  return context.json(categories, 200);
+});
+  return categoriesApp;
+}
+
+const createApiRoutes = (handlers: Handlers) => {
+  const apiApp = new Hono();
+
+  apiApp.route("/levels", createLevelRoutes(handlers.levelsHandler));
+  apiApp.route("/questions", createQuestionRoutes());
+  apiApp.route("/topics", createTopicRoutes());
+  apiApp.route("/categories", createCategoryRoute());
+
+  return apiApp;
 }
 
 export const createApp = (handlers : Handlers) => {
@@ -39,12 +60,10 @@ export const createApp = (handlers : Handlers) => {
   app.use(logger());
 
   // Testing Endpoint
-  app.get("/", (c) => c.text("Hey, I am alive!"));
+  app.get("/", (c:Context) => c.text("Hey, I am alive!"));
 
   // Register Routes
-  app.route("/api/levels", createLevelRoutes(handlers.levelsHandler));
-  app.route("/api/questions", createQuestionRoutes());
-  app.route("/api/topics", createTopicRoutes());
+  app.route("/api", createApiRoutes(handlers));
 
   return app;
 };

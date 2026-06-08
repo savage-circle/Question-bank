@@ -2,8 +2,8 @@
 
 # Configuration
 DB_NAME="QuestionBank2"
-DB_USER="gullipalliharipriya"
-DB_PASSWORD="hari@90525:"
+DB_USER="postgres"
+DB_PASSWORD="password"
 
 echo "Creating database..."
 
