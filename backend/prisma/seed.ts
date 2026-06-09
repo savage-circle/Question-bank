@@ -1,16 +1,15 @@
-import  prisma  from "../src/lib/prisma.ts";
+import prisma from "../src/lib/prisma.ts";
+import { seedCategories } from "./seeds/categories.ts";
+import { seedTopics } from "./seeds/topics.ts";
+import { seedQuestions } from "./seeds/questions.ts";
 
 const main = async () => {
-  await prisma.Category.createMany({
-    data: [
-      { name: 'Maths' },
-      { name: 'Coding' }
-    ],
-    skipDuplicates: true
-  })
+  await seedCategories(prisma);
+  await seedTopics(prisma);
+  await seedQuestions(prisma);
 
   console.log("Database seeded successfully");
-}
+};
 
 main()
   .catch(console.error)

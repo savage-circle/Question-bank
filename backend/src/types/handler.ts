@@ -1,9 +1,11 @@
-import { CategoriesHandler } from "../handlers/CategoriesHandler.ts";
-import { LevelsHandler } from "../handlers/LevelsHandler.ts";
-import QuestionsHandler from "../handlers/QuestionsHandler.ts";
+import { CategoryHandler } from "../handlers/CategoryHandler.ts";
+import { LevelHandler } from "../handlers/LevelHandler.ts";
+import { TopicHandler } from "../handlers/TopicHandler.ts";
+import { QuestionHandler } from "../handlers/QuestionHandler.ts";
 
 export type Handlers = {
-  questionsHandler: QuestionsHandler,
-  levelsHandler: LevelsHandler,
-  categoriesHandler: CategoriesHandler,
-}
+  levelsHandler: LevelHandler;
+  categoriesHandler: CategoryHandler;
+  topicHandler: TopicHandler;
+  questionHandler: QuestionHandler;
+};

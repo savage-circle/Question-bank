@@ -1,18 +1,12 @@
-import { Hono, Context } from "@hono/hono";
+import { Context, Hono } from "@hono/hono";
 import { logger } from "@hono/logger";
-import { CategoriesHandler } from "./handlers/CategoriesHandler.ts";
+import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { Handlers } from "./types/handler.ts";
-import { LevelsHandler } from "./handlers/LevelsHandler.ts";
-import QuestionsHandler from "./handlers/QuestionsHandler.ts";
+import { LevelHandler } from "./handlers/LevelHandler.ts";
+import { TopicHandler } from "./handlers/TopicHandler.ts";
+import { QuestionHandler } from "./handlers/QuestionHandler.ts";
 
-const createQuestionsRoutes = (questionsHandler: QuestionsHandler) => {
-  const questionsApp = new Hono();
-  
-  questionsApp.get("/delete", questionsHandler.deleteQuestion);
-  return questionsApp;
-}
-
-const createLevelRoutes = (levelsHandler: LevelsHandler) => {
+const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
 
   levelsApp.get("/", levelsHandler.getLevels);
@@ -20,7 +14,7 @@ const createLevelRoutes = (levelsHandler: LevelsHandler) => {
   return levelsApp;
 };
 
-const createCategoryRoute = (categoriesHandler: CategoriesHandler) => {
+const createCategoryRoute = (categoriesHandler: CategoryHandler) => {
   const categoriesApp = new Hono();
 
   categoriesApp.get("/", categoriesHandler.getCategories);
@@ -28,13 +22,30 @@ const createCategoryRoute = (categoriesHandler: CategoriesHandler) => {
   return categoriesApp;
 };
 
+const createTopicRoute = (topicHandler: TopicHandler) => {
+  const topicApp = new Hono();
+
+  topicApp.get("/", topicHandler.getTopics);
+  topicApp.post("/", topicHandler.addTopic);
+
+  return topicApp;
+};
+
+const createQuestionRoute = (questionHandler: QuestionHandler) => {
+  const questionApp = new Hono();
+
+  questionApp.get("/", questionHandler.getQuestions);
+
+  return questionApp;
+};
+
 const createApiRoutes = (handlers: Handlers) => {
   const apiApp = new Hono();
 
   apiApp.route("/levels", createLevelRoutes(handlers.levelsHandler));
   apiApp.route("/categories", createCategoryRoute(handlers.categoriesHandler));
-  apiApp.route("/questions", createQuestionsRoutes(handlers.questionsHandler));
-
+  apiApp.route("/topics", createTopicRoute(handlers.topicHandler));
+  apiApp.route("/questions", createQuestionRoute(handlers.questionHandler));
   return apiApp;
 };
 

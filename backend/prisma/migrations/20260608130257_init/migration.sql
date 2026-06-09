@@ -5,7 +5,7 @@ CREATE TABLE "Category" (
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
-
+--
 -- CreateTable
 CREATE TABLE "Topic" (
     "id" SERIAL NOT NULL,
