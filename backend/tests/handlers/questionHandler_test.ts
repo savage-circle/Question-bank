@@ -11,7 +11,14 @@ function createMockContext(query: Record<string, string> = {}) {
     req: {
       query: (key: string) => query[key],
     },
-    json: (data: unknown, status = 200) => ({ status, data }),
+    json: (data: unknown, status = 200) => ({
+      status,
+      data,
+    }),
+    body: (_data: unknown, status = 200) => ({
+      status,
+      data: null,
+    }),
   } as unknown as Context;
 }
 
@@ -233,6 +240,80 @@ describe("QuestionHandler", () => {
 
     it("should return an empty array when the JSON is not an array", () => {
       assertEquals(handler.parseExtensions('{"a":1}'), []);
+    });
+  });
+
+  describe("deleteQuestion", () => {
+    it("should return 400 when question id is invalid", async () => {
+      const handler = new QuestionHandler({} as unknown as QuestionService);
+
+      const c = createMockContext({ id: "abc" });
+
+      const result = (await handler.deleteQuestion(
+        c,
+      )) as unknown as MockResponse;
+
+      assertEquals(result.status, 400);
+      assertEquals(result.data, {
+        error: "Invalid question ID",
+      });
+    });
+
+    it("should return 204 when question is deleted successfully", async () => {
+      const questionService = {
+        deleteQuestion: (_id: number) => Promise.resolve({}),
+      };
+
+      const handler = new QuestionHandler(
+        questionService as unknown as QuestionService,
+      );
+
+      const c = createMockContext({ id: "1" });
+
+      const result = await handler.deleteQuestion(c);
+
+      assertEquals((result as unknown as MockResponse).status, 204);
+    });
+
+    it("should pass the question id to the service", async () => {
+      const questionService = {
+        deleteQuestion: (id: number) => {
+          assertEquals(id, 123);
+
+          return Promise.resolve({
+            id: 123,
+          });
+        },
+      };
+
+      const handler = new QuestionHandler(
+        questionService as unknown as QuestionService,
+      );
+
+      await handler.deleteQuestion(createMockContext({ id: "123" }));
+    });
+
+    it("should return 404 when the question does not exist", async () => {
+      const questionService = {
+        deleteQuestion: () => {
+          throw new Error("Question not found");
+        },
+      };
+
+      const handler = new QuestionHandler(
+        questionService as unknown as QuestionService,
+      );
+
+      const c = createMockContext({ id: "1" });
+
+      const result = (await handler.deleteQuestion(
+        c,
+      )) as unknown as MockResponse;
+
+      assertEquals(result.status, 404);
+      assertEquals(result.data, {
+        error: "Question does not exist",
+      });
     });
   });
 });

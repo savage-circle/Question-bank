@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma/client.ts";
+import { PrismaClient, Question } from "../generated/prisma/client.ts";
 import { QuestionFilters, QuestionWithTopic } from "../types/question.ts";
 
 export class QuestionService {
@@ -20,5 +20,13 @@ export class QuestionService {
         topic: true,
       },
     });
+  }
+
+  async deleteQuestion(questionId: number): Promise<Question> {
+    const response = await this.prisma.question.delete({
+      where: { id: questionId },
+    }); 
+
+    return response;
   }
 }

@@ -11,7 +11,9 @@ class QuestionsHandler {
     }
 
     async deleteQuestion(c: Context): Promise<Response> {
+        console.log('The context ', c.req.query("id"))
         const questionId = Number(c.req.query("id"));
+        console.log('The question id', questionId)
         if (isNaN(questionId)) {
             return c.json({ error: "Invalid question ID" }, 400);
         }

@@ -117,4 +117,59 @@ describe("QuestionService", () => {
       await service.getQuestions({ categoryId: 1, topicId: 4, levelId: 2 });
     });
   });
+  describe("deleteQuestion", () => {
+    it("should delete a question by id", async () => {
+      const deletedQuestion = {
+        id: 101,
+        description: "Explain the concept of polymorphism.",
+        topicId: 4,
+        levelId: 2,
+        extensions: null,
+      };
+
+      const deleteSpy = (args: unknown) => {
+        assertEquals(args, {
+          where: { id: 101 },
+        });
+
+        return Promise.resolve(deletedQuestion);
+      };
+
+      const prisma = {
+        question: {
+          delete: deleteSpy,
+        },
+      } as unknown as PrismaClient;
+
+      const service = new QuestionService(prisma);
+
+      const result = await service.deleteQuestion(101);
+
+      assertEquals(result, deletedQuestion);
+    });
+
+    it("should give error when question does not exist", async () => {
+      const deleteSpy = () => {
+        return Promise.reject(new Error("Question not found"));
+      };
+
+      const prisma = {
+        question: {
+          delete: deleteSpy,
+        },
+      } as unknown as PrismaClient;
+
+      const service = new QuestionService(prisma);
+
+      let error;
+
+      try {
+        await service.deleteQuestion(999);
+      } catch (e) {
+        error = e;
+      }
+
+      assertEquals((error as Error).message, "Question not found");
+    });
+  });
 });

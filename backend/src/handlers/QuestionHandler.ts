@@ -10,6 +10,7 @@ export class QuestionHandler {
 
     // bind methods
     this.getQuestions = this.getQuestions.bind(this);
+    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   async getQuestions(
@@ -76,6 +77,20 @@ export class QuestionHandler {
       return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
+    }
+  }
+
+  async deleteQuestion(c: Context): Promise<Response> {
+    const questionId = Number(c.req.query("id"));
+    if (isNaN(questionId)) {
+      return c.json({ error: "Invalid question ID" }, 400);
+    }
+
+    try {
+      await this.questionService.deleteQuestion(questionId);
+      return c.body(null, 204);
+    } catch {
+      return c.json({ error: "Question does not exist" }, 404);
     }
   }
 }
