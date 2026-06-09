@@ -8,7 +8,7 @@ export class CategoriesService {
   }
 
   async getCategories(): Promise<Category[]> {
-    const categories = await this.prisma.categories.findMany();
+    const categories = await this.prisma.category.findMany();
     return categories;
   }
 }

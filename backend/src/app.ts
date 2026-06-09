@@ -3,6 +3,14 @@ import { logger } from "@hono/logger";
 import { CategoriesHandler } from "./handlers/CategoriesHandler.ts";
 import { Handlers } from "./types/handler.ts";
 import { LevelsHandler } from "./handlers/LevelsHandler.ts";
+import QuestionsHandler from "./handlers/QuestionsHandler.ts";
+
+const createQuestionsRoutes = (questionsHandler: QuestionsHandler) => {
+  const questionsApp = new Hono();
+  
+  questionsApp.get("/delete", questionsHandler.deleteQuestion);
+  return questionsApp;
+}
 
 const createLevelRoutes = (levelsHandler: LevelsHandler) => {
   const levelsApp = new Hono();
@@ -25,6 +33,7 @@ const createApiRoutes = (handlers: Handlers) => {
 
   apiApp.route("/levels", createLevelRoutes(handlers.levelsHandler));
   apiApp.route("/categories", createCategoryRoute(handlers.categoriesHandler));
+  apiApp.route("/questions", createQuestionsRoutes(handlers.questionsHandler));
 
   return apiApp;
 };
