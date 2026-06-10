@@ -4,6 +4,11 @@ import { QuestionHandler } from "../../src/handlers/QuestionHandler.ts";
 import { QuestionService } from "../../src/services/question.service.ts";
 import { Context } from "@hono/hono";
 import { TopicService } from "../../src/services/topic.service.ts";
+import { isValidId } from "../../src/lib/validation.ts";
+import {
+  getLevelName,
+  parseExtensions,
+} from "../../src/lib/questionHelpers.ts";
 
 type MockResponse = { status: number; data: unknown };
 
@@ -38,7 +43,7 @@ function createTopicServiceMock(
   overrides?: Partial<TopicService>,
 ): TopicService {
   return {
-    isTopicExists: () => Promise.resolve(true),
+    topicExists: () => Promise.resolve(true),
     ...overrides,
   } as TopicService;
 }
@@ -196,67 +201,61 @@ describe("QuestionHandler", () => {
   });
 
   describe("isValidId", () => {
-    const handler = createHandler();
-
     it("should return true for undefined", () => {
-      assertEquals(handler.isValidId(undefined), true);
+      assertEquals(isValidId(undefined), true);
     });
 
     it("should return true for a positive number", () => {
-      assertEquals(handler.isValidId("1"), true);
+      assertEquals(isValidId("1"), true);
     });
 
     it("should return false for zero", () => {
-      assertEquals(handler.isValidId("0"), false);
+      assertEquals(isValidId("0"), false);
     });
 
     it("should return false for a negative number", () => {
-      assertEquals(handler.isValidId("-1"), false);
+      assertEquals(isValidId("-1"), false);
     });
 
     it("should return false for a non-numeric value", () => {
-      assertEquals(handler.isValidId("abc"), false);
+      assertEquals(isValidId("abc"), false);
     });
   });
 
   describe("getLevelName", () => {
-    const handler = createHandler();
-
     it("should map level ids to enum names", () => {
-      assertEquals(handler.getLevelName(1), "EASY");
-      assertEquals(handler.getLevelName(2), "MEDIUM");
-      assertEquals(handler.getLevelName(3), "HARD");
+      assertEquals(getLevelName(1), "EASY");
+      assertEquals(getLevelName(2), "MEDIUM");
+      assertEquals(getLevelName(3), "HARD");
     });
 
     it("should return UNKNOWN for an unmapped level id", () => {
-      assertEquals(handler.getLevelName(99), "UNKNOWN");
+      assertEquals(getLevelName(99), "UNKNOWN");
     });
   });
 
   describe("parseExtensions", () => {
-    const handler = createHandler();
-
     it("should return an empty array for null", () => {
-      assertEquals(handler.parseExtensions(null), []);
+      assertEquals(parseExtensions(null), []);
     });
 
     it("should parse a stringified JSON array", () => {
-      assertEquals(handler.parseExtensions('["a","b"]'), ["a", "b"]);
+      assertEquals(parseExtensions('["a","b"]'), ["a", "b"]);
     });
 
     it("should return an empty array for invalid JSON", () => {
-      assertEquals(handler.parseExtensions("not json"), []);
+      assertEquals(parseExtensions("not json"), []);
     });
 
     it("should return an empty array when the JSON is not an array", () => {
-      assertEquals(handler.parseExtensions('{"a":1}'), []);
+      assertEquals(parseExtensions('{"a":1}'), []);
     });
   });
 
   describe("updateQuestion", () => {
     it("should return an error response if the service throws", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.reject(new Error("DB Error")),
       });
 
@@ -279,7 +278,7 @@ describe("QuestionHandler", () => {
 
     it("should return the updated question on success", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       });
 
@@ -304,7 +303,7 @@ describe("QuestionHandler", () => {
 
     it("should return an error response if the question ID is not existing", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(false),
+        questionExists: () => Promise.resolve(false),
         updateQuestion: () => Promise.resolve(),
       });
 
@@ -321,14 +320,13 @@ describe("QuestionHandler", () => {
         c,
       )) as unknown as MockResponse;
 
-
       assertEquals(result.status, 404);
       assertEquals(result.data, { error: "Question does not exist." });
     });
 
     it("should retunn an error response if the topic ID is invalid", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       });
 
@@ -352,11 +350,11 @@ describe("QuestionHandler", () => {
     });
 
     it("should return an error response if the topic ID is not existing", async () => {
-     const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+      const handler = createHandler({
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       }, {
-        isTopicExists: () => Promise.resolve(false),
+        topicExists: () => Promise.resolve(false),
       });
 
       const c = createMockContext(
@@ -372,7 +370,6 @@ describe("QuestionHandler", () => {
         c,
       )) as unknown as MockResponse;
 
-
       assertEquals(result.status, 404);
 
       assertEquals(result.data, { error: "Topic does not exist." });
@@ -380,10 +377,10 @@ describe("QuestionHandler", () => {
 
     it("should return an error response if the description is empty", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       }, {
-        isTopicExists: () => Promise.resolve(true),
+        topicExists: () => Promise.resolve(true),
       });
 
       const c = createMockContext(
@@ -405,7 +402,7 @@ describe("QuestionHandler", () => {
 
     it("should return an error response if the levelId is invalid", async () => {
       const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       });
 
@@ -429,8 +426,8 @@ describe("QuestionHandler", () => {
     });
 
     it("should return an error response if the extensions is not an array", async () => {
-     const handler = createHandler({
-        isQuestionExists: () => Promise.resolve(true),
+      const handler = createHandler({
+        questionExists: () => Promise.resolve(true),
         updateQuestion: () => Promise.resolve(),
       });
 
@@ -441,7 +438,7 @@ describe("QuestionHandler", () => {
           description: "desc",
           topicId: 1,
           levelId: 1,
-          extensions: "not an array" as unknown as string[]
+          extensions: "not an array" as unknown as string[],
         },
       );
       const result = (await handler.updateQuestion(
@@ -449,7 +446,9 @@ describe("QuestionHandler", () => {
       )) as unknown as MockResponse;
 
       assertEquals(result.status, 400);
-      assertEquals(result.data, { error: "Extensions should be an array of non-empty strings." });
+      assertEquals(result.data, {
+        error: "Extensions should be an array of non-empty strings.",
+      });
     });
   });
 });

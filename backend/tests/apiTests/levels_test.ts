@@ -5,7 +5,6 @@ import { getHandlers } from "../../main.ts";
 
 describe("Levels API", () => {
   it("returns all supported levels", async () => {
-
     const app = createApp(getHandlers());
     const response = await app.request("/api/levels", { method: "GET" });
 

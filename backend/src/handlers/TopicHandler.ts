@@ -2,11 +2,12 @@ import { Context, TypedResponse } from "@hono/hono";
 import { TopicService } from "../services/topic.service.ts";
 import { CategoryService } from "../services/category.service.ts";
 import { Topic } from "../types/topic.ts";
-import _ from "lodash";
+import { isValidId } from "../lib/validation.ts";
+import { capitalize } from "../lib/string.ts";
 
 export class TopicHandler {
-  private topicService: TopicService;
-  private categoryService: CategoryService;
+  private readonly topicService: TopicService;
+  private readonly categoryService: CategoryService;
   constructor(topicService: TopicService, categoryService: CategoryService) {
     this.topicService = topicService;
     this.categoryService = categoryService;
@@ -22,9 +23,7 @@ export class TopicHandler {
     try {
       const categoryId = c.req.query("categoryId");
 
-      const isValidCategoryId: boolean = this.isValidCategoryId(categoryId);
-
-      if (!isValidCategoryId) {
+      if (!isValidId(categoryId)) {
         return c.json({ error: "Invalid categoryId" }, 400);
       }
 
@@ -51,11 +50,16 @@ export class TopicHandler {
   async addTopic(
     c: Context,
   ): Promise<TypedResponse<Topic> | TypedResponse<{ error: string }>> {
-    const { name, categoryId } = await c.req.json();
+    let body: { name?: unknown; categoryId?: unknown };
+    try {
+      body = await c.req.json();
+    } catch {
+      return c.json({ error: "Invalid JSON body" }, 400);
+    }
 
-    const isValidCategoryId: boolean = this.isValidCategoryId(categoryId);
+    const { name, categoryId } = body;
 
-    if (!isValidCategoryId) {
+    if (!isValidId(categoryId as string | number | undefined)) {
       return c.json({ error: "Invalid categoryId" }, 400);
     }
 
@@ -71,11 +75,13 @@ export class TopicHandler {
         );
       }
 
+      const normalizedName = capitalize(name.trim());
+
       const existingTopics = await this.topicService.getTopics(
         Number(categoryId),
       );
       const topicExists = existingTopics.some(
-        (topic) => topic.name === _.capitalize(name.trim()),
+        (topic) => topic.name === normalizedName,
       );
 
       if (topicExists) {
@@ -83,20 +89,12 @@ export class TopicHandler {
       }
 
       const newTopic = await this.topicService.addTopic(
-        _.capitalize(name.trim()),
+        normalizedName,
         Number(categoryId),
       );
       return c.json(newTopic, 201);
     } catch (_error) {
       return c.json({ error: "Failed to add topic" }, 500);
     }
-  }
-
-  isValidCategoryId(value: string | undefined): boolean {
-    if (value === undefined) {
-      return true;
-    }
-
-    return Number(value) > 0;
   }
 }

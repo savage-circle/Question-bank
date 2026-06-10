@@ -151,7 +151,7 @@ describe("QuestionService", () => {
       });
     });
 
-     it("should update the question without extensions", async () => {
+    it("should update the question without extensions", async () => {
       let updatedData: unknown = null;
 
       const updateSpy = (args: unknown) => {

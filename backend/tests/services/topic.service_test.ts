@@ -106,7 +106,7 @@ describe("TopicService", () => {
     });
   });
 
-  describe("isTopicExists", () => {
+  describe("topicExists", () => {
     it("should return true if topic exists", async () => {
       const prisma = {
         topic: {
@@ -119,7 +119,7 @@ describe("TopicService", () => {
 
       const service = new TopicService(prisma);
 
-      const result = await service.isTopicExists(1);
+      const result = await service.topicExists(1);
 
       assertEquals(result, true);
     });
@@ -133,7 +133,7 @@ describe("TopicService", () => {
 
       const service = new TopicService(prisma);
 
-      const result = await service.isTopicExists(999);
+      const result = await service.topicExists(999);
 
       assertEquals(result, false);
     });

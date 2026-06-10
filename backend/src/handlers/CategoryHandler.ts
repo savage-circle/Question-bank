@@ -11,8 +11,14 @@ export class CategoryHandler {
     this.getCategories = this.getCategories.bind(this);
   }
 
-  async getCategories(c: Context): Promise<TypedResponse<Category[]>> {
-    const categories = await this.categoriesService.getCategories();
-    return c.json(categories);
+  async getCategories(
+    c: Context,
+  ): Promise<TypedResponse<Category[]> | TypedResponse<{ error: string }>> {
+    try {
+      const categories = await this.categoriesService.getCategories();
+      return c.json(categories);
+    } catch (_error) {
+      return c.json({ error: "Failed to fetch categories" }, 500);
+    }
   }
 }

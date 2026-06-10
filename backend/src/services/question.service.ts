@@ -1,12 +1,12 @@
 import { PrismaClient } from "../generated/prisma/client.ts";
 import {
   QuestionFilters,
-  QuestionWithTopic,
   QuestionRequest,
+  QuestionWithTopic,
 } from "../types/question.ts";
 
 export class QuestionService {
-  private prisma: PrismaClient;
+  private readonly prisma: PrismaClient;
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
@@ -26,7 +26,7 @@ export class QuestionService {
     });
   }
 
-  async isQuestionExists(id: number): Promise<boolean> {
+  async questionExists(id: number): Promise<boolean> {
     const question = await this.prisma.question.findUnique({
       where: { id },
       select: { id: true },
@@ -36,13 +36,19 @@ export class QuestionService {
   }
 
   async updateQuestion(id: number, data: QuestionRequest): Promise<void> {
-    const updatedExtensions = data.extensions?.map((ext) => ext.trim()).filter((ext) => ext.length > 0);
+    const updatedExtensions = data.extensions
+      ?.map((ext) => ext.trim())
+      .filter((ext) => ext.length > 0);
 
     await this.prisma.question.update({
       where: { id },
       data: {
-        ...data,
-        extensions: updatedExtensions ? JSON.stringify(updatedExtensions) : null,
+        description: data.description,
+        topicId: data.topicId,
+        levelId: data.levelId,
+        extensions: updatedExtensions
+          ? JSON.stringify(updatedExtensions)
+          : null,
       },
     });
   }

@@ -4,6 +4,7 @@ import { TopicHandler } from "../../src/handlers/TopicHandler.ts";
 import { TopicService } from "../../src/services/topic.service.ts";
 import { CategoryService } from "../../src/services/category.service.ts";
 import { Context } from "@hono/hono";
+import { isValidId } from "../../src/lib/validation.ts";
 
 type MockResponse = { status: number; data: unknown };
 
@@ -50,7 +51,10 @@ describe("TopicHandler", () => {
     });
 
     it("should return 400 for invalid categoryId", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
+      const handler = new TopicHandler(
+        {} as unknown as TopicService,
+        {} as unknown as CategoryService,
+      );
 
       const c = createMockContext({
         queryValue: "-1",
@@ -187,7 +191,10 @@ describe("TopicHandler", () => {
     });
 
     it("should return 400 for invalid categoryId", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
+      const handler = new TopicHandler(
+        {} as unknown as TopicService,
+        {} as unknown as CategoryService,
+      );
 
       const c = createMockContext({
         jsonBody: {
@@ -205,7 +212,10 @@ describe("TopicHandler", () => {
     });
 
     it("should return 400 for invalid topic name", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
+      const handler = new TopicHandler(
+        {} as unknown as TopicService,
+        {} as unknown as CategoryService,
+      );
 
       const c = createMockContext({
         jsonBody: {
@@ -318,27 +328,25 @@ describe("TopicHandler", () => {
     });
   });
 
-  describe("isValidCategoryId", () => {
-    const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
-
+  describe("categoryId validation", () => {
     it("should return true for undefined", () => {
-      assertEquals(handler.isValidCategoryId(undefined), true);
+      assertEquals(isValidId(undefined), true);
     });
 
     it("should return true for positive number", () => {
-      assertEquals(handler.isValidCategoryId("1"), true);
+      assertEquals(isValidId("1"), true);
     });
 
     it("should return false for zero", () => {
-      assertEquals(handler.isValidCategoryId("0"), false);
+      assertEquals(isValidId("0"), false);
     });
 
     it("should return false for negative number", () => {
-      assertEquals(handler.isValidCategoryId("-1"), false);
+      assertEquals(isValidId("-1"), false);
     });
 
     it("should return false for non-numeric value", () => {
-      assertEquals(handler.isValidCategoryId("abc"), false);
+      assertEquals(isValidId("abc"), false);
     });
   });
 });

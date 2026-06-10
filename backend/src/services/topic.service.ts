@@ -2,7 +2,7 @@ import { PrismaClient } from "../generated/prisma/client.ts";
 import { Topic } from "../types/topic.ts";
 
 export class TopicService {
-  private prisma: PrismaClient;
+  private readonly prisma: PrismaClient;
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
@@ -20,7 +20,7 @@ export class TopicService {
       },
     });
   }
-  async isTopicExists(id: number): Promise<boolean> {
+  async topicExists(id: number): Promise<boolean> {
     const topic = await this.prisma.topic.findUnique({
       where: { id },
       select: { id: true },

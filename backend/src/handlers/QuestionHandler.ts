@@ -1,12 +1,17 @@
 import { Context, TypedResponse } from "@hono/hono";
 import { QuestionService } from "../services/question.service.ts";
-import { QuestionResponse, QuestionRequest } from "../types/question.ts";
-import LevelType from "../enums/levelType.ts";
+import { QuestionRequest, QuestionResponse } from "../types/question.ts";
 import { TopicService } from "../services/topic.service.ts";
+import { isValidId } from "../lib/validation.ts";
+import {
+  getLevelName,
+  parseExtensions,
+  validateQuestionRequest,
+} from "../lib/questionHelpers.ts";
 
 export class QuestionHandler {
-  private questionService: QuestionService;
-  private topicService!: TopicService;
+  private readonly questionService: QuestionService;
+  private readonly topicService: TopicService;
   constructor(questionService: QuestionService, topicService: TopicService) {
     this.questionService = questionService;
     this.topicService = topicService;
@@ -26,15 +31,15 @@ export class QuestionHandler {
       const topicId = c.req.query("topicId");
       const levelId = c.req.query("levelId");
 
-      if (!this.isValidId(categoryId)) {
+      if (!isValidId(categoryId)) {
         return c.json({ error: "Invalid categoryId" }, 400);
       }
 
-      if (!this.isValidId(topicId)) {
+      if (!isValidId(topicId)) {
         return c.json({ error: "Invalid topicId" }, 400);
       }
 
-      if (!this.isValidId(levelId)) {
+      if (!isValidId(levelId)) {
         return c.json({ error: "Invalid levelId" }, 400);
       }
 
@@ -48,8 +53,8 @@ export class QuestionHandler {
         id: question.id,
         description: question.description,
         topicName: question.topic.name,
-        levelName: this.getLevelName(question.levelId),
-        extensions: this.parseExtensions(question.extensions),
+        levelName: getLevelName(question.levelId),
+        extensions: parseExtensions(question.extensions),
       }));
 
       return c.json(response);
@@ -58,85 +63,46 @@ export class QuestionHandler {
     }
   }
 
-  private questionRequestValidator(data: QuestionRequest): { isValid: boolean; error?: string } {
-    const { description, topicId, levelId, extensions } = data;
-    
-    if (!description || description.trim() === "") {
-      return { isValid: false,error: "Question description is required." };
-    }
-
-    const num = Number(topicId);
-
-    if (!Number.isInteger(num) || num < 1) {
-      return { isValid: false, error: "Invalid topic id." };
-    }
-
-    if (!LevelType[Number(levelId)]) {
-      return { isValid: false, error: "LevelId should be valid enum value" };
-    }
-
-    if (extensions && (!Array.isArray(extensions) || extensions!.some((ext) => typeof ext !== "string"))) {
-      return { isValid: false, error: "Extensions should be an array of non-empty strings." };
-    }
-
-    return { isValid: true };
-  }
-
-
-
   async updateQuestion(
     c: Context,
   ): Promise<
     TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
   > {
-    const data: QuestionRequest = await c.req.json();
     const id = c.req.param("id");
-    const questionId = Number(id);
-    const validation = this.questionRequestValidator(data);
+
+    if (!isValidId(id)) {
+      return c.json({ error: "Invalid question id" }, 400);
+    }
+
+    let data: QuestionRequest;
+    try {
+      data = await c.req.json();
+    } catch {
+      return c.json({ error: "Invalid JSON body" }, 400);
+    }
+
+    const validation = validateQuestionRequest(data);
 
     if (!validation.isValid) {
       return c.json({ error: validation.error! }, 400);
     }
 
+    const questionId = Number(id);
+
     try {
-      if (!questionId || !(await this.questionService.isQuestionExists(questionId))) {
+      if (!(await this.questionService.questionExists(questionId))) {
         return c.json({ error: "Question does not exist." }, 404);
       }
 
-      if (!(await this.topicService.isTopicExists(data.topicId))) {
+      if (!(await this.topicService.topicExists(data.topicId))) {
         return c.json({ error: "Topic does not exist." }, 404);
       }
 
-      await this.questionService.updateQuestion(questionId,data);
+      await this.questionService.updateQuestion(questionId, data);
 
       return c.json({ message: "Question updated successfully." });
     } catch {
       return c.json({ error: "Failed to update question" }, 500);
-    }
-  }
-
-  isValidId(value: number | string | undefined): boolean {
-    if (value === undefined) {
-      return true;
-    }
-
-    return Number(value) > 0;
-  }
-
-  getLevelName(levelId: number): string {
-    return LevelType[levelId] ?? "UNKNOWN";
-  }
-
-  parseExtensions(extensions: string | null): string[] {
-    if (!extensions) {
-      return [];
-    }
-
-    try {
-      const parsed = JSON.parse(extensions);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
     }
   }
 }

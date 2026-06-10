@@ -55,6 +55,12 @@ export const createApp = (handlers: Handlers) => {
 
   app.use(logger());
 
+  // Catch-all for anything a handler doesn't handle itself.
+  app.onError((err, c: Context) => {
+    console.error(err);
+    return c.json({ error: "Internal server error" }, 500);
+  });
+
   // Testing Endpoint
   app.get("/", (c: Context) => c.text("Hey, I am alive!"));
 
