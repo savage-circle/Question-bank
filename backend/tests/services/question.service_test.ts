@@ -172,4 +172,69 @@ describe("QuestionService", () => {
       assertEquals((error as Error).message, "Question not found");
     });
   });
+
+  describe("updateQuestion", () => {
+    it("should update the question", async () => {
+      let updatedData: unknown = null;
+
+      const updateSpy = (args: unknown) => {
+        updatedData = args;
+        return Promise.resolve();
+      };
+
+      const prisma = {
+        question: { update: updateSpy },
+      } as unknown as PrismaClient;
+
+      const service = new QuestionService(prisma);
+
+      const newQuestionAttributes = {
+        description: "Updated description",
+        topicId: 5,
+        levelId: 3,
+        extensions: ["Think about inheritance."],
+      };
+
+      await service.updateQuestion(101, newQuestionAttributes);
+
+      assertEquals(updatedData, {
+        where: { id: 101 },
+        data: {
+          ...newQuestionAttributes,
+          extensions: JSON.stringify(newQuestionAttributes.extensions),
+        },
+      });
+    });
+
+     it("should update the question without extensions", async () => {
+      let updatedData: unknown = null;
+
+      const updateSpy = (args: unknown) => {
+        updatedData = args;
+        return Promise.resolve();
+      };
+
+      const prisma = {
+        question: { update: updateSpy },
+      } as unknown as PrismaClient;
+
+      const service = new QuestionService(prisma);
+
+      const newQuestionAttributes = {
+        description: "Updated description",
+        topicId: 5,
+        levelId: 3,
+        extensions: null,
+      };
+
+      await service.updateQuestion(101, newQuestionAttributes);
+
+      assertEquals(updatedData, {
+        where: { id: 101 },
+        data: {
+          ...newQuestionAttributes,
+        },
+      });
+    });
+  });
 });

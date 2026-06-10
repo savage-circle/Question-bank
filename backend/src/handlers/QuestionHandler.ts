@@ -1,16 +1,20 @@
 import { Context, TypedResponse } from "@hono/hono";
 import { QuestionService } from "../services/question.service.ts";
-import { QuestionResponse } from "../types/question.ts";
+import { QuestionResponse, QuestionRequest } from "../types/question.ts";
 import LevelType from "../enums/levelType.ts";
+import { TopicService } from "../services/topic.service.ts";
 
 export class QuestionHandler {
   private questionService: QuestionService;
-  constructor(questionService: QuestionService) {
+  private topicService!: TopicService;
+  constructor(questionService: QuestionService, topicService: TopicService) {
     this.questionService = questionService;
+    this.topicService = topicService;
 
     // bind methods
     this.getQuestions = this.getQuestions.bind(this);
     this.deleteQuestion = this.deleteQuestion.bind(this);
+    this.updateQuestion = this.updateQuestion.bind(this);
   }
 
   async getQuestions(
@@ -55,7 +59,64 @@ export class QuestionHandler {
     }
   }
 
-  isValidId(value: string | undefined): boolean {
+  private questionRequestValidator(data: QuestionRequest): { isValid: boolean; error?: string } {
+    const { description, topicId, levelId, extensions } = data;
+    
+    if (!description || description.trim() === "") {
+      return { isValid: false,error: "Question description is required." };
+    }
+
+    const num = Number(topicId);
+
+    if (!Number.isInteger(num) || num < 1) {
+      return { isValid: false, error: "Invalid topic id." };
+    }
+
+    if (!LevelType[Number(levelId)]) {
+      return { isValid: false, error: "LevelId should be valid enum value" };
+    }
+
+    if (extensions && (!Array.isArray(extensions) || extensions!.some((ext) => typeof ext !== "string"))) {
+      return { isValid: false, error: "Extensions should be an array of non-empty strings." };
+    }
+
+    return { isValid: true };
+  }
+
+
+
+  async updateQuestion(
+    c: Context,
+  ): Promise<
+    TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
+  > {
+    const data: QuestionRequest = await c.req.json();
+    const id = c.req.param("id");
+    const questionId = Number(id);
+    const validation = this.questionRequestValidator(data);
+
+    if (!validation.isValid) {
+      return c.json({ error: validation.error! }, 400);
+    }
+
+    try {
+      if (!questionId || !(await this.questionService.isQuestionExists(questionId))) {
+        return c.json({ error: "Question does not exist." }, 404);
+      }
+
+      if (!(await this.topicService.isTopicExists(data.topicId))) {
+        return c.json({ error: "Topic does not exist." }, 404);
+      }
+
+      await this.questionService.updateQuestion(questionId,data);
+
+      return c.json({ message: "Question updated successfully." });
+    } catch {
+      return c.json({ error: "Failed to update question" }, 500);
+    }
+  }
+
+  isValidId(value: number | string | undefined): boolean {
     if (value === undefined) {
       return true;
     }

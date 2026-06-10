@@ -105,4 +105,37 @@ describe("TopicService", () => {
       assertEquals(result.categoryId, 5);
     });
   });
+
+  describe("isTopicExists", () => {
+    it("should return true if topic exists", async () => {
+      const prisma = {
+        topic: {
+          findUnique: () =>
+            Promise.resolve({
+              id: 1,
+            }),
+        },
+      } as unknown as PrismaClient;
+
+      const service = new TopicService(prisma);
+
+      const result = await service.isTopicExists(1);
+
+      assertEquals(result, true);
+    });
+
+    it("should return false if topic does not exist", async () => {
+      const prisma = {
+        topic: {
+          findUnique: () => Promise.resolve(null),
+        },
+      } as unknown as PrismaClient;
+
+      const service = new TopicService(prisma);
+
+      const result = await service.isTopicExists(999);
+
+      assertEquals(result, false);
+    });
+  });
 });
