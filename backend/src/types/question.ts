@@ -25,17 +25,17 @@ export type QuestionResponse = {
   extensions: string[];
 };
 
-export type UpdateQuestionRequest = {
+export type QuestionRequest = {
   description: string;
   topicId: number;
   levelId: number;
-  extensions?: string[]
-}
+  extensions: string[] | null;
+};
 
-export type updateQuestionResponse = {
+export type UpdateQuestionResponse = {
   id: number;
   description: string;
   topicId: number;
   levelId: number;
   extensions: string | null;
-}
+};

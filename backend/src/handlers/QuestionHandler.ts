@@ -1,6 +1,6 @@
 import { Context, TypedResponse } from "@hono/hono";
 import { QuestionService } from "../services/question.service.ts";
-import { QuestionResponse, UpdateQuestionRequest } from "../types/question.ts";
+import { QuestionResponse, QuestionRequest } from "../types/question.ts";
 import LevelType from "../enums/levelType.ts";
 import { TopicService } from "../services/topic.service.ts";
 
@@ -58,71 +58,56 @@ export class QuestionHandler {
     }
   }
 
-  async updateQuestionValidator(c:Context, questionId : number, { description, topicId, levelId, extensions }: UpdateQuestionRequest){
-      if (!this.isValidId(questionId)) {
-        return c.json({ error: "Invalid question ID." }, 400);
-      }
-  
-      const isQuestionExists: boolean =
-        await this.questionService.isQuestionExists(questionId);
-  
-      if (!isQuestionExists) {
-        return c.json({ error: "Question does not exist." }, 404);
-      }
-  
-      if (!description || description.trim() === "") {
-        return c.json({ error: "Question description is required." }, 400);
-      }
-  
-      if (!topicId || !this.isValidId(topicId)) {
-        return c.json({ error: "Invalid topic id or TopicId is required" }, 400);
-      }
-
-      if (topicId && !(await this.topicService.isTopicExists(Number(topicId)))) {
-        return c.json({ error: "Topic does not exist." }, 404);
-      }
-      
-      if (!LevelType[Number(levelId)]) {
-        return c.json({ error: "LevelId should be valid enum value" }, 400);
-      }
-  
-      if (extensions !== undefined) {
-        if (!Array.isArray(extensions)) {
-          return c.json({ error: "Extensions must be an array." }, 400);
-        }
-        for (const ext of extensions) {
-          if (typeof ext !== "string" || ext.trim() === "") {
-            return c.json(
-              { error: "Extension values must be non-empty strings." },
-              400,
-            );
-          }
-        }
-      }
-      return null;
+  private questionRequestValidator(data: QuestionRequest): { isValid: boolean; error?: string } {
+    const { description, topicId, levelId, extensions } = data;
+    
+    if (!description || description.trim() === "") {
+      return { isValid: false,error: "Question description is required." };
     }
+
+    const num = Number(topicId);
+
+    if (!Number.isInteger(num) || num < 1) {
+      return { isValid: false, error: "Invalid topic id." };
+    }
+
+    if (!LevelType[Number(levelId)]) {
+      return { isValid: false, error: "LevelId should be valid enum value" };
+    }
+
+    if (extensions && (!Array.isArray(extensions) || extensions!.some((ext) => typeof ext !== "string"))) {
+      return { isValid: false, error: "Extensions should be an array of strings." };
+    }
+
+    return { isValid: true };
+  }
+
+
 
   async updateQuestion(
     c: Context,
   ): Promise<
     TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
   > {
-    const data = await c.req.json();
+    const data: QuestionRequest = await c.req.json();
     const id = c.req.param("id");
     const questionId = Number(id);
-    
-  const validationError = await this.updateQuestionValidator(c,questionId, data);
-  if (validationError) return validationError;
+    const validation = this.questionRequestValidator(data);
+
+    if (!validation.isValid) {
+      return c.json({ error: validation.error! }, 400);
+    }
 
     try {
-      const newQuestionAttributes = {
-        description: data.description,
-        topicId: data.topicId,
-        levelId: data.levelId,
-        ...(data.extensions && { extensions: data.extensions }),
-      };
-      
-     await this.questionService.updateQuestion(questionId, newQuestionAttributes);
+      if (!questionId || !(await this.questionService.isQuestionExists(questionId))) {
+        return c.json({ error: "Question not found" }, 404);
+      }
+
+      if (!(await this.topicService.isTopicExists(data.topicId))) {
+        return c.json({ error: "Topic not found" }, 404);
+      }
+
+      await this.questionService.updateQuestion(questionId,data);
 
       return c.json({ message: "Question updated successfully." });
     } catch {
