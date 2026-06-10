@@ -36,11 +36,13 @@ export class QuestionService {
   }
 
   async updateQuestion(id: number, data: QuestionRequest): Promise<void> {
+    const updatedExtensions = data.extensions?.map((ext) => ext.trim()).filter((ext) => ext.length > 0);
+
     await this.prisma.question.update({
       where: { id },
       data: {
         ...data,
-        extensions: data.extensions ? JSON.stringify(data.extensions) : null,
+        extensions: updatedExtensions ? JSON.stringify(updatedExtensions) : null,
       },
     });
   }

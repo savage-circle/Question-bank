@@ -76,7 +76,7 @@ export class QuestionHandler {
     }
 
     if (extensions && (!Array.isArray(extensions) || extensions!.some((ext) => typeof ext !== "string"))) {
-      return { isValid: false, error: "Extensions should be an array of strings." };
+      return { isValid: false, error: "Extensions should be an array of non-empty strings." };
     }
 
     return { isValid: true };
@@ -100,11 +100,11 @@ export class QuestionHandler {
 
     try {
       if (!questionId || !(await this.questionService.isQuestionExists(questionId))) {
-        return c.json({ error: "Question not found" }, 404);
+        return c.json({ error: "Question does not exist." }, 404);
       }
 
       if (!(await this.topicService.isTopicExists(data.topicId))) {
-        return c.json({ error: "Topic not found" }, 404);
+        return c.json({ error: "Topic does not exist." }, 404);
       }
 
       await this.questionService.updateQuestion(questionId,data);

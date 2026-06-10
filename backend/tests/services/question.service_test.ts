@@ -169,6 +169,7 @@ describe("QuestionService", () => {
         description: "Updated description",
         topicId: 5,
         levelId: 3,
+        extensions: null,
       };
 
       await service.updateQuestion(101, newQuestionAttributes);
