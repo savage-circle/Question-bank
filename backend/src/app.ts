@@ -35,6 +35,7 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
   const questionApp = new Hono();
 
   questionApp.get("/", questionHandler.getQuestions);
+  questionApp.put("/:id", questionHandler.updateQuestion);
 
   return questionApp;
 };

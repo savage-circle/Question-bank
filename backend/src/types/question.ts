@@ -24,3 +24,18 @@ export type QuestionResponse = {
   levelName: string;
   extensions: string[];
 };
+
+export type QuestionRequest = {
+  description: string;
+  topicId: number;
+  levelId: number;
+  extensions: string[] | null;
+};
+
+export type UpdateQuestionResponse = {
+  id: number;
+  description: string;
+  topicId: number;
+  levelId: number;
+  extensions: string | null;
+};
