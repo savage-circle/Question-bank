@@ -19,7 +19,7 @@ export const getHandlers = (): Handlers => {
   const topicHandler = new TopicHandler(topicService, categoriesService);
 
   const questionService = new QuestionService(prisma);
-  const questionHandler = new QuestionHandler(questionService);
+  const questionHandler = new QuestionHandler(questionService, topicService);
 
   return {
     levelsHandler,

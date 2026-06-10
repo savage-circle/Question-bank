@@ -1,5 +1,5 @@
 import { PrismaClient } from "../generated/prisma/client.ts";
-import { QuestionFilters, QuestionWithTopic } from "../types/question.ts";
+import { QuestionFilters, QuestionWithTopic, UpdateQuestionRequest } from "../types/question.ts";
 
 export class QuestionService {
   private prisma: PrismaClient;
@@ -19,6 +19,25 @@ export class QuestionService {
       include: {
         topic: true,
       },
+    });
+  }
+  
+  async isQuestionExists(id: number): Promise<boolean> {
+    const question = await this.prisma.question.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    return question !== null;
+  }
+
+  async updateQuestion(
+    id: number,
+    data: UpdateQuestionRequest
+  ): Promise<void> {
+    await this.prisma.question.update({
+      where: { id },
+      data: { ...data , extensions: data.extensions ? JSON.stringify(data.extensions) : null },
     });
   }
 }

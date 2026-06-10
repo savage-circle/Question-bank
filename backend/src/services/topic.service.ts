@@ -20,4 +20,11 @@ export class TopicService {
       },
     });
   }
+  async isTopicExists(id: number): Promise<boolean> {
+    const topic = await this.prisma.topic.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    return topic !== null;
+  }
 }

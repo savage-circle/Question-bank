@@ -31,10 +31,11 @@ const createTopicRoute = (topicHandler: TopicHandler) => {
   return topicApp;
 };
 
-const createQuestionRoute = (questionHandler: QuestionHandler) => {
+const questionRoute = (questionHandler: QuestionHandler) => {
   const questionApp = new Hono();
 
   questionApp.get("/", questionHandler.getQuestions);
+  questionApp.put("/:id", questionHandler.updateQuestion);
 
   return questionApp;
 };
@@ -45,7 +46,8 @@ const createApiRoutes = (handlers: Handlers) => {
   apiApp.route("/levels", createLevelRoutes(handlers.levelsHandler));
   apiApp.route("/categories", createCategoryRoute(handlers.categoriesHandler));
   apiApp.route("/topics", createTopicRoute(handlers.topicHandler));
-  apiApp.route("/questions", createQuestionRoute(handlers.questionHandler));
+  apiApp.route("/questions", questionRoute(handlers.questionHandler));
+  apiApp.route("/questions", questionRoute(handlers.questionHandler));
   return apiApp;
 };
 
