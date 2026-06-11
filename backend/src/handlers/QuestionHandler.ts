@@ -16,7 +16,6 @@ export class QuestionHandler {
     this.getQuestions = this.getQuestions.bind(this);
     this.addQuestion = this.addQuestion.bind(this);
     this.updateQuestion = this.updateQuestion.bind(this);
-    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   async getQuestions(
@@ -137,31 +136,6 @@ export class QuestionHandler {
       return c.json({ message: "Question updated successfully." });
     } catch {
       return c.json({ error: "Failed to update question" }, 500);
-    }
-  }
-
-  async deleteQuestion(
-    c: Context,
-  ): Promise<
-    TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
-  > {
-    const id = c.req.param("id");
-    const questionId = Number(id);
-
-    if (!questionId) {
-      return c.json({ error: "Invalid question id." }, 400);
-    }
-
-    try {
-      if (!(await this.questionService.existsAsync(questionId))) {
-        return c.json({ error: "Question does not exist." }, 404);
-      }
-
-      await this.questionService.deleteAsync(questionId);
-
-      return c.json({ message: "Question deleted successfully." });
-    } catch {
-      return c.json({ error: "Failed to delete question" }, 500);
     }
   }
 
