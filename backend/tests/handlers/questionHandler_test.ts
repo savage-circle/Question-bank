@@ -467,7 +467,7 @@ describe("QuestionHandler", () => {
         {} as unknown as TopicService,
       );
 
-      const c = createMockContext({ id: "abc" });
+      const c = createMockContext({}, { id: "abc" });
 
       const result = (await handler.deleteQuestion(
         c,
@@ -489,7 +489,7 @@ describe("QuestionHandler", () => {
         {} as unknown as TopicService,
       );
 
-      const c = createMockContext({ id: "1" });
+      const c = createMockContext({}, { id: "1" });
 
       const result = await handler.deleteQuestion(c);
 
@@ -512,7 +512,7 @@ describe("QuestionHandler", () => {
         {} as unknown as TopicService,
       );
 
-      await handler.deleteQuestion(createMockContext({ id: "123" }));
+      await handler.deleteQuestion(createMockContext({}, { id: "123" }));
     });
 
     it("should return 404 when the question does not exist", async () => {
@@ -527,7 +527,7 @@ describe("QuestionHandler", () => {
         {} as unknown as TopicService,
       );
 
-      const c = createMockContext({ id: "1" });
+      const c = createMockContext({}, { id: "1" });
 
       const result = (await handler.deleteQuestion(
         c,

@@ -36,7 +36,7 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
 
   questionApp.get("/", questionHandler.getQuestions);
   questionApp.put("/:id", questionHandler.updateQuestion);
-  questionApp.delete("/", questionHandler.deleteQuestion);
+  questionApp.delete("/:id", questionHandler.deleteQuestion);
 
   return questionApp;
 };

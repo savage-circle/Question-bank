@@ -142,7 +142,7 @@ export class QuestionHandler {
   }
 
   async deleteQuestion(c: Context): Promise<Response> {
-    const questionId = Number(c.req.query("id"));
+    const questionId = Number(c.req.param("id"));
     if (isNaN(questionId)) {
       return c.json({ error: "Invalid question ID" }, 400);
     }
