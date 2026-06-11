@@ -1,10 +1,4 @@
-export type QuestionFilters = {
-  categoryId?: number;
-  topicId?: number;
-  levelId?: number;
-};
-
-export type QuestionWithTopic = {
+export type Question = {
   id: number;
   description: string;
   topicId: number;
@@ -25,17 +19,9 @@ export type QuestionResponse = {
   extensions: string[];
 };
 
-export type QuestionRequest = {
+export type CreateQuestionDTO = {
   description: string;
   topicId: number;
   levelId: number;
   extensions: string[] | null;
-};
-
-export type UpdateQuestionResponse = {
-  id: number;
-  description: string;
-  topicId: number;
-  levelId: number;
-  extensions: string | null;
-};
+}

@@ -3,3 +3,8 @@ export type Topic = {
   name: string;
   categoryId: number;
 }
+
+export type CreateTopicDTO = {
+  name: string;
+  categoryId: number;
+}

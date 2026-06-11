@@ -4,9 +4,9 @@ import { LevelHandler } from "./src/handlers/LevelHandler.ts";
 import { TopicHandler } from "./src/handlers/TopicHandler.ts";
 import { QuestionHandler } from "./src/handlers/QuestionHandler.ts";
 import prisma from "./src/lib/prisma.ts";
-import { CategoryService } from "./src/services/category.service.ts";
-import { TopicService } from "./src/services/topic.service.ts";
-import { QuestionService } from "./src/services/question.service.ts";
+import { CategoryService } from "./src/services/CategoryService.ts";
+import { TopicService } from "./src/services/TopicService.ts";
+import { QuestionService } from "./src/services/QuestionService.ts";
 import { Handlers } from "./src/types/handler.ts";
 
 export const getHandlers = (): Handlers => {

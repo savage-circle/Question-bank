@@ -27,6 +27,7 @@ const createTopicRoute = (topicHandler: TopicHandler) => {
 
   topicApp.get("/", topicHandler.getTopics);
   topicApp.post("/", topicHandler.addTopic);
+  topicApp.delete("/:id", topicHandler.deleteTopic);
 
   return topicApp;
 };
@@ -35,7 +36,9 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
   const questionApp = new Hono();
 
   questionApp.get("/", questionHandler.getQuestions);
+  questionApp.post("/", questionHandler.addQuestion);
   questionApp.put("/:id", questionHandler.updateQuestion);
+  questionApp.delete("/:id", questionHandler.deleteQuestion);
 
   return questionApp;
 };
