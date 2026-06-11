@@ -7,7 +7,7 @@ describe("deleteQuestion", () => {
   it("return 404 when the question does not exist with the id", async () => {
 
     const app = createApp(getHandlers());
-    const response = await app.request("/api/questions/1", { method: "DELETE" });
+    const response = await app.request("/api/questions/7", { method: "DELETE" });
 
     assertEquals(404, response.status)
   });
