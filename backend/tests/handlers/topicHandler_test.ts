@@ -1,344 +1,312 @@
-import { describe, it } from "@std/testing";
-import { assertEquals } from "@std/assert";
+import {
+  assertEquals,
+} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
+import { Hono } from "@hono/hono";
 import { TopicHandler } from "../../src/handlers/TopicHandler.ts";
-import { TopicService } from "../../src/services/topic.service.ts";
-import { CategoryService } from "../../src/services/category.service.ts";
-import { Context } from "@hono/hono";
-
-type MockResponse = { status: number; data: unknown };
-
-function createMockContext({
-  queryValue,
-  jsonBody,
-}: {
-  queryValue?: string;
-  jsonBody?: unknown;
-}) {
-  return {
-    req: {
-      query: () => queryValue,
-      json: () => Promise.resolve(jsonBody),
-    },
-    json: (data: unknown, status = 200) => ({ status, data }),
-  } as unknown as Context;
-}
+import { IService } from "../../src/services/IService.ts";
+import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
+import { Category, CreateCategoryDTO } from "../../src/types/category.ts";
 
 describe("TopicHandler", () => {
+  const mockTopicService: IService<Topic, CreateTopicDTO> = {
+    getAllAsync: () => Promise.resolve([]),
+    getByIdAsync: () => Promise.resolve(null),
+    existsAsync: () => Promise.resolve(false),
+    createAsync: () =>
+      Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 }),
+    updateAsync: () =>
+      Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 }),
+    deleteAsync: () => Promise.resolve(),
+  };
+
+  const mockCategoryService: IService<Category, CreateCategoryDTO> = {
+    getAllAsync: () => Promise.resolve([]),
+    getByIdAsync: () => Promise.resolve(null),
+    existsAsync: () => Promise.resolve(false),
+    createAsync: () => Promise.resolve({ id: 1, name: "Category 1" }),
+    updateAsync: () => Promise.resolve({ id: 1, name: "Category 1" }),
+    deleteAsync: () => Promise.resolve(),
+  };
+
   describe("getTopics", () => {
     it("should return all topics", async () => {
-      const topics = [{ id: 1, name: "Java", categoryId: 1 }];
-
-      const topicService = {
-        getTopics: () => Promise.resolve(topics),
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+      // Arrange
+      const topics = [{ id: 1, name: "Topic 1", categoryId: 1 }];
+      const getAllAsyncSpy = spy(() => Promise.resolve(topics));
+      mockTopicService.getAllAsync = getAllAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
+      const app = new Hono();
+      app.get("/", topicHandler.getTopics);
+      const req = new Request("http://localhost/");
 
-      const c = createMockContext({});
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
 
-      const result = (await handler.getTopics(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 200);
-      assertEquals(result.data, topics);
+      // Assert
+      assertEquals(result, topics);
+      assertEquals(getAllAsyncSpy.calls.length, 1);
     });
 
-    it("should return 400 for invalid categoryId", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
+    it("should return topics by categoryId", async () => {
+      // Arrange
+      const topics = [{ id: 1, name: "Topic 1", categoryId: 1 }];
+      const getAllAsyncSpy = spy(() => Promise.resolve(topics));
+      mockTopicService.getAllAsync = getAllAsyncSpy;
+      const existsAsyncSpy = spy(() => Promise.resolve(true));
+      mockCategoryService.existsAsync = existsAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
+      );
+      const app = new Hono();
+      app.get("/", topicHandler.getTopics);
+      const req = new Request("http://localhost/?categoryId=1");
 
-      const c = createMockContext({
-        queryValue: "-1",
-      });
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
 
-      const result = (await handler.getTopics(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 400);
-      assertEquals(result.data, {
-        error: "Invalid categoryId",
-      });
+      // Assert
+      assertEquals(result, topics);
+      assertEquals(getAllAsyncSpy.calls.length, 1);
+      assertEquals(existsAsyncSpy.calls.length, 1);
     });
 
-    it("should return 404 when category does not exist", async () => {
-      const topicService = {
-        getTopics: () => Promise.resolve([]),
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(false),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should return 400 if categoryId is invalid", async () => {
+      // Arrange
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
+      const app = new Hono();
+      app.get("/", topicHandler.getTopics);
+      const req = new Request("http://localhost/?categoryId=invalid");
 
-      const c = createMockContext({
-        queryValue: "1",
-      });
+      // Act
+      const res = await app.request(req);
 
-      const result = (await handler.getTopics(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 404);
-      assertEquals(result.data, {
-        error: "Category not found with Id : 1",
-      });
+      // Assert
+      assertEquals(res.status, 400);
     });
 
-    it("should return filtered topics by category", async () => {
-      const topics = [{ id: 1, name: "Java", categoryId: 1 }];
-
-      const topicService = {
-        getTopics: (categoryId: number) => {
-          assertEquals(categoryId, 1);
-          return Promise.resolve(topics);
-        },
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should return 404 if category does not exist", async () => {
+      // Arrange
+      const existsAsyncSpy = spy(() => Promise.resolve(false));
+      mockCategoryService.existsAsync = existsAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
+      const app = new Hono();
+      app.get("/", topicHandler.getTopics);
+      const req = new Request("http://localhost/?categoryId=1");
 
-      const c = createMockContext({
-        queryValue: "1",
-      });
+      // Act
+      const res = await app.request(req);
 
-      const result = (await handler.getTopics(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 200);
-      assertEquals(result.data, topics);
-    });
-
-    it("should return 500 when service throws", async () => {
-      const topicService = {
-        getTopics: () => {
-          throw new Error("DB Error");
-        },
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
-      );
-
-      const c = createMockContext({});
-
-      const result = (await handler.getTopics(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 500);
-      assertEquals(result.data, {
-        error: "Failed to fetch topics",
-      });
+      // Assert
+      assertEquals(res.status, 404);
+      assertEquals(existsAsyncSpy.calls.length, 1);
     });
   });
 
   describe("addTopic", () => {
-    it("should create a topic", async () => {
-      const createdTopic = {
-        id: 1,
-        name: "Java",
-        categoryId: 1,
-      };
-
-      const topicService = {
-        getTopics: () => Promise.resolve([]),
-        addTopic: (name: string, categoryId: number) => {
-          assertEquals(name, "Java");
-          assertEquals(categoryId, 1);
-
-          return Promise.resolve(createdTopic);
-        },
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should add a new topic", async () => {
+      // Arrange
+      const topic = { id: 1, name: "Topic 1", categoryId: 1 };
+      const createAsyncSpy = spy(() => Promise.resolve(topic));
+      mockTopicService.createAsync = createAsyncSpy;
+      const existsAsyncSpy = spy(() => Promise.resolve(true));
+      mockCategoryService.existsAsync = existsAsyncSpy;
+      const getAllAsyncSpy = spy(() => Promise.resolve([]));
+      mockTopicService.getAllAsync = getAllAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "java",
-          categoryId: 1,
-        },
+      const app = new Hono();
+      app.post("/", topicHandler.addTopic);
+      const req = new Request("http://localhost/", {
+        method: "POST",
+        body: JSON.stringify({ name: "Topic 1", categoryId: "1" }),
       });
 
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
 
-      assertEquals(result.status, 201);
-      assertEquals(result.data, createdTopic);
+      // Assert
+      assertEquals(res.status, 201);
+      assertEquals(result, topic);
+      assertEquals(createAsyncSpy.calls.length, 1);
+      assertEquals(existsAsyncSpy.calls.length, 1);
+      assertEquals(getAllAsyncSpy.calls.length, 1);
     });
 
-    it("should return 400 for invalid categoryId", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "Java",
-          categoryId: -1,
-        },
-      });
-
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 400);
-      assertEquals(result.data, {
-        error: "Invalid categoryId",
-      });
-    });
-
-    it("should return 400 for invalid topic name", async () => {
-      const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "",
-          categoryId: 1,
-        },
-      });
-
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
-
-      assertEquals(result.status, 400);
-      assertEquals(result.data, {
-        error: "Invalid topic name",
-      });
-    });
-
-    it("should return 404 when category does not exist", async () => {
-      const topicService = {};
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(false),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should return 400 if categoryId is invalid", async () => {
+      // Arrange
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "Java",
-          categoryId: 1,
-        },
+      const app = new Hono();
+      app.post("/", topicHandler.addTopic);
+      const req = new Request("http://localhost/", {
+        method: "POST",
+        body: JSON.stringify({ name: "Topic 1", categoryId: "invalid" }),
       });
 
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
+      // Act
+      const res = await app.request(req);
 
-      assertEquals(result.status, 404);
-      assertEquals(result.data, {
-        error: "Category not found with Id : 1",
-      });
+      // Assert
+      assertEquals(res.status, 400);
     });
 
-    it("should return 400 when topic already exists", async () => {
-      const topicService = {
-        getTopics: () =>
-          Promise.resolve([
-            {
-              id: 1,
-              name: "Java",
-              categoryId: 1,
-            },
-          ]),
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should return 400 if topic name is invalid", async () => {
+      // Arrange
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "java",
-          categoryId: 1,
-        },
+      const app = new Hono();
+      app.post("/", topicHandler.addTopic);
+      const req = new Request("http://localhost/", {
+        method: "POST",
+        body: JSON.stringify({ name: "", categoryId: "1" }),
       });
 
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
+      // Act
+      const res = await app.request(req);
 
-      assertEquals(result.status, 400);
-      assertEquals(result.data, {
-        error: "Topic already exists",
-      });
+      // Assert
+      assertEquals(res.status, 400);
     });
 
-    it("should return 500 when addTopic throws", async () => {
-      const topicService = {
-        getTopics: () => Promise.resolve([]),
-        addTopic: () => {
-          throw new Error("DB Error");
-        },
-      };
-
-      const categoryService = {
-        categoryExists: () => Promise.resolve(true),
-      };
-
-      const handler = new TopicHandler(
-        topicService as unknown as TopicService,
-        categoryService as unknown as CategoryService,
+    it("should return 404 if category does not exist", async () => {
+      // Arrange
+      const existsAsyncSpy = spy(() => Promise.resolve(false));
+      mockCategoryService.existsAsync = existsAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
       );
-
-      const c = createMockContext({
-        jsonBody: {
-          name: "Java",
-          categoryId: 1,
-        },
+      const app = new Hono();
+      app.post("/", topicHandler.addTopic);
+      const req = new Request("http://localhost/", {
+        method: "POST",
+        body: JSON.stringify({ name: "Topic 1", categoryId: "1" }),
       });
 
-      const result = (await handler.addTopic(c)) as unknown as MockResponse;
+      // Act
+      const res = await app.request(req);
 
-      assertEquals(result.status, 500);
-      assertEquals(result.data, {
-        error: "Failed to add topic",
+      // Assert
+      assertEquals(res.status, 404);
+      assertEquals(existsAsyncSpy.calls.length, 1);
+    });
+
+    it("should return 400 if topic already exists", async () => {
+      // Arrange
+      const existsAsyncSpy = spy(() => Promise.resolve(true));
+      mockCategoryService.existsAsync = existsAsyncSpy;
+      const getAllAsyncSpy = spy(() =>
+        Promise.resolve([{ id: 1, name: "Topic 1", categoryId: 1 }])
+      );
+      mockTopicService.getAllAsync = getAllAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
+      );
+      const app = new Hono();
+      app.post("/", topicHandler.addTopic);
+      const req = new Request("http://localhost/", {
+        method: "POST",
+        body: JSON.stringify({ name: "Topic 1", categoryId: "1" }),
       });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 400);
+      assertEquals(existsAsyncSpy.calls.length, 1);
+      assertEquals(getAllAsyncSpy.calls.length, 1);
     });
   });
 
-  describe("isValidCategoryId", () => {
-    const handler = new TopicHandler({} as unknown as TopicService, {} as unknown as CategoryService);
+  describe("deleteTopic", () => {
+    it("should delete a topic", async () => {
+      // Arrange
+      const deleteAsyncSpy = spy(() => Promise.resolve());
+      mockTopicService.deleteAsync = deleteAsyncSpy;
+      const existsAsyncSpy = spy(() => Promise.resolve(true));
+      mockTopicService.existsAsync = existsAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
+      );
+      const app = new Hono();
+      app.delete("/:id", topicHandler.deleteTopic);
+      const req = new Request("http://localhost/1", {
+        method: "DELETE",
+      });
 
-    it("should return true for undefined", () => {
-      assertEquals(handler.isValidCategoryId(undefined), true);
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
+
+      // Assert
+      assertEquals(result, { message: "Topic deleted successfully." });
+      assertEquals(deleteAsyncSpy.calls.length, 1);
+      assertEquals(existsAsyncSpy.calls.length, 1);
     });
 
-    it("should return true for positive number", () => {
-      assertEquals(handler.isValidCategoryId("1"), true);
+    it("should return 400 if topicId is invalid", async () => {
+      // Arrange
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
+      );
+      const app = new Hono();
+      app.delete("/:id", topicHandler.deleteTopic);
+      const req = new Request("http://localhost/invalid", {
+        method: "DELETE",
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 400);
     });
 
-    it("should return false for zero", () => {
-      assertEquals(handler.isValidCategoryId("0"), false);
-    });
+    it("should return 404 if topic does not exist", async () => {
+      // Arrange
+      const existsAsyncSpy = spy(() => Promise.resolve(false));
+      mockTopicService.existsAsync = existsAsyncSpy;
+      const topicHandler = new TopicHandler(
+        mockTopicService,
+        mockCategoryService,
+      );
+      const app = new Hono();
+      app.delete("/:id", topicHandler.deleteTopic);
+      const req = new Request("http://localhost/1", {
+        method: "DELETE",
+      });
 
-    it("should return false for negative number", () => {
-      assertEquals(handler.isValidCategoryId("-1"), false);
-    });
+      // Act
+      const res = await app.request(req);
 
-    it("should return false for non-numeric value", () => {
-      assertEquals(handler.isValidCategoryId("abc"), false);
+      // Assert
+      assertEquals(res.status, 404);
+      assertEquals(existsAsyncSpy.calls.length, 1);
     });
   });
 });

@@ -1,10 +1,10 @@
 import { Context, Hono } from "@hono/hono";
 import { logger } from "@hono/logger";
 import { CategoryHandler } from "./handlers/CategoryHandler.ts";
-import { Handlers } from "./types/handler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
+import { Handlers } from "./types/Handler.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
@@ -27,6 +27,7 @@ const createTopicRoute = (topicHandler: TopicHandler) => {
 
   topicApp.get("/", topicHandler.getTopics);
   topicApp.post("/", topicHandler.addTopic);
+  topicApp.delete("/:id", topicHandler.deleteTopic);
 
   return topicApp;
 };
@@ -35,7 +36,9 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
   const questionApp = new Hono();
 
   questionApp.get("/", questionHandler.getQuestions);
+  questionApp.post("/", questionHandler.addQuestion);
   questionApp.put("/:id", questionHandler.updateQuestion);
+  questionApp.delete("/:id", questionHandler.deleteQuestion);
 
   return questionApp;
 };

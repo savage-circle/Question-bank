@@ -1,19 +1,22 @@
 import { Context, TypedResponse } from "@hono/hono";
-import { QuestionService } from "../services/question.service.ts";
-import { QuestionResponse, QuestionRequest } from "../types/question.ts";
+import { Question, QuestionResponse, CreateQuestionDTO } from "../types/question.ts";
 import LevelType from "../enums/levelType.ts";
-import { TopicService } from "../services/topic.service.ts";
+import { IService } from "../services/IService.ts";
+import { CreateTopicDTO, Topic } from "../types/topic.ts";
 
 export class QuestionHandler {
-  private questionService: QuestionService;
-  private topicService!: TopicService;
-  constructor(questionService: QuestionService, topicService: TopicService) {
+  private questionService: IService<Question, CreateQuestionDTO>;
+  private topicService: IService<Topic, CreateTopicDTO>;
+  
+  constructor(questionService: IService<Question, CreateQuestionDTO>, topicService: IService<Topic, CreateTopicDTO>) {
     this.questionService = questionService;
     this.topicService = topicService;
 
     // bind methods
     this.getQuestions = this.getQuestions.bind(this);
+    this.addQuestion = this.addQuestion.bind(this);
     this.updateQuestion = this.updateQuestion.bind(this);
+    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   async getQuestions(
@@ -38,13 +41,13 @@ export class QuestionHandler {
         return c.json({ error: "Invalid levelId" }, 400);
       }
 
-      const questions = await this.questionService.getQuestions({
+      const questions = await this.questionService.getAllAsync({
         categoryId: categoryId ? Number(categoryId) : undefined,
         topicId: topicId ? Number(topicId) : undefined,
         levelId: levelId ? Number(levelId) : undefined,
       });
 
-      const response: QuestionResponse[] = questions.map((question) => ({
+      const response: QuestionResponse[] = questions.map((question: Question) => ({
         id: question.id,
         description: question.description,
         topicName: question.topic.name,
@@ -58,7 +61,31 @@ export class QuestionHandler {
     }
   }
 
-  private questionRequestValidator(data: QuestionRequest): { isValid: boolean; error?: string } {
+  async addQuestion(
+    c: Context,
+  ): Promise<
+    TypedResponse<Question> | TypedResponse<{ error: string }>
+  > {
+    const data: CreateQuestionDTO = await c.req.json();
+    const validation = this.questionRequestValidator(data);
+
+    if (!validation.isValid) {
+      return c.json({ error: validation.error! }, 400);
+    }
+
+    try {
+      if (!(await this.topicService.existsAsync(data.topicId))) {
+        return c.json({ error: "Topic does not exist." }, 404);
+      }
+
+      const newQuestion = await this.questionService.createAsync(data);
+      return c.json(newQuestion, 201);
+    } catch {
+      return c.json({ error: "Failed to add question" }, 500);
+    }
+  }
+
+  private questionRequestValidator(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
     const { description, topicId, levelId, extensions } = data;
     
     if (!description || description.trim() === "") {
@@ -82,14 +109,12 @@ export class QuestionHandler {
     return { isValid: true };
   }
 
-
-
   async updateQuestion(
     c: Context,
   ): Promise<
     TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
   > {
-    const data: QuestionRequest = await c.req.json();
+    const data: CreateQuestionDTO = await c.req.json();
     const id = c.req.param("id");
     const questionId = Number(id);
     const validation = this.questionRequestValidator(data);
@@ -99,19 +124,44 @@ export class QuestionHandler {
     }
 
     try {
-      if (!questionId || !(await this.questionService.isQuestionExists(questionId))) {
+      if (!questionId || !(await this.questionService.existsAsync(questionId))) {
         return c.json({ error: "Question does not exist." }, 404);
       }
 
-      if (!(await this.topicService.isTopicExists(data.topicId))) {
+      if (!(await this.topicService.existsAsync(data.topicId))) {
         return c.json({ error: "Topic does not exist." }, 404);
       }
 
-      await this.questionService.updateQuestion(questionId,data);
+      await this.questionService.updateAsync(questionId,data);
 
       return c.json({ message: "Question updated successfully." });
     } catch {
       return c.json({ error: "Failed to update question" }, 500);
+    }
+  }
+
+  async deleteQuestion(
+    c: Context,
+  ): Promise<
+    TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
+  > {
+    const id = c.req.param("id");
+    const questionId = Number(id);
+
+    if (!questionId) {
+      return c.json({ error: "Invalid question id." }, 400);
+    }
+
+    try {
+      if (!(await this.questionService.existsAsync(questionId))) {
+        return c.json({ error: "Question does not exist." }, 404);
+      }
+
+      await this.questionService.deleteAsync(questionId);
+
+      return c.json({ message: "Question deleted successfully." });
+    } catch {
+      return c.json({ error: "Failed to delete question" }, 500);
     }
   }
 

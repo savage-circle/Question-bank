@@ -1,19 +1,21 @@
 import { Context, TypedResponse } from "@hono/hono";
-import { TopicService } from "../services/topic.service.ts";
-import { CategoryService } from "../services/category.service.ts";
-import { Topic } from "../types/topic.ts";
+import { Topic, CreateTopicDTO } from "../types/topic.ts";
 import _ from "lodash";
+import { IService } from "../services/IService.ts";
+import { Category, CreateCategoryDTO } from "../types/category.ts";
 
 export class TopicHandler {
-  private topicService: TopicService;
-  private categoryService: CategoryService;
-  constructor(topicService: TopicService, categoryService: CategoryService) {
+  private topicService: IService<Topic, CreateTopicDTO>;
+  private categoryService: IService<Category, CreateCategoryDTO>;
+
+  constructor(topicService: IService<Topic, CreateTopicDTO>, categoryService: IService<Category, CreateCategoryDTO>) {
     this.topicService = topicService;
     this.categoryService = categoryService;
 
     // bind methods
     this.getTopics = this.getTopics.bind(this);
     this.addTopic = this.addTopic.bind(this);
+    this.deleteTopic = this.deleteTopic.bind(this);
   }
 
   async getTopics(
@@ -30,7 +32,7 @@ export class TopicHandler {
 
       if (
         categoryId !== undefined &&
-        !(await this.categoryService.categoryExists(Number(categoryId)))
+        !(await this.categoryService.existsAsync(Number(categoryId)))
       ) {
         return c.json(
           { error: `Category not found with Id : ${categoryId}` },
@@ -38,9 +40,7 @@ export class TopicHandler {
         );
       }
 
-      const topics = await this.topicService.getTopics(
-        categoryId ? Number(categoryId) : undefined,
-      );
+      const topics = await this.topicService.getAllAsync({ categoryId: categoryId ? Number(categoryId) : undefined });
 
       return c.json(topics);
     } catch (_error) {
@@ -64,31 +64,56 @@ export class TopicHandler {
     }
 
     try {
-      if (!(await this.categoryService.categoryExists(Number(categoryId)))) {
+      if (!(await this.categoryService.existsAsync(Number(categoryId)))) {
         return c.json(
           { error: `Category not found with Id : ${categoryId}` },
           404,
         );
       }
 
-      const existingTopics = await this.topicService.getTopics(
-        Number(categoryId),
-      );
+      const existingTopics = await this.topicService.getAllAsync({ categoryId: categoryId ? Number(categoryId) : undefined });
       const topicExists = existingTopics.some(
-        (topic) => topic.name === _.capitalize(name.trim()),
+        (topic: Topic) => topic.name === _.capitalize(name.trim()),
       );
 
       if (topicExists) {
         return c.json({ error: "Topic already exists" }, 400);
       }
 
-      const newTopic = await this.topicService.addTopic(
-        _.capitalize(name.trim()),
-        Number(categoryId),
-      );
+      const createTopicDTO: CreateTopicDTO = {
+        name: _.capitalize(name.trim()),
+        categoryId: Number(categoryId),
+      };
+
+      const newTopic = await this.topicService.createAsync(createTopicDTO);
       return c.json(newTopic, 201);
     } catch (_error) {
       return c.json({ error: "Failed to add topic" }, 500);
+    }
+  }
+
+  async deleteTopic(
+    c: Context,
+  ): Promise<
+    TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
+  > {
+    const id = c.req.param("id");
+    const topicId = Number(id);
+
+    if (!topicId) {
+      return c.json({ error: "Invalid topic id." }, 400);
+    }
+
+    try {
+      if (!(await this.topicService.existsAsync(topicId))) {
+        return c.json({ error: "Topic does not exist." }, 404);
+      }
+
+      await this.topicService.deleteAsync(topicId);
+
+      return c.json({ message: "Topic deleted successfully." });
+    } catch {
+      return c.json({ error: "Failed to delete topic" }, 500);
     }
   }
 

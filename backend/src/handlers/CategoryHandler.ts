@@ -1,10 +1,10 @@
 import { Context, TypedResponse } from "@hono/hono";
-import { CategoryService } from "../services/category.service.ts";
-import { Category } from "../types/category.ts";
+import { Category, CreateCategoryDTO } from "../types/category.ts";
+import { IService } from "../services/IService.ts";
 
 export class CategoryHandler {
-  private readonly categoriesService: CategoryService;
-  constructor(categoriesService: CategoryService) {
+  private readonly categoriesService: IService<Category, CreateCategoryDTO>;
+  constructor(categoriesService: IService<Category, CreateCategoryDTO>) {
     this.categoriesService = categoriesService;
 
     // bind methods
@@ -12,7 +12,7 @@ export class CategoryHandler {
   }
 
   async getCategories(c: Context): Promise<TypedResponse<Category[]>> {
-    const categories = await this.categoriesService.getCategories();
+    const categories = await this.categoriesService.getAllAsync();
     return c.json(categories);
   }
 }
