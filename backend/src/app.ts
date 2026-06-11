@@ -1,10 +1,10 @@
 import { Context, Hono } from "@hono/hono";
 import { logger } from "@hono/logger";
 import { CategoryHandler } from "./handlers/CategoryHandler.ts";
-import { Handlers } from "./types/handler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
+import { Handlers } from "./types/Handler.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
