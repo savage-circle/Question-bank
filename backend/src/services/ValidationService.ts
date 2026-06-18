@@ -1,0 +1,48 @@
+import { IValidationService } from "./IValidationService.ts";
+import { CreateQuestionDTO } from "../types/question.ts";
+import LevelType from "../enums/levelType.ts";
+
+export class ValidationService implements IValidationService{
+    isValidWhenProvided(value:number | string | undefined): boolean {
+    return value === undefined || Number(value) > 0;
+    }
+
+    isNonEmptyString(value: string | null | undefined): boolean {
+        return typeof value === "string" && value.trim() !== "";
+    }
+
+    isValidPositiveInteger(value: number | string | undefined): boolean {
+        const num = Number(value);
+        return Number.isInteger(num) && num >= 1;
+    }
+
+    isValidEnumValue(value: number | string, enumObj: object): boolean {
+        return Object.values(enumObj).includes(Number(value));
+    }
+
+    isStringArray(value: string[] | null | undefined): boolean {
+        return Array.isArray(value) && value.every((item) => typeof item === "string");
+    }
+
+    validateQuestionRequest(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
+        const { description, topicId, levelId, extensions } = data;
+
+        if (!this.isNonEmptyString(description)) {
+            return { isValid: false, error: "Question description is required." };
+        }
+
+        if (!this.isValidPositiveInteger(topicId)) {
+            return { isValid: false, error: "Invalid topic id." };
+        }
+
+        if (!this.isValidEnumValue(levelId, LevelType)) {
+            return { isValid: false, error: "LevelId should be valid enum value" };
+        }
+
+        if (extensions && !this.isStringArray(extensions)) {
+            return { isValid: false, error: "Extensions should be an array of non-empty strings." };
+        }
+
+        return { isValid: true };
+    }
+}

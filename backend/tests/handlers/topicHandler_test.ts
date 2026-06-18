@@ -37,6 +37,7 @@ describe("TopicHandler", () => {
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
     isStringArray: () => true,
+    validateQuestionRequest: () => ({ isValid: true }),
   };
 
   describe("getTopics", () => {

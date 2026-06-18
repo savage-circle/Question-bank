@@ -53,6 +53,7 @@ describe("QuestionHandler", () => {
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
     isStringArray: () => true,
+    validateQuestionRequest: () => ({ isValid: true }),
   };
 
   describe("getQuestions", () => {
@@ -200,7 +201,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, isNonEmptyString: () => false }
+        { ...mockValidationService, validateQuestionRequest: () => ({ isValid: false, error: "Question description is required." }) }
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -300,7 +301,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, isNonEmptyString: () => false }
+        { ...mockValidationService, validateQuestionRequest: () => ({ isValid: false, error: "Question description is required." }) }
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
