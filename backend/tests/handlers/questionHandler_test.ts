@@ -8,6 +8,7 @@ import { QuestionHandler } from "../../src/handlers/QuestionHandler.ts";
 import { IService } from "../../src/services/IService.ts";
 import { Question, CreateQuestionDTO } from "../../src/types/question.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
+import { IValidationService } from "../../src/services/IValidationService.ts";
 
 describe("QuestionHandler", () => {
   const mockQuestionService: IService<Question, CreateQuestionDTO> = {
@@ -46,6 +47,14 @@ describe("QuestionHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
+  const mockValidationService: IValidationService = {
+    isValidWhenProvided: () => true,
+    isNonEmptyString: () => true,
+    isValidPositiveInteger: () => true,
+    isValidEnumValue: () => true,
+    isStringArray: () => true,
+  };
+
   describe("getQuestions", () => {
     it("should return all questions", async () => {
       // Arrange
@@ -64,6 +73,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -91,7 +101,9 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        { ...mockValidationService, isValidWhenProvided: () => false }
       );
+
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
       const req = new Request("http://localhost/?categoryId=invalid");
@@ -108,6 +120,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        { ...mockValidationService, isValidWhenProvided: () => false }
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -125,6 +138,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        { ...mockValidationService, isValidWhenProvided: () => false }
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -156,6 +170,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -185,6 +200,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        { ...mockValidationService, isNonEmptyString: () => false }
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -212,6 +228,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -254,6 +271,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -282,6 +300,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        { ...mockValidationService, isNonEmptyString: () => false }
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -309,6 +328,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -339,6 +359,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
+        mockValidationService
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
