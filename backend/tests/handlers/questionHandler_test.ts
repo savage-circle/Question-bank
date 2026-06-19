@@ -53,7 +53,8 @@ describe("QuestionHandler", () => {
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
     isStringArray: () => true,
-    validateQuestionRequest: () => ({ isValid: true }),
+    validateQuestionUpsertInput: () => ({ isValid: true }),
+    validateGetQuestionInput: () => ({ isValid: true }),
   };
 
   describe("getQuestions", () => {
@@ -102,7 +103,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, isValidWhenProvided: () => false }
+        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid categoryId" }) }
       );
 
       const app = new Hono();
@@ -121,7 +122,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, isValidWhenProvided: () => false }
+        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid topicId" }) }
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -139,7 +140,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, isValidWhenProvided: () => false }
+        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid levelId" }) }
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -201,7 +202,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionRequest: () => ({ isValid: false, error: "Question description is required." }) }
+        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -301,7 +302,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionRequest: () => ({ isValid: false, error: "Question description is required." }) }
+        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);

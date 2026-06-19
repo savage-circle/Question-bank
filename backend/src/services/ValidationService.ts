@@ -24,7 +24,20 @@ export class ValidationService implements IValidationService{
         return Array.isArray(value) && value.every((item) => typeof item === "string");
     }
 
-    validateQuestionRequest(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
+    validateGetQuestionInput(categoryId: string | undefined, topicId: string | undefined, levelId: string | undefined): { isValid: boolean; error?: string } {
+        if (!this.isValidWhenProvided(categoryId)) {
+            return { isValid: false, error: "Invalid categoryId" };
+        }
+        if (!this.isValidWhenProvided(topicId)) {
+            return { isValid: false, error: "Invalid topicId" };
+        }
+        if (!this.isValidWhenProvided(levelId)) {
+            return { isValid: false, error: "Invalid levelId" };
+        }
+        return { isValid: true };
+    }
+
+    validateQuestionUpsertInput(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
         const { description, topicId, levelId, extensions } = data;
 
         if (!this.isNonEmptyString(description)) {

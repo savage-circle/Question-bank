@@ -31,16 +31,9 @@ export class QuestionHandler {
       const topicId = c.req.query("topicId");
       const levelId = c.req.query("levelId");
 
-      if (!this.validationService.isValidWhenProvided(categoryId)) {
-        return c.json({ error: "Invalid categoryId" }, 400);
-      }
-
-      if (!this.validationService.isValidWhenProvided(topicId)) {
-        return c.json({ error: "Invalid topicId" }, 400);
-      }
-
-      if (!this.validationService.isValidWhenProvided(levelId)) {
-        return c.json({ error: "Invalid levelId" }, 400);
+      const inputValidation = this.validationService.validateGetQuestionInput(categoryId, topicId, levelId);
+      if (!inputValidation.isValid) {
+        return c.json({ error: inputValidation.error! }, 400);
       }
 
       const questions = await this.questionService.getAllAsync({
@@ -69,7 +62,7 @@ export class QuestionHandler {
     TypedResponse<Question> | TypedResponse<{ error: string }>
   > {
     const data: CreateQuestionDTO = await c.req.json();
-    const validation = this.validationService.validateQuestionRequest(data);
+    const validation = this.validationService.validateQuestionUpsertInput(data);
 
     if (!validation.isValid) {
       return c.json({ error: validation.error! }, 400);
@@ -95,7 +88,7 @@ export class QuestionHandler {
     const data: CreateQuestionDTO = await c.req.json();
     const id = c.req.param("id");
     const questionId = Number(id);
-    const validation = this.validationService.validateQuestionRequest(data);
+    const validation = this.validationService.validateQuestionUpsertInput(data);
 
     if (!validation.isValid) {
       return c.json({ error: validation.error! }, 400);
