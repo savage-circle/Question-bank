@@ -3,14 +3,17 @@ import { Question, QuestionResponse, CreateQuestionDTO } from "../types/question
 import LevelType from "../enums/levelType.ts";
 import { IService } from "../services/IService.ts";
 import { CreateTopicDTO, Topic } from "../types/topic.ts";
+import { IValidationService } from "../services/IValidationService.ts";
 
 export class QuestionHandler {
   private questionService: IService<Question, CreateQuestionDTO>;
   private topicService: IService<Topic, CreateTopicDTO>;
+  private validationService: IValidationService;
   
-  constructor(questionService: IService<Question, CreateQuestionDTO>, topicService: IService<Topic, CreateTopicDTO>) {
+  constructor(questionService: IService<Question, CreateQuestionDTO>, topicService: IService<Topic, CreateTopicDTO>, validationService: IValidationService) {
     this.questionService = questionService;
     this.topicService = topicService;
+    this.validationService = validationService;
 
     // bind methods
     this.getQuestions = this.getQuestions.bind(this);
@@ -28,16 +31,9 @@ export class QuestionHandler {
       const topicId = c.req.query("topicId");
       const levelId = c.req.query("levelId");
 
-      if (!this.isValidId(categoryId)) {
-        return c.json({ error: "Invalid categoryId" }, 400);
-      }
-
-      if (!this.isValidId(topicId)) {
-        return c.json({ error: "Invalid topicId" }, 400);
-      }
-
-      if (!this.isValidId(levelId)) {
-        return c.json({ error: "Invalid levelId" }, 400);
+      const inputValidation = this.validationService.validateGetQuestionInput(categoryId, topicId, levelId);
+      if (!inputValidation.isValid) {
+        return c.json({ error: inputValidation.error! }, 400);
       }
 
       const questions = await this.questionService.getAllAsync({
@@ -66,7 +62,7 @@ export class QuestionHandler {
     TypedResponse<Question> | TypedResponse<{ error: string }>
   > {
     const data: CreateQuestionDTO = await c.req.json();
-    const validation = this.questionRequestValidator(data);
+    const validation = this.validationService.validateQuestionUpsertInput(data);
 
     if (!validation.isValid) {
       return c.json({ error: validation.error! }, 400);
@@ -84,30 +80,6 @@ export class QuestionHandler {
     }
   }
 
-  private questionRequestValidator(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
-    const { description, topicId, levelId, extensions } = data;
-    
-    if (!description || description.trim() === "") {
-      return { isValid: false,error: "Question description is required." };
-    }
-
-    const num = Number(topicId);
-
-    if (!Number.isInteger(num) || num < 1) {
-      return { isValid: false, error: "Invalid topic id." };
-    }
-
-    if (!LevelType[Number(levelId)]) {
-      return { isValid: false, error: "LevelId should be valid enum value" };
-    }
-
-    if (extensions && (!Array.isArray(extensions) || extensions!.some((ext) => typeof ext !== "string"))) {
-      return { isValid: false, error: "Extensions should be an array of non-empty strings." };
-    }
-
-    return { isValid: true };
-  }
-
   async updateQuestion(
     c: Context,
   ): Promise<
@@ -116,7 +88,7 @@ export class QuestionHandler {
     const data: CreateQuestionDTO = await c.req.json();
     const id = c.req.param("id");
     const questionId = Number(id);
-    const validation = this.questionRequestValidator(data);
+    const validation = this.validationService.validateQuestionUpsertInput(data);
 
     if (!validation.isValid) {
       return c.json({ error: validation.error! }, 400);
@@ -137,14 +109,6 @@ export class QuestionHandler {
     } catch {
       return c.json({ error: "Failed to update question" }, 500);
     }
-  }
-
-  isValidId(value: number | string | undefined): boolean {
-    if (value === undefined) {
-      return true;
-    }
-
-    return Number(value) > 0;
   }
 
   getLevelName(levelId: number): string {

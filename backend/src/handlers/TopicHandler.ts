@@ -3,14 +3,17 @@ import { Topic, CreateTopicDTO } from "../types/topic.ts";
 import _ from "lodash";
 import { IService } from "../services/IService.ts";
 import { Category, CreateCategoryDTO } from "../types/category.ts";
+import { IValidationService } from "../services/IValidationService.ts";
 
 export class TopicHandler {
   private topicService: IService<Topic, CreateTopicDTO>;
   private categoryService: IService<Category, CreateCategoryDTO>;
+  private validationService: IValidationService;
 
-  constructor(topicService: IService<Topic, CreateTopicDTO>, categoryService: IService<Category, CreateCategoryDTO>) {
+  constructor(topicService: IService<Topic, CreateTopicDTO>, categoryService: IService<Category, CreateCategoryDTO>, validationService: IValidationService) {
     this.topicService = topicService;
     this.categoryService = categoryService;
+    this.validationService = validationService;
 
     // bind methods
     this.getTopics = this.getTopics.bind(this);
@@ -24,10 +27,9 @@ export class TopicHandler {
     try {
       const categoryId = c.req.query("categoryId");
 
-      const isValidCategoryId: boolean = this.isValidCategoryId(categoryId);
-
-      if (!isValidCategoryId) {
-        return c.json({ error: "Invalid categoryId" }, 400);
+      const inputValidation = this.validationService.validateGetTopicsInput(categoryId);
+      if (!inputValidation.isValid) {
+        return c.json({ error: inputValidation.error! }, 400);
       }
 
       if (
@@ -53,14 +55,9 @@ export class TopicHandler {
   ): Promise<TypedResponse<Topic> | TypedResponse<{ error: string }>> {
     const { name, categoryId } = await c.req.json();
 
-    const isValidCategoryId: boolean = this.isValidCategoryId(categoryId);
-
-    if (!isValidCategoryId) {
-      return c.json({ error: "Invalid categoryId" }, 400);
-    }
-
-    if (!name || typeof name !== "string") {
-      return c.json({ error: "Invalid topic name" }, 400);
+    const inputValidation = this.validationService.validateAddTopicInput(name, categoryId);
+    if (!inputValidation.isValid) {
+      return c.json({ error: inputValidation.error! }, 400);
     }
 
     try {
@@ -98,11 +95,12 @@ export class TopicHandler {
     TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
   > {
     const id = c.req.param("id");
-    const topicId = Number(id);
 
-    if (!topicId) {
+    if (!this.validationService.isValidPositiveInteger(id)) {
       return c.json({ error: "Invalid topic id." }, 400);
     }
+
+    const topicId = Number(id);
 
     try {
       if (!(await this.topicService.existsAsync(topicId))) {
@@ -115,13 +113,5 @@ export class TopicHandler {
     } catch {
       return c.json({ error: "Failed to delete topic" }, 500);
     }
-  }
-
-  isValidCategoryId(value: string | undefined): boolean {
-    if (value === undefined) {
-      return true;
-    }
-
-    return Number(value) > 0;
   }
 }

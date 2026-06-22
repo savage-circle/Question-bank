@@ -8,6 +8,7 @@ import { TopicHandler } from "../../src/handlers/TopicHandler.ts";
 import { IService } from "../../src/services/IService.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
 import { Category, CreateCategoryDTO } from "../../src/types/category.ts";
+import { IValidationService } from "../../src/services/IValidationService.ts";
 
 describe("TopicHandler", () => {
   const mockTopicService: IService<Topic, CreateTopicDTO> = {
@@ -30,6 +31,18 @@ describe("TopicHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
+  const mockValidationService: IValidationService = {
+    isValidWhenProvided: () => true,
+    isNonEmptyString: () => true,
+    isValidPositiveInteger: () => true,
+    isValidEnumValue: () => true,
+    isStringArray: () => true,
+    validateQuestionUpsertInput: () => ({ isValid: true }),
+    validateGetQuestionInput: () => ({ isValid: true }),
+    validateGetTopicsInput: () => ({ isValid: true }),
+    validateAddTopicInput: () => ({ isValid: true }),
+  };
+
   describe("getTopics", () => {
     it("should return all topics", async () => {
       // Arrange
@@ -39,6 +52,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -63,6 +77,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -83,6 +98,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        { ...mockValidationService, validateGetTopicsInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -102,6 +118,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -129,6 +146,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -154,6 +172,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -174,6 +193,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid topic name" }) },
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -196,6 +216,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -223,6 +244,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -251,6 +273,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService,
       );
       const app = new Hono();
       app.delete("/:id", topicHandler.deleteTopic);
@@ -273,6 +296,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        { ...mockValidationService, isValidPositiveInteger: () => false }
       );
       const app = new Hono();
       app.delete("/:id", topicHandler.deleteTopic);
@@ -294,6 +318,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
+        mockValidationService
       );
       const app = new Hono();
       app.delete("/:id", topicHandler.deleteTopic);
