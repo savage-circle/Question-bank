@@ -225,5 +225,61 @@ describe("ValidationService", () => {
       assertEquals(validationService.validateGetQuestionInput("1", "abc", "abc"), { isValid: false, error: "Invalid topicId" });
     });
   });
+
+  describe("validateGetTopicsInput", () => {
+    it("should return valid when categoryId is undefined", () => {
+      assertEquals(validationService.validateGetTopicsInput(undefined), { isValid: true });
+    });
+
+    it("should return valid when categoryId is a valid positive integer", () => {
+      assertEquals(validationService.validateGetTopicsInput("1"), { isValid: true });
+    });
+
+    it("should return invalid when categoryId is zero", () => {
+      assertEquals(validationService.validateGetTopicsInput("0"), { isValid: false, error: "Invalid categoryId" });
+    });
+
+    it("should return invalid when categoryId is negative", () => {
+      assertEquals(validationService.validateGetTopicsInput("-1"), { isValid: false, error: "Invalid categoryId" });
+    });
+
+    it("should return invalid when categoryId is non-numeric", () => {
+      assertEquals(validationService.validateGetTopicsInput("abc"), { isValid: false, error: "Invalid categoryId" });
+    });
+  });
+
+  describe("validateAddTopicInput", () => {
+    it("should return valid for a valid name and categoryId", () => {
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "1"), { isValid: true });
+    });
+
+    it("should return valid when categoryId is undefined", () => {
+      assertEquals(validationService.validateAddTopicInput("Topic 1", undefined), { isValid: true });
+    });
+
+    it("should return invalid when categoryId is zero", () => {
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "0"), { isValid: false, error: "Invalid categoryId" });
+    });
+
+    it("should return invalid when categoryId is negative", () => {
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "-1"), { isValid: false, error: "Invalid categoryId" });
+    });
+
+    it("should return invalid when categoryId is non-numeric", () => {
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "abc"), { isValid: false, error: "Invalid categoryId" });
+    });
+
+    it("should return invalid when name is empty", () => {
+      assertEquals(validationService.validateAddTopicInput("", "1"), { isValid: false, error: "Invalid topic name" });
+    });
+
+    it("should return invalid when name is whitespace only", () => {
+      assertEquals(validationService.validateAddTopicInput("   ", "1"), { isValid: false, error: "Invalid topic name" });
+    });
+
+    it("should return categoryId error first when both are invalid", () => {
+      assertEquals(validationService.validateAddTopicInput("", "abc"), { isValid: false, error: "Invalid categoryId" });
+    });
+  });
 }
 );

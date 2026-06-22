@@ -27,10 +27,9 @@ export class TopicHandler {
     try {
       const categoryId = c.req.query("categoryId");
 
-      const isValidCategoryId: boolean = this.validationService.isValidWhenProvided(categoryId);
-
-      if (!isValidCategoryId) {
-        return c.json({ error: "Invalid categoryId" }, 400);
+      const inputValidation = this.validationService.validateGetTopicsInput(categoryId);
+      if (!inputValidation.isValid) {
+        return c.json({ error: inputValidation.error! }, 400);
       }
 
       if (
@@ -56,14 +55,9 @@ export class TopicHandler {
   ): Promise<TypedResponse<Topic> | TypedResponse<{ error: string }>> {
     const { name, categoryId } = await c.req.json();
 
-    const isValidCategoryId: boolean = this.validationService.isValidWhenProvided(categoryId);
-
-    if (!isValidCategoryId) {
-      return c.json({ error: "Invalid categoryId" }, 400);
-    }
-
-    if (!this.validationService.isNonEmptyString(name)) {
-      return c.json({ error: "Invalid topic name" }, 400);
+    const inputValidation = this.validationService.validateAddTopicInput(name, categoryId);
+    if (!inputValidation.isValid) {
+      return c.json({ error: inputValidation.error! }, 400);
     }
 
     try {

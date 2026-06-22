@@ -24,6 +24,23 @@ export class ValidationService implements IValidationService{
         return Array.isArray(value) && value.every((item) => typeof item === "string");
     }
 
+    validateGetTopicsInput(categoryId: string | undefined): { isValid: boolean; error?: string } {
+        if (!this.isValidWhenProvided(categoryId)) {
+            return { isValid: false, error: "Invalid categoryId" };
+        }
+        return { isValid: true };
+    }
+
+    validateAddTopicInput(name: string, categoryId: string | undefined): { isValid: boolean; error?: string } {
+        if (!this.isValidWhenProvided(categoryId)) {
+            return { isValid: false, error: "Invalid categoryId" };
+        }
+        if (!this.isNonEmptyString(name)) {
+            return { isValid: false, error: "Invalid topic name" };
+        }
+        return { isValid: true };
+    }
+
     validateGetQuestionInput(categoryId: string | undefined, topicId: string | undefined, levelId: string | undefined): { isValid: boolean; error?: string } {
         if (!this.isValidWhenProvided(categoryId)) {
             return { isValid: false, error: "Invalid categoryId" };

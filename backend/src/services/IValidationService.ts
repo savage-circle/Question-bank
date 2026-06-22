@@ -8,4 +8,6 @@ export interface IValidationService {
   isStringArray(value: string[] | null | undefined): boolean;
   validateQuestionUpsertInput(data: CreateQuestionDTO): { isValid: boolean; error?: string };
   validateGetQuestionInput(categoryId: string | undefined, topicId: string | undefined, levelId: string | undefined): { isValid: boolean; error?: string };
+  validateGetTopicsInput(categoryId: string | undefined): { isValid: boolean; error?: string };
+  validateAddTopicInput(name: string, categoryId: string | undefined): { isValid: boolean; error?: string };
 }

@@ -39,6 +39,8 @@ describe("TopicHandler", () => {
     isStringArray: () => true,
     validateQuestionUpsertInput: () => ({ isValid: true }),
     validateGetQuestionInput: () => ({ isValid: true }),
+    validateGetTopicsInput: () => ({ isValid: true }),
+    validateAddTopicInput: () => ({ isValid: true }),
   };
 
   describe("getTopics", () => {
@@ -96,7 +98,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, isValidWhenProvided: () => false },
+        { ...mockValidationService, validateGetTopicsInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -170,7 +172,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, isValidWhenProvided: () => false },
+        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -191,7 +193,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, isNonEmptyString: () => false },
+        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid topic name" }) },
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);

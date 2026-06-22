@@ -55,6 +55,8 @@ describe("QuestionHandler", () => {
     isStringArray: () => true,
     validateQuestionUpsertInput: () => ({ isValid: true }),
     validateGetQuestionInput: () => ({ isValid: true }),
+    validateGetTopicsInput: () => ({ isValid: true }),
+    validateAddTopicInput: () => ({ isValid: true }),
   };
 
   describe("getQuestions", () => {
