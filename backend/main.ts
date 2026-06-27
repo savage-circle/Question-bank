@@ -8,18 +8,31 @@ import { CategoryService } from "./src/services/CategoryService.ts";
 import { TopicService } from "./src/services/TopicService.ts";
 import { QuestionService } from "./src/services/QuestionService.ts";
 import { Handlers } from "./src/types/handler.ts";
+import {ValidationService} from "./src/services/ValidationService.ts";
 
 export const getHandlers = (): Handlers => {
   const levelsHandler = new LevelHandler();
+  const validationService = new ValidationService();
 
   const categoriesService = new CategoryService(prisma);
-  const categoriesHandler = new CategoryHandler(categoriesService);
+  const categoriesHandler = new CategoryHandler(
+    categoriesService,
+    validationService,
+  );
 
   const topicService = new TopicService(prisma);
-  const topicHandler = new TopicHandler(topicService, categoriesService);
+  const topicHandler = new TopicHandler(
+    topicService,
+    categoriesService,
+    validationService,
+  );
 
   const questionService = new QuestionService(prisma);
-  const questionHandler = new QuestionHandler(questionService, topicService);
+  const questionHandler = new QuestionHandler(
+    questionService,
+    topicService,
+    validationService,
+  );
 
   return {
     levelsHandler,

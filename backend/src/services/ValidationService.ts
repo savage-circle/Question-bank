@@ -24,6 +24,18 @@ export class ValidationService implements IValidationService{
         return Array.isArray(value) && value.every((item) => typeof item === "string");
     }
 
+    validateUpdateCategoryInput(id: string | undefined, categoryName: string): { isValid: boolean; error?: string } {
+        if (!this.isValidPositiveInteger(id)) {
+            return { isValid: false, error: "Invalid category id." };
+        }
+
+        if (!this.isNonEmptyString(categoryName)) {
+            return { isValid: false, error: "Category name is required." };
+        }
+
+        return { isValid: true };
+    }
+
     validateGetTopicsInput(categoryId: string | undefined): { isValid: boolean; error?: string } {
         if (!this.isValidWhenProvided(categoryId)) {
             return { isValid: false, error: "Invalid categoryId" };

@@ -4,7 +4,7 @@ import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
-import { Handlers } from "./types/Handler.ts";
+import {Handlers} from "./types/handler.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
@@ -18,6 +18,7 @@ const createCategoryRoute = (categoriesHandler: CategoryHandler) => {
   const categoriesApp = new Hono();
 
   categoriesApp.get("/", categoriesHandler.getCategories);
+  categoriesApp.put("/:id", categoriesHandler.updateCategory);
 
   return categoriesApp;
 };

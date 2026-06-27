@@ -37,6 +37,7 @@ describe("TopicHandler", () => {
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
     isStringArray: () => true,
+    validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
     validateQuestionUpsertInput: () => ({ isValid: true }),
     validateGetQuestionInput: () => ({ isValid: true }),
     validateGetTopicsInput: () => ({ isValid: true }),
