@@ -3,17 +3,16 @@ import _ from "lodash";
 import {
   Category,
   CategoryUpdateResponse,
-  CreateCategoryDTO,
 } from "../types/category.ts";
-import { IService } from "../services/IService.ts";
+import { ICategoryService } from "../services/ICategoryService.ts";
 import { IValidationService } from "../services/IValidationService.ts";
 
 export class CategoryHandler {
-  private readonly categoriesService: IService<Category, CreateCategoryDTO>;
+  private readonly categoriesService: ICategoryService;
   private readonly validationService: IValidationService;
 
   constructor(
-    categoriesService: IService<Category, CreateCategoryDTO>,
+    categoriesService: ICategoryService,
     validationService: IValidationService,
   ) {
     this.categoriesService = categoriesService;
@@ -51,9 +50,9 @@ export class CategoryHandler {
       }
 
       const normalizedName = _.capitalize(categoryName.trim());
-      const existingCategories = await this.categoriesService.getAllAsync();
-      const duplicateExists = existingCategories.some(
-        (cat: Category) => cat.name === normalizedName && cat.id !== categoryId,
+      const duplicateExists = await this.categoriesService.existsByNameAsync(
+        normalizedName,
+        categoryId,
       );
 
       if (duplicateExists) {

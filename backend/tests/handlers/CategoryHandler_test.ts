@@ -5,15 +5,14 @@ import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
 import { CategoryHandler } from "../../src/handlers/CategoryHandler.ts";
-import { IService } from "../../src/services/IService.ts";
+import { ICategoryService } from "../../src/services/ICategoryService.ts";
 import { IValidationService } from "../../src/services/IValidationService.ts";
-import { Category, CreateCategoryDTO } from "../../src/types/category.ts";
-
 describe("CategoryHandler", () => {
-  const mockCategoryService: IService<Category, CreateCategoryDTO> = {
+  const mockCategoryService: ICategoryService = {
     getAllAsync: () => Promise.resolve([]),
     getByIdAsync: () => Promise.resolve(null),
     existsAsync: () => Promise.resolve(false),
+    existsByNameAsync: () => Promise.resolve(false),
     createAsync: () => Promise.resolve({ id: 1, name: "Category 1" }),
     updateAsync: () => Promise.resolve({ id: 1, name: "Category 1" }),
     deleteAsync: () => Promise.resolve(),
@@ -60,8 +59,7 @@ describe("CategoryHandler", () => {
     it("should update a category successfully", async () => {
       // Arrange
       mockCategoryService.existsAsync = () => Promise.resolve(true);
-      mockCategoryService.getAllAsync = () =>
-        Promise.resolve([{ id: 1, name: "Maths" }]);
+      mockCategoryService.existsByNameAsync = () => Promise.resolve(false);
       mockCategoryService.updateAsync = () =>
         Promise.resolve({ id: 1, name: "Advanced Mathematics" });
 
@@ -164,11 +162,7 @@ describe("CategoryHandler", () => {
 
     it("should return 409 if category name already exists", async () => {
       mockCategoryService.existsAsync = () => Promise.resolve(true);
-      mockCategoryService.getAllAsync = () =>
-        Promise.resolve([
-          { id: 1, name: "Maths" },
-          { id: 2, name: "Coding" },
-        ]);
+      mockCategoryService.existsByNameAsync = () => Promise.resolve(true);
 
       const categoryHandler = new CategoryHandler(
         mockCategoryService,
