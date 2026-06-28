@@ -1,8 +1,8 @@
 import { PrismaClient } from "../generated/prisma/client.ts";
 import { Category, CreateCategoryDTO } from "../types/category.ts";
-import { IService } from "./IService.ts";
+import { ICategoryService } from "./ICategoryService.ts";
 
-export class CategoryService implements IService<Category, CreateCategoryDTO> {
+export class CategoryService implements ICategoryService {
   private prisma: PrismaClient;
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
@@ -24,6 +24,18 @@ export class CategoryService implements IService<Category, CreateCategoryDTO> {
       select: { id: true },
     });
     
+    return category !== null;
+  }
+
+  async existsByNameAsync(name: string, excludeId?: number): Promise<boolean> {
+    const category = await this.prisma.category.findFirst({
+      where: {
+        name,
+        ...(excludeId !== undefined ? { NOT: { id: excludeId } } : {}),
+      },
+      select: { id: true },
+    });
+
     return category !== null;
   }
 

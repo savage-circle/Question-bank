@@ -79,6 +79,40 @@ describe("CategoryService", () => {
     });
   });
 
+  describe("existsByNameAsync", () => {
+    it("should return true if a category name exists", async () => {
+      // Arrange
+      const prisma = MockPrisma.create({
+        category: {
+          findFirst: () => Promise.resolve({ id: 1 }),
+        },
+      });
+      const categoryService = new CategoryService(prisma);
+
+      // Act
+      const result = await categoryService.existsByNameAsync("Maths");
+
+      // Assert
+      assertEquals(result, true);
+    });
+
+    it("should return false if a category name does not exist", async () => {
+      // Arrange
+      const prisma = MockPrisma.create({
+        category: {
+          findFirst: () => Promise.resolve(null),
+        },
+      });
+      const categoryService = new CategoryService(prisma);
+
+      // Act
+      const result = await categoryService.existsByNameAsync("Unknown");
+
+      // Assert
+      assertEquals(result, false);
+    });
+  });
+
   describe("createAsync", () => {
     it("should create a new category", async () => {
       // Arrange

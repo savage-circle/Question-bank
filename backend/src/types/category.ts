@@ -3,7 +3,6 @@ export type Category = {
   name: string;
 };
 
-
 export type CreateCategoryDTO = {
   name: string;
-}
+};
