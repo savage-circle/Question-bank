@@ -6,8 +6,3 @@ export type Category = {
 export type CreateCategoryDTO = {
   name: string;
 };
-
-export type CategoryUpdateResponse = {
-  id: number;
-  name: string;
-};

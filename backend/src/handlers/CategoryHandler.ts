@@ -1,9 +1,6 @@
 import { Context, TypedResponse } from "@hono/hono";
 import _ from "lodash";
-import {
-  Category,
-  CategoryUpdateResponse,
-} from "../types/category.ts";
+import { Category } from "../types/category.ts";
 import { ICategoryService } from "../services/ICategoryService.ts";
 import { IValidationService } from "../services/IValidationService.ts";
 
@@ -31,7 +28,7 @@ export class CategoryHandler {
   async updateCategory(
     c: Context,
   ): Promise<
-    TypedResponse<CategoryUpdateResponse> | TypedResponse<{ error: string }>
+    TypedResponse<Category> | TypedResponse<{ error: string }>
   > {
     const id = c.req.param("id");
     const { categoryName } = await c.req.json();
