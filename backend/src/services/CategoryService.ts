@@ -23,11 +23,12 @@ export class CategoryService implements ICategoryService {
       where: { id },
       select: { id: true },
     });
-    
+
     return category !== null;
   }
 
   async existsByNameAsync(name: string, excludeId?: number): Promise<boolean> {
+    console.log("inside existsByNameAsync", name, excludeId);
     const category = await this.prisma.category.findFirst({
       where: {
         name,
@@ -36,11 +37,13 @@ export class CategoryService implements ICategoryService {
       select: { id: true },
     });
 
+    console.log("category", category);
     return category !== null;
   }
 
   createAsync(data: CreateCategoryDTO): Promise<Category> {
     const { name } = data;
+    console.log("The data in createAync", name);
     return this.prisma.category.create({
       data: {
         name,
@@ -59,8 +62,10 @@ export class CategoryService implements ICategoryService {
   }
 
   deleteAsync(id: number): Promise<void> {
-    return this.prisma.category.delete({
-      where: { id },
-    }).then(() => {});
+    return this.prisma.category
+      .delete({
+        where: { id },
+      })
+      .then(() => {});
   }
 }

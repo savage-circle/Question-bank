@@ -281,5 +281,19 @@ describe("ValidationService", () => {
       assertEquals(validationService.validateAddTopicInput("", "abc"), { isValid: false, error: "Invalid categoryId" });
     });
   });
+
+  describe("validateCreateCategoryInput", () => {
+    it("should return valid for a non-empty name", () => {
+      assertEquals(validationService.validateCreateCategoryInput("Mathematics"), { isValid: true });
+    });
+
+    it("should return invalid when name is empty", () => {
+      assertEquals(validationService.validateCreateCategoryInput(""), { isValid: false, error: "Category name is required." });
+    });
+
+    it("should return invalid when name is whitespace only", () => {
+      assertEquals(validationService.validateCreateCategoryInput("   "), { isValid: false, error: "Category name is required." });
+    });
+  });
 }
 );

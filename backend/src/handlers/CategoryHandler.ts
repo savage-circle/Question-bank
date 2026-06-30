@@ -17,6 +17,7 @@ export class CategoryHandler {
 
     // bind methods
     this.getCategories = this.getCategories.bind(this);
+    this.createCategory = this.createCategory.bind(this);
     this.updateCategory = this.updateCategory.bind(this);
   }
 
@@ -25,16 +26,51 @@ export class CategoryHandler {
     return c.json(categories);
   }
 
+  async createCategory(
+    c: Context,
+  ): Promise<TypedResponse<Category> | TypedResponse<{ error: string }>> {
+    const { categoryName } = await c.req.json();
+    console.log("The category name", categoryName);
+
+    const inputValidation =
+      this.validationService.validateCreateCategoryInput(categoryName);
+    console.log("The validation", inputValidation);
+    if (!inputValidation.isValid) {
+      return c.json({ error: inputValidation.error! }, 400);
+    }
+
+    try {
+      const normalizedName = _.capitalize(categoryName.trim());
+      const duplicateExists =
+        await this.categoriesService.existsByNameAsync(normalizedName);
+      console.log("duplicate exists", duplicateExists, normalizedName);
+      if (duplicateExists) {
+        return c.json({ error: "Category name already exists." }, 409);
+      }
+
+      const created = await this.categoriesService.createAsync({
+        name: normalizedName,
+      });
+
+      console.log("The created", created);
+
+      return c.json({ id: created.id, name: created.name }, 201);
+    } catch (error) {
+      console.log("The error is", error);
+      return c.json({ error: "Failed to create category" }, 500);
+    }
+  }
+
   async updateCategory(
     c: Context,
-  ): Promise<
-    TypedResponse<Category> | TypedResponse<{ error: string }>
-  > {
+  ): Promise<TypedResponse<Category> | TypedResponse<{ error: string }>> {
     const id = c.req.param("id");
     const { categoryName } = await c.req.json();
 
-    const inputValidation =
-      this.validationService.validateUpdateCategoryInput(id, categoryName);
+    const inputValidation = this.validationService.validateUpdateCategoryInput(
+      id,
+      categoryName,
+    );
     if (!inputValidation.isValid) {
       return c.json({ error: inputValidation.error! }, 400);
     }
