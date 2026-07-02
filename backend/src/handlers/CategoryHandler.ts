@@ -30,11 +30,9 @@ export class CategoryHandler {
     c: Context,
   ): Promise<TypedResponse<Category> | TypedResponse<{ error: string }>> {
     const { categoryName } = await c.req.json();
-    console.log("The category name", categoryName);
 
     const inputValidation =
       this.validationService.validateCreateCategoryInput(categoryName);
-    console.log("The validation", inputValidation);
     if (!inputValidation.isValid) {
       return c.json({ error: inputValidation.error! }, 400);
     }
@@ -43,7 +41,6 @@ export class CategoryHandler {
       const normalizedName = _.capitalize(categoryName.trim());
       const duplicateExists =
         await this.categoriesService.existsByNameAsync(normalizedName);
-      console.log("duplicate exists", duplicateExists, normalizedName);
       if (duplicateExists) {
         return c.json({ error: "Category name already exists." }, 409);
       }
@@ -52,11 +49,8 @@ export class CategoryHandler {
         name: normalizedName,
       });
 
-      console.log("The created", created);
-
-      return c.json({ id: created.id, name: created.name }, 201);
+      return c.json(created, 201);
     } catch (error) {
-      console.log("The error is", error);
       return c.json({ error: "Failed to create category" }, 500);
     }
   }
@@ -96,7 +90,7 @@ export class CategoryHandler {
         name: normalizedName,
       });
 
-      return c.json({ id: updated.id, name: updated.name });
+      return c.json(updated);
     } catch {
       return c.json({ error: "Failed to update category" }, 500);
     }
