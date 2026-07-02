@@ -18,6 +18,7 @@ const createCategoryRoute = (categoriesHandler: CategoryHandler) => {
   const categoriesApp = new Hono();
 
   categoriesApp.get("/", categoriesHandler.getCategories);
+  categoriesApp.post("/", categoriesHandler.createCategory);
   categoriesApp.put("/:id", categoriesHandler.updateCategory);
 
   return categoriesApp;

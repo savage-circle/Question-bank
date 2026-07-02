@@ -23,7 +23,7 @@ export class CategoryService implements ICategoryService {
       where: { id },
       select: { id: true },
     });
-    
+
     return category !== null;
   }
 
@@ -59,8 +59,10 @@ export class CategoryService implements ICategoryService {
   }
 
   deleteAsync(id: number): Promise<void> {
-    return this.prisma.category.delete({
-      where: { id },
-    }).then(() => {});
+    return this.prisma.category
+      .delete({
+        where: { id },
+      })
+      .then(() => {});
   }
 }

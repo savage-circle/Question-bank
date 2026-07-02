@@ -24,6 +24,7 @@ describe("CategoryHandler", () => {
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
     isStringArray: () => true,
+    validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
     validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
     validateQuestionUpsertInput: () => ({ isValid: true }),
     validateGetQuestionInput: () => ({ isValid: true }),
@@ -52,6 +53,86 @@ describe("CategoryHandler", () => {
       // Assert
       assertEquals(result, categories);
       assertEquals(getAllAsyncSpy.calls.length, 1);
+    });
+  });
+
+  describe("createCategory", () => {
+    it("should create a category successfully", async () => {
+      // Arrange
+      mockCategoryService.existsByNameAsync = () => Promise.resolve(false);
+      mockCategoryService.createAsync = () =>
+        Promise.resolve({ id: 1, name: "Mathematics" });
+
+      const categoryHandler = new CategoryHandler(
+        mockCategoryService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.post("/", categoryHandler.createCategory);
+
+      // Act
+      const res = await app.request(
+        new Request("http://localhost/", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ categoryName: "Mathematics" }),
+        }),
+      );
+      const result = await res.json();
+
+      // Assert
+      assertEquals(res.status, 201);
+      assertEquals(result, { id: 1, name: "Mathematics" });
+    });
+
+    it("should return 400 if categoryName is empty", async () => {
+      const categoryHandler = new CategoryHandler(
+        mockCategoryService,
+        {
+          ...mockValidationService,
+          validateCreateCategoryInput: (_categoryName: string) => ({
+            isValid: false,
+            error: "Category name is required.",
+          }),
+        },
+      );
+      const app = new Hono();
+      app.post("/", categoryHandler.createCategory);
+
+      const res = await app.request(
+        new Request("http://localhost/", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ categoryName: "" }),
+        }),
+      );
+      const result = await res.json();
+
+      assertEquals(res.status, 400);
+      assertEquals(result, { error: "Category name is required." });
+    });
+
+    it("should return 409 if category name already exists", async () => {
+      mockCategoryService.existsByNameAsync = () => Promise.resolve(true);
+
+      const categoryHandler = new CategoryHandler(
+        mockCategoryService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.post("/", categoryHandler.createCategory);
+
+      const res = await app.request(
+        new Request("http://localhost/", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ categoryName: "Mathematics" }),
+        }),
+      );
+      const result = await res.json();
+
+      assertEquals(res.status, 409);
+      assertEquals(result, { error: "Category name already exists." });
     });
   });
 
