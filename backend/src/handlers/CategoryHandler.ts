@@ -50,7 +50,7 @@ export class CategoryHandler {
       });
 
       return c.json(created, 201);
-    } catch (error) {
+    } catch {
       return c.json({ error: "Failed to create category" }, 500);
     }
   }
