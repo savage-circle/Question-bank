@@ -1,0 +1,35 @@
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
+export default function LabTabs() {
+  const [value, setValue] = React.useState('0');
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
+  const categories: string[] = ["Maths", "Coding"];
+
+  return (
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange}>
+            {categories.map((category, i) => (
+              <Tab label={category} value={String(i)} key={i}/>
+            ))}
+          </TabList>
+        </Box>
+        {categories.map((category, i) => (
+          <TabPanel value={String(i)} key={i}>
+            {category} questions
+          </TabPanel>
+        ))}
+      </TabContext>
+    </Box>
+  );
+}
