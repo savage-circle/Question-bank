@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import * as apiService from '../../services/apiService';
+import apiClient from '../../services/apiClient';
 import { getCategories } from '../../services/categoryService';
 import { Category } from '../../types/category';
 
-vi.mock('../../services/apiService');
+vi.mock('../../services/apiClient');
 
 describe('getCategories', () => {
   afterEach(() => {
@@ -15,11 +15,11 @@ describe('getCategories', () => {
       { id: 1, name: 'Algorithms' },
       { id: 2, name: 'System Design' },
     ];
-    vi.mocked(apiService.get).mockResolvedValue(categories);
+    vi.mocked(apiClient.get).mockResolvedValue({ data: categories });
 
     const result = await getCategories();
 
-    expect(apiService.get).toHaveBeenCalledWith('/categories');
+    expect(apiClient.get).toHaveBeenCalledWith('/categories');
     expect(result).toEqual(categories);
   });
 });

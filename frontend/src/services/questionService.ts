@@ -1,6 +1,6 @@
-import { get } from './apiService';
+import apiClient from './apiClient';
 import { Question } from '../types/question';
 
 export function getQuestionsByCategory(categoryId: number) {
-  return get<Question[]>(`/questions?categoryId=${categoryId}`);
+  return apiClient.get<Question[]>(`/questions?categoryId=${categoryId}`).then((response) => response.data);
 }
