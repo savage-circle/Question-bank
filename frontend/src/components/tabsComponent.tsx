@@ -21,11 +21,6 @@ export default function TabsComponent() {
   const value = selectedValue ?? (categories.length > 0 ? String(categories[0].id) : '');
   const questions = fetchQuestions(value === '' ? undefined : parseInt(value));
 
-  questions.map((question) => {
-    console.log(question);
-    console.log(question.levelName);
-  });
-
   if (categories.length === 0) {
     return null;
   }

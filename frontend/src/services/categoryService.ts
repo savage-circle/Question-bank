@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 import { Category } from '../types/category';
 
-export function getCategories() {
-  return apiClient.get<Category[]>('/categories').then((response) => response.data);
+export async function getCategories() {
+  const response = await apiClient.get<Category[]>('/categories');
+  return response.data;
 }
