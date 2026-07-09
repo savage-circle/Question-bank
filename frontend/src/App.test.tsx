@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import App from './App';
 
 describe('App', () => {
-  it('renders the application layout', () => {
+  it('should renders the application layout', () => {
     render(<App />);
 
     expect(screen.getByTestId('app-layout')).toBeInTheDocument();
