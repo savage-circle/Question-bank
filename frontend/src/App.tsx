@@ -4,6 +4,7 @@ function App() {
   return (
     <div>
       <Box
+        data-testid="app-layout"
         sx={{
           width: '100vw',
           height: '100vh',
@@ -16,24 +17,25 @@ function App() {
       >
         {/* Header */}
         <Box
+          data-testid="header"
           sx={{
             height: 70,
             borderBottom: '1px solid #BDBDBD',
           }}
-        ></Box>
+        />
 
         {/* Toolbar */}
         <Box
+          data-testid="toolbar"
           sx={{
             height: 70,
             borderBottom: '1px solid #BDBDBD',
           }}
-        >
-          {' '}
-        </Box>
+        />
 
         {/* Body */}
         <Box
+          data-testid="body"
           sx={{
             flex: 1,
             px: 3,
@@ -44,6 +46,7 @@ function App() {
         >
           {/* Sidebar */}
           <Box
+            data-testid="sidebar"
             sx={{
               width: 280,
               border: '1px solid #BDBDBD',
@@ -52,6 +55,7 @@ function App() {
 
           {/* Main Content */}
           <Box
+            data-testid="main-content"
             sx={{
               flex: 1,
               border: '1px solid #BDBDBD',
@@ -61,6 +65,7 @@ function App() {
 
         {/* Footer */}
         <Box
+          data-testid="footer"
           sx={{
             height: 80,
             borderTop: '1px solid #BDBDBD',
