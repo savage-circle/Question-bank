@@ -1,8 +1,27 @@
 import { Box } from '@mui/system';
-
-import TabsComponent from "./components/tabsComponent";
+import React from 'react';
+import fetchQuestions from './hooks/fetchQuestions';
+import fetchCategories from './hooks/fetchCategories';
+import Toolbar from './components/toolbar';
+import MainContent from './components/mainContent';
 
 function App() {
+  const categories = fetchCategories();
+
+  const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setSelectedValue(newValue);
+  };
+
+  const value =
+    selectedValue ?? (categories.length > 0 ? String(categories[0].id) : '');
+  const questions = fetchQuestions(value === '' ? undefined : parseInt(value));
+
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <div>
       <Box
@@ -27,13 +46,7 @@ function App() {
         />
 
         {/* Toolbar */}
-        <Box
-          data-testid="toolbar"
-          sx={{
-            height: 70,
-            borderBottom: '1px solid #BDBDBD',
-          }}
-        />
+        <Toolbar categories={categories} value={value} onChange={handleChange} />
 
         {/* Body */}
         <Box
@@ -56,25 +69,18 @@ function App() {
           />
 
           {/* Main Content */}
+          <MainContent categories={categories} questions={questions} value={value} />
+
+          {/* Footer */}
           <Box
-            data-testid="main-content"
+            data-testid="footer"
             sx={{
-              flex: 1,
-              border: '1px solid #BDBDBD',
+              height: 80,
+              borderTop: '1px solid #BDBDBD',
             }}
           />
         </Box>
-
-        {/* Footer */}
-        <Box
-          data-testid="footer"
-          sx={{
-            height: 80,
-            borderTop: '1px solid #BDBDBD',
-          }}
-        />
       </Box>
-      <TabsComponent />
     </div>
   );
 }
