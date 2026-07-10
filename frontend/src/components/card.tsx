@@ -23,7 +23,17 @@ const Card = ({question}: {question: Question}) => {
                 fontFamily: 'sans-serif',
             }}
         >
-            <Typography sx={{ fontSize: 17, lineHeight: 1.7, color: '#111827', fontWeight: 400 }}>
+            <Typography
+                sx={{
+                    fontFamily: 'Inter',
+                    fontWeight: 500,
+                    fontSize: '15px',
+                    lineHeight: '24px',
+                    letterSpacing: '0%',
+                    verticalAlign: 'middle',
+                    color: '#1E293B',
+                }}
+            >
                 {question.description}
             </Typography>
             <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
@@ -32,7 +42,7 @@ const Card = ({question}: {question: Question}) => {
                     sx={{
                         px: 1.5,
                         py: 0.5,
-                        borderRadius: 999,
+                        borderRadius: 2,
                         fontSize: 14,
                         fontWeight: 500,
                         ...difficultyStyle,

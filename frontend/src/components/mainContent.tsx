@@ -17,7 +17,6 @@ export default function MainContent({ categories, questions, value }: MainConten
       data-testid="main-content"
       sx={{
         flex: 1,
-        border: '1px solid #BDBDBD',
         borderBottom: 1,
         borderColor: 'divider',
         overflow: 'scroll',
