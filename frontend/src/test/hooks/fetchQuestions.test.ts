@@ -30,7 +30,7 @@ describe('fetchQuestions', () => {
 
   it('fetches questions for the given category and updates state once resolved', async () => {
     const questions: Question[] = [
-      { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'Easy', extensions: null },
+      { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'EASY', extensions: null },
     ];
     vi.mocked(getQuestionsByCategory).mockResolvedValue(questions);
 
@@ -42,7 +42,7 @@ describe('fetchQuestions', () => {
 
   it('re-fetches when categoryId changes', async () => {
     const questionsForCategoryTwo: Question[] = [
-      { id: 2, description: 'Balance a binary tree', topicName: 'Trees', levelName: 'Medium', extensions: null },
+      { id: 2, description: 'Balance a binary tree', topicName: 'Trees', levelName: 'MEDIUM', extensions: null },
     ];
     vi.mocked(getQuestionsByCategory).mockResolvedValue([]);
 

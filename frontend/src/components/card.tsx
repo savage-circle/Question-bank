@@ -1,24 +1,47 @@
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Question } from '../types/question';
 
-const difficultyStyles: Record<string, string> = {
-    Easy: 'bg-emerald-50 text-emerald-600',
-    Medium: 'bg-orange-50 text-orange-700',
-    Hard: 'bg-red-50 text-red-600',
+const difficultyStyles: Record<string, { bgcolor: string; color: string }> = {
+    EASY: { bgcolor: '#ecfdf5', color: '#059669' },
+    MEDIUM: { bgcolor: '#fff7ed', color: '#c2410c' },
+    HARD: { bgcolor: '#fef2f2', color: '#dc2626' },
 };
 
 const Card = ({question}: {question: Question}) => {
+    const difficultyStyle = difficultyStyles[question.levelName] ?? { bgcolor: '#f1f5f9', color: '#475569' };
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4 font-sans">
-            <p className="text-[17px] leading-relaxed text-gray-900 font-normal">{question.description}</p>
-            <div className="flex mt-4 gap-2">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${difficultyStyles[question.levelName] ?? 'bg-slate-100 text-slate-600'}`}>
+        <Box
+            sx={{
+                bgcolor: '#f3f4f6',
+                borderRadius: 4,
+                border: '1px solid #f3f4f6',
+                boxShadow: 1,
+                p: 3,
+                mb: 2,
+                fontFamily: 'sans-serif',
+            }}
+        >
+            <Typography sx={{ fontSize: 17, lineHeight: 1.7, color: '#111827', fontWeight: 400 }}>
+                {question.description}
+            </Typography>
+            <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
+                <Box
+                    component="span"
+                    sx={{
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: 999,
+                        fontSize: 14,
+                        fontWeight: 500,
+                        ...difficultyStyle,
+                    }}
+                >
                     {question.levelName}
-                </span>
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-600">
-                    {question.topicName}
-                </span>
-            </div>
-        </div>
+                </Box>
+            </Box>
+        </Box>
     )
 }
 

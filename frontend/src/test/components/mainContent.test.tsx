@@ -11,8 +11,8 @@ describe('MainContent', () => {
   ];
 
   const questions: Question[] = [
-    { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'Easy', extensions: null },
-    { id: 2, description: 'Design a rate limiter', topicName: 'Scalability', levelName: 'Hard', extensions: null },
+    { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'EASY', extensions: null },
+    { id: 2, description: 'Design a rate limiter', topicName: 'Scalability', levelName: 'HARD', extensions: null },
   ];
 
   it('renders a card for each question in the active category panel', () => {

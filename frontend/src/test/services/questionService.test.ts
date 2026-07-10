@@ -12,7 +12,7 @@ describe('getQuestionsByCategory', () => {
 
   it('fetches questions from the /questions endpoint for the given category', async () => {
     const questions: Question[] = [
-      { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'Easy', extensions: null },
+      { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'EASY', extensions: null },
     ];
     vi.mocked(apiClient.get).mockResolvedValue({ data: questions });
 

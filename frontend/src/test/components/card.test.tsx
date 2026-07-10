@@ -8,27 +8,30 @@ describe('Card', () => {
     id: 1,
     description: 'Reverse a linked list',
     topicName: 'Linked List',
-    levelName: 'Easy',
+    levelName: 'EASY',
     extensions: null,
   };
 
-  it('renders the question description, level, and topic', () => {
+  it('renders the question description and level', () => {
     render(<Card question={baseQuestion} />);
 
     expect(screen.getByText('Reverse a linked list')).toBeInTheDocument();
-    expect(screen.getByText('Easy')).toBeInTheDocument();
-    expect(screen.getByText('Linked List')).toBeInTheDocument();
+    expect(screen.getByText('EASY')).toBeInTheDocument();
   });
 
-  it('applies a known style for a recognized difficulty level', () => {
-    render(<Card question={baseQuestion} />);
+  it.each([
+    ['EASY', '#ecfdf5', '#059669'],
+    ['MEDIUM', '#fff7ed', '#c2410c'],
+    ['HARD', '#fef2f2', '#dc2626'],
+  ])('applies the correct style for the %s difficulty level', (levelName, bgcolor, color) => {
+    render(<Card question={{ ...baseQuestion, levelName }} />);
 
-    expect(screen.getByText('Easy')).toHaveClass('bg-emerald-50', 'text-emerald-600');
+    expect(screen.getByText(levelName)).toHaveStyle({ backgroundColor: bgcolor, color });
   });
 
   it('falls back to a default style for an unrecognized difficulty level', () => {
     render(<Card question={{ ...baseQuestion, levelName: 'Unknown' }} />);
 
-    expect(screen.getByText('Unknown')).toHaveClass('bg-slate-100', 'text-slate-600');
+    expect(screen.getByText('Unknown')).toHaveStyle({ backgroundColor: '#f1f5f9', color: '#475569' });
   });
 });
