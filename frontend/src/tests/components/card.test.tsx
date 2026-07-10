@@ -20,18 +20,26 @@ describe('Card', () => {
   });
 
   it.each([
-    ['EASY', '#ecfdf5', '#059669'],
-    ['MEDIUM', '#fff7ed', '#c2410c'],
-    ['HARD', '#fef2f2', '#dc2626'],
-  ])('applies the correct style for the %s difficulty level', (levelName, bgcolor, color) => {
+    ['EASY', '#ECFDF5', '#047857', '#D1FAE5'],
+    ['MEDIUM', '#FFF7ED', '#C2410C', '#FFEDD5'],
+    ['HARD', '#FFF1F2', '#BE123C', '#FFE4E6'],
+  ])('applies the correct style for the %s difficulty level', (levelName, bgcolor, color, borderColor) => {
     render(<Card question={{ ...baseQuestion, levelName }} />);
 
-    expect(screen.getByText(levelName)).toHaveStyle({ backgroundColor: bgcolor, color });
+    expect(screen.getByText(levelName)).toHaveStyle({
+      backgroundColor: bgcolor,
+      color,
+      borderColor,
+    });
   });
 
   it('falls back to a default style for an unrecognized difficulty level', () => {
     render(<Card question={{ ...baseQuestion, levelName: 'Unknown' }} />);
 
-    expect(screen.getByText('Unknown')).toHaveStyle({ backgroundColor: '#f1f5f9', color: '#475569' });
+    expect(screen.getByText('Unknown')).toHaveStyle({
+      backgroundColor: '#f1f5f9',
+      color: '#475569',
+      borderColor: '#e2e8f0',
+    });
   });
 });
