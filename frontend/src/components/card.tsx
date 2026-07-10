@@ -43,8 +43,12 @@ const Card = ({question}: {question: Question}) => {
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 2,
-                        fontSize: 14,
+                        fontFamily: 'Inter',
                         fontWeight: 500,
+                        fontSize: '12px',
+                        lineHeight: '18px',
+                        letterSpacing: '0.19px',
+                        verticalAlign: 'middle',
                         ...difficultyStyle,
                     }}
                 >
