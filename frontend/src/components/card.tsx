@@ -14,7 +14,7 @@ const Card = ({question}: {question: Question}) => {
     return (
         <Box
             sx={{
-                bgcolor: '#f3f4f6',
+                bgcolor: '#FFFFFF',
                 borderRadius: 4,
                 border: '1px solid #f3f4f6',
                 boxShadow: 1,

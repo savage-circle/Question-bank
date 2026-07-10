@@ -33,7 +33,7 @@ function App() {
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
-          bgcolor: '#fff',
+          bgcolor: '#F8FAFC',
         }}
       >
         {/* Header */}
@@ -42,6 +42,7 @@ function App() {
           sx={{
             height: 70,
             borderBottom: '1px solid #BDBDBD',
+            backgroundColor: '#FFFFFF',
           }}
         />
 
@@ -65,6 +66,7 @@ function App() {
             sx={{
               width: 280,
               border: '1px solid #BDBDBD',
+              backgroundColor: '#FFFFFF',
             }}
           />
 
