@@ -137,14 +137,19 @@ export class QuestionHandler {
     const id = c.req.param("id");
     const questionId = Number(id);
 
-    if (!questionId || !(await this.questionService.existsAsync(questionId))) {
-      return c.json({ error: "Question does not exist." }, 404);
-    }
-
     try {
       await this.questionService.deleteAsync(questionId);
       return c.json({ message: "Question deleted successfully." });
-    } catch {
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        error.code === "P2025"
+      ) {
+        return c.json({ error: "Question does not exist." }, 404);
+      }
+
       return c.json({ error: "Failed to delete question" }, 500);
     }
   }

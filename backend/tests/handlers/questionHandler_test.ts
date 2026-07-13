@@ -393,8 +393,6 @@ describe("QuestionHandler", () => {
     it("should delete a question", async () => {
       const deleteAsyncSpy = spy(() => Promise.resolve());
       mockQuestionService.deleteAsync = deleteAsyncSpy;
-      const existsAsyncSpy = spy(() => Promise.resolve(true));
-      mockQuestionService.existsAsync = existsAsyncSpy;
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
@@ -411,12 +409,12 @@ describe("QuestionHandler", () => {
 
       assertEquals(result, { message: "Question deleted successfully." });
       assertEquals(deleteAsyncSpy.calls.length, 1);
-      assertEquals(existsAsyncSpy.calls.length, 1);
     });
 
     it("should return 404 if question does not exist", async () => {
-      const existsAsyncSpy = spy(() => Promise.resolve(false));
-      mockQuestionService.existsAsync = existsAsyncSpy;
+      mockQuestionService.deleteAsync = () => {
+        throw { code: "P2025" };
+      };
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
@@ -431,14 +429,11 @@ describe("QuestionHandler", () => {
       const res = await app.request(req);
 
       assertEquals(res.status, 404);
-      assertEquals(existsAsyncSpy.calls.length, 1);
     });
 
     it("should return 500 if deletion fails or connection failed", async () => {
-      const deleteAsyncSpy = spy(() => Promise.reject(new Error("Deletion failed")));
+      const deleteAsyncSpy = spy(() => Promise.reject(new Error()));
       mockQuestionService.deleteAsync = deleteAsyncSpy;
-      const existsAsyncSpy = spy(() => Promise.resolve(true));
-      mockQuestionService.existsAsync = existsAsyncSpy;
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
@@ -456,7 +451,6 @@ describe("QuestionHandler", () => {
       assertEquals(res.status, 500);
       assertEquals(result, { error: "Failed to delete question" });
       assertEquals(deleteAsyncSpy.calls.length, 1);
-      assertEquals(existsAsyncSpy.calls.length, 1);
     });
   });
 });
