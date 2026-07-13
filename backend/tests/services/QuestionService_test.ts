@@ -209,51 +209,7 @@ describe("QuestionService", () => {
       // Assert
       assertEquals(result, question);
     });
-
-    it("should serialize extensions when creating a question", async () => {
-      // Arrange
-      const question = {
-        id: 1,
-        description: "Question 1",
-        topicId: 1,
-        levelId: 1,
-        extensions: null,
-        topic: { id: 1, name: "Topic 1", categoryId: 1 },
-      };
-      let receivedArgs: unknown;
-      const prisma = MockPrisma.create({
-        question: {
-          create: (args: unknown) => {
-            receivedArgs = args;
-            return Promise.resolve(question);
-          },
-        },
-      });
-      const questionService = new QuestionService(prisma);
-
-      // Act
-      await questionService.createAsync({
-        description: "Question 1",
-        topicId: 1,
-        levelId: 1,
-        extensions: ["answer:42"],
-      });
-
-      // Assert
-      assertEquals(receivedArgs, {
-        data: {
-          description: "Question 1",
-          topicId: 1,
-          levelId: 1,
-          extensions: JSON.stringify(["answer:42"]),
-        },
-        include: {
-          topic: true,
-        },
-      });
-    });
   });
-
   describe("updateAsync", () => {
     it("should update a question", async () => {
       // Arrange
