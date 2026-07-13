@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Toolbar from '../../components/toolbar';
-import { Category } from '../../types/category';
+import { Category } from "../../types";
 
 describe('Toolbar', () => {
   const categories: Category[] = [

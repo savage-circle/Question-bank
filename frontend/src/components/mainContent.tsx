@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
-import { Category } from '../types/category';
-import { Question } from '../types/question';
+import { Category, Question } from "../types";
 import Card from './card';
 
 interface MainContentProps {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import useFetchCategories from '../../hooks/fetchCategories';
 import { getCategories } from '../../services/categoryService';
-import { Category } from '../../types/category';
+import { Category } from "../../types";
 
 vi.mock('../../services/categoryService');
 

@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import MainContent from '../../components/mainContent';
-import { Category } from '../../types/category';
-import { Question } from '../../types/question';
+import { Category, Question } from "../../types";
 
 describe('MainContent', () => {
   const categories: Category[] = [
