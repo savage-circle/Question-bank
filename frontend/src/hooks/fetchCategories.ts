@@ -2,7 +2,7 @@ import * as React from 'react';
 import { getCategories } from '../services/categoryService';
 import { Category } from '../types/category';
 
-export default function fetchCategories() {
+export default function useFetchCategories() {
   const [categories, setCategories] = React.useState<Category[]>([]);
 
   React.useEffect(() => {

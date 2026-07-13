@@ -1,12 +1,12 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import fetchQuestions from './hooks/fetchQuestions';
-import fetchCategories from './hooks/fetchCategories';
+import useFetchQuestions from './hooks/fetchQuestions';
+import useFetchCategories from './hooks/fetchCategories';
 import Toolbar from './components/toolbar';
 import MainContent from './components/mainContent';
 
 function App() {
-  const categories = fetchCategories();
+  const categories = useFetchCategories();
 
   const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
 
@@ -16,7 +16,7 @@ function App() {
 
   const value =
     selectedValue ?? (categories.length > 0 ? String(categories[0].id) : '');
-  const questions = fetchQuestions(value === '' ? undefined : parseInt(value));
+  const questions = useFetchQuestions(value === '' ? undefined : parseInt(value));
 
   if (categories.length === 0) {
     return null;

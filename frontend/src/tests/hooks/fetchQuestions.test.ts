@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import fetchQuestions from '../../hooks/fetchQuestions';
+import useFetchQuestions from '../../hooks/fetchQuestions';
 import { getQuestionsByCategory } from '../../services/questionService';
 import { Question } from '../../types/question';
 
@@ -17,13 +17,13 @@ describe('fetchQuestions', () => {
   });
 
   it('starts with an empty list of questions', () => {
-    const { result } = renderHook(() => fetchQuestions(1));
+    const { result } = renderHook(() => useFetchQuestions(1));
 
     expect(result.current).toEqual([]);
   });
 
   it('does not fetch when categoryId is undefined', () => {
-    renderHook(() => fetchQuestions(undefined));
+    renderHook(() => useFetchQuestions(undefined));
 
     expect(getQuestionsByCategory).not.toHaveBeenCalled();
   });
@@ -34,7 +34,7 @@ describe('fetchQuestions', () => {
     ];
     vi.mocked(getQuestionsByCategory).mockResolvedValue(questions);
 
-    const { result } = renderHook(() => fetchQuestions(1));
+    const { result } = renderHook(() => useFetchQuestions(1));
 
     expect(getQuestionsByCategory).toHaveBeenCalledWith(1);
     await waitFor(() => expect(result.current).toEqual(questions));
@@ -46,7 +46,7 @@ describe('fetchQuestions', () => {
     ];
     vi.mocked(getQuestionsByCategory).mockResolvedValue([]);
 
-    const { result, rerender } = renderHook(({ categoryId }) => fetchQuestions(categoryId), {
+    const { result, rerender } = renderHook(({ categoryId }) => useFetchQuestions(categoryId), {
       initialProps: { categoryId: 1 },
     });
 
@@ -62,7 +62,7 @@ describe('fetchQuestions', () => {
     const error = new Error('network error');
     vi.mocked(getQuestionsByCategory).mockRejectedValue(error);
 
-    const { result } = renderHook(() => fetchQuestions(1));
+    const { result } = renderHook(() => useFetchQuestions(1));
 
     await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch questions', error));
     expect(result.current).toEqual([]);

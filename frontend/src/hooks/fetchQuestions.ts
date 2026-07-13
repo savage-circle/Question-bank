@@ -2,7 +2,7 @@ import * as React from 'react';
 import { getQuestionsByCategory } from '../services/questionService';
 import { Question } from '../types/question';
 
-export default function fetchQuestions(categoryId: number | undefined) {
+export default function useFetchQuestions(categoryId: number | undefined) {
   const [questions, setQuestions] = React.useState<Question[]>([]);
 
   React.useEffect(() => {
