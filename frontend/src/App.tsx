@@ -36,7 +36,6 @@ function App() {
           bgcolor: '#F8FAFC',
         }}
       >
-        {/* Header */}
         <Box
           data-testid="header"
           sx={{
@@ -46,10 +45,8 @@ function App() {
           }}
         />
 
-        {/* Toolbar */}
         <Toolbar categories={categories} value={value} onChange={handleChange} />
 
-        {/* Body */}
         <Box
           data-testid="body"
           sx={{
@@ -60,7 +57,6 @@ function App() {
             gap: 5,
           }}
         >
-          {/* Sidebar */}
           <Box
             data-testid="sidebar"
             sx={{
@@ -70,10 +66,8 @@ function App() {
             }}
           />
 
-          {/* Main Content */}
           <MainContent categories={categories} questions={questions} value={value} />
 
-          {/* Footer */}
           <Box
             data-testid="footer"
             sx={{
