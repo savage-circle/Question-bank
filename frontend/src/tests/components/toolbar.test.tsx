@@ -33,4 +33,11 @@ describe('Toolbar', () => {
 
     expect(onChange).toHaveBeenCalledWith(expect.anything(), '2');
   });
+
+  it('renders no tabs when there are no categories', () => {
+    render(<Toolbar categories={[]} value="" onChange={vi.fn()} />);
+
+    expect(screen.getByTestId('toolbar')).toBeInTheDocument();
+    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+  });
 });
