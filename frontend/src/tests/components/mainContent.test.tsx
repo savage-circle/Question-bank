@@ -11,12 +11,26 @@ describe('MainContent', () => {
   ];
 
   const questions: Question[] = [
-    { id: 1, description: 'Reverse a linked list', topicName: 'Linked List', levelName: 'EASY', extensions: null },
-    { id: 2, description: 'Design a rate limiter', topicName: 'Scalability', levelName: 'HARD', extensions: null },
+    {
+      id: 1,
+      description: 'Reverse a linked list',
+      topicName: 'Linked List',
+      levelName: 'EASY',
+      extensions: null,
+    },
+    {
+      id: 2,
+      description: 'Design a rate limiter',
+      topicName: 'Scalability',
+      levelName: 'HARD',
+      extensions: null,
+    },
   ];
 
   it('renders a card for each question in the active category panel', () => {
-    render(<MainContent categories={categories} questions={questions} value="1" />);
+    render(
+      <MainContent categories={categories} questions={questions} value="1" />,
+    );
 
     expect(screen.getByTestId('main-content')).toBeInTheDocument();
     expect(screen.getByText('Reverse a linked list')).toBeInTheDocument();

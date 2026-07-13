@@ -16,7 +16,9 @@ function App() {
 
   const value =
     selectedValue ?? (categories.length > 0 ? String(categories[0].id) : '');
-  const questions = useFetchQuestions(value === '' ? undefined : parseInt(value));
+  const questions = useFetchQuestions(
+    value === '' ? undefined : parseInt(value),
+  );
 
   if (categories.length === 0) {
     return null;
@@ -45,7 +47,11 @@ function App() {
           }}
         />
 
-        <Toolbar categories={categories} value={value} onChange={handleChange} />
+        <Toolbar
+          categories={categories}
+          value={value}
+          onChange={handleChange}
+        />
 
         <Box
           data-testid="body"
@@ -66,7 +72,11 @@ function App() {
             }}
           />
 
-          <MainContent categories={categories} questions={questions} value={value} />
+          <MainContent
+            categories={categories}
+            questions={questions}
+            value={value}
+          />
 
           <Box
             data-testid="footer"

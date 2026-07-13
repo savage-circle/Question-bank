@@ -15,14 +15,22 @@ describe('Toolbar', () => {
 
     expect(screen.getByTestId('toolbar')).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Algorithms' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'System Design' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('tab', { name: 'System Design' }),
+    ).toBeInTheDocument();
   });
 
   it('marks the tab matching the selected value as selected', () => {
     render(<Toolbar categories={categories} value="2" onChange={vi.fn()} />);
 
-    expect(screen.getByRole('tab', { name: 'System Design' })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('tab', { name: 'Algorithms' })).toHaveAttribute('aria-selected', 'false');
+    expect(screen.getByRole('tab', { name: 'System Design' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.getByRole('tab', { name: 'Algorithms' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
   });
 
   it('calls onChange with the newly selected category value when a tab is clicked', async () => {

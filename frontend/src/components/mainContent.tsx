@@ -11,7 +11,11 @@ interface MainContentProps {
   value: string;
 }
 
-export default function MainContent({ categories, questions, value }: MainContentProps) {
+export default function MainContent({
+  categories,
+  questions,
+  value,
+}: MainContentProps) {
   return (
     <Box
       data-testid="main-content"

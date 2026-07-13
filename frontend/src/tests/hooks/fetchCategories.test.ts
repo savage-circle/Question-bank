@@ -29,13 +29,20 @@ describe('fetchCategories', () => {
   });
 
   it('logs an error and keeps categories empty when the fetch fails', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     const error = new Error('network error');
     vi.mocked(getCategories).mockRejectedValue(error);
 
     const { result } = renderHook(() => useFetchCategories());
 
-    await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch categories', error));
+    await waitFor(() =>
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to fetch categories',
+        error,
+      ),
+    );
     expect(result.current).toEqual([]);
   });
 });

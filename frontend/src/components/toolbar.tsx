@@ -24,13 +24,16 @@ export default function Toolbar({ categories, value, onChange }: ToolbarProps) {
       <TabContext value={value}>
         <Box
           sx={{
-            height: 55
+            height: 55,
           }}
         >
           <TabList
             onChange={onChange}
             centered
-            sx={{ height: 55, '& .MuiTabs-indicator': { backgroundColor: '#2B3B4E' } }}
+            sx={{
+              height: 55,
+              '& .MuiTabs-indicator': { backgroundColor: '#2B3B4E' },
+            }}
           >
             {categories.map((category) => (
               <Tab
@@ -40,7 +43,7 @@ export default function Toolbar({ categories, value, onChange }: ToolbarProps) {
                   fontFamily: 'Inter',
                   fontWeight: 900,
                   color: '#64748B',
-                  '&.Mui-selected': { color: '#1E293B'},
+                  '&.Mui-selected': { color: '#1E293B' },
                 }}
                 label={category.name}
                 value={String(category.id)}
