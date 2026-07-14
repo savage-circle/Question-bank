@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { Category, Question } from "../../types";
@@ -16,15 +15,9 @@ export default function QuestionPanel({
   value,
 }: QuestionPanelProps) {
   return (
-    <Box
+    <div
       data-testid="question-panel"
-      sx={{
-        flex: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-        overflow: 'scroll',
-        height: '75vh',
-      }}
+      className="flex-1 border-b border-gray-200 overflow-scroll h-[75vh]"
     >
       <TabContext value={value}>
         {categories.map((category) => (
@@ -35,6 +28,6 @@ export default function QuestionPanel({
           </TabPanel>
         ))}
       </TabContext>
-    </Box>
+    </div>
   );
 }

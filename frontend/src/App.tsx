@@ -1,4 +1,3 @@
-import { Box } from '@mui/system';
 import React from 'react';
 import useFetchQuestions from './hooks/useFetchQuestions/useFetchQuestions';
 import useFetchCategories from './hooks/useFetchCategories/useFetchCategories';
@@ -26,25 +25,13 @@ function App() {
 
   return (
     <div>
-      <Box
+      <div
         data-testid="app-layout"
-        sx={{
-          width: '100vw',
-          height: '100vh',
-          border: '1px solid #BDBDBD',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-          bgcolor: '#F8FAFC',
-        }}
+        className="w-screen h-screen border border-[#BDBDBD] box-border flex flex-col bg-[#F8FAFC]"
       >
-        <Box
+        <div
           data-testid="header"
-          sx={{
-            height: 70,
-            borderBottom: '1px solid #BDBDBD',
-            backgroundColor: '#FFFFFF',
-          }}
+          className="h-[70px] border-b border-[#BDBDBD] bg-white"
         />
 
         <CategoryTabs
@@ -53,23 +40,10 @@ function App() {
           onChange={handleChange}
         />
 
-        <Box
-          data-testid="body"
-          sx={{
-            flex: 1,
-            px: 3,
-            py: 4,
-            display: 'flex',
-            gap: 5,
-          }}
-        >
-          <Box
+        <div data-testid="body" className="flex-1 px-6 py-8 flex gap-10">
+          <div
             data-testid="sidebar"
-            sx={{
-              width: 280,
-              border: '1px solid #BDBDBD',
-              backgroundColor: '#FFFFFF',
-            }}
+            className="w-[280px] border border-[#BDBDBD] bg-white"
           />
 
           <QuestionPanel
@@ -78,15 +52,12 @@ function App() {
             value={value}
           />
 
-          <Box
+          <div
             data-testid="footer"
-            sx={{
-              height: 80,
-              borderTop: '1px solid #BDBDBD',
-            }}
+            className="h-[80px] border-t border-[#BDBDBD]"
           />
-        </Box>
-      </Box>
+        </div>
+      </div>
     </div>
   );
 }

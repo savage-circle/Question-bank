@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -13,46 +12,28 @@ interface CategoryTabsProps {
 
 export default function CategoryTabs({ categories, value, onChange }: CategoryTabsProps) {
   return (
-    <Box
+    <div
       data-testid="category-tabs"
-      sx={{
-        height: 55,
-        borderBottom: '1px solid #BDBDBD',
-        backgroundColor: '#FFFFFF',
-      }}
+      className="h-[55px] border-b border-[#BDBDBD] bg-white"
     >
       <TabContext value={value}>
-        <Box
-          sx={{
-            height: 55,
-          }}
-        >
+        <div className="h-[55px]">
           <TabList
             onChange={onChange}
             centered
-            sx={{
-              height: 55,
-              '& .MuiTabs-indicator': { backgroundColor: '#2B3B4E' },
-            }}
+            className="h-[55px] [&_.MuiTabs-indicator]:bg-[#2B3B4E]"
           >
             {categories.map((category) => (
               <Tab
-                sx={{
-                  height: 55,
-                  width: 120,
-                  fontFamily: 'Inter',
-                  fontWeight: 900,
-                  color: '#64748B',
-                  '&.Mui-selected': { color: '#1E293B' },
-                }}
+                className="h-[55px] w-[120px] font-[Inter] font-black text-[#64748B] [&.Mui-selected]:text-[#1E293B]"
                 label={category.name}
                 value={String(category.id)}
                 key={category.id}
               />
             ))}
           </TabList>
-        </Box>
+        </div>
       </TabContext>
-    </Box>
+    </div>
   );
 }

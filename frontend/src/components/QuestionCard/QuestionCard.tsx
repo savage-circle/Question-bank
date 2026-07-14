@@ -1,5 +1,3 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { Question } from "../../types";
 
 const difficultyStyles: Record<
@@ -19,51 +17,23 @@ const QuestionCard = ({ question }: { question: Question }) => {
   };
 
   return (
-    <Box
-      sx={{
-        bgcolor: '#FFFFFF',
-        borderRadius: 4,
-        border: '1px solid #f3f4f6',
-        boxShadow: 1,
-        p: 3,
-        mb: 2,
-        fontFamily: 'sans-serif',
-      }}
-    >
-      <Typography
-        sx={{
-          fontFamily: 'Inter',
-          fontWeight: 500,
-          fontSize: '15px',
-          lineHeight: '24px',
-          letterSpacing: '0%',
-          verticalAlign: 'middle',
-          color: '#1E293B',
-        }}
-      >
+    <div className="bg-white rounded-2xl border border-[#f3f4f6] shadow p-6 mb-4 font-sans">
+      <p className="font-[Inter] font-medium text-[15px] leading-6 align-middle text-[#1E293B]">
         {question.description}
-      </Typography>
-      <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
-        <Box
-          component="span"
-          sx={{
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 2,
-            border: '1px solid',
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: '12px',
-            lineHeight: '18px',
-            letterSpacing: '0.19px',
-            verticalAlign: 'middle',
-            ...difficultyStyle,
+      </p>
+      <div className="flex mt-4 gap-2">
+        <span
+          className="px-3 py-1 rounded-lg border font-[Inter] font-medium text-[12px] leading-[18px] tracking-[0.19px] align-middle"
+          style={{
+            backgroundColor: difficultyStyle.bgcolor,
+            color: difficultyStyle.color,
+            borderColor: difficultyStyle.borderColor,
           }}
         >
           {question.levelName}
-        </Box>
-      </Box>
-    </Box>
+        </span>
+      </div>
+    </div>
   );
 };
 
