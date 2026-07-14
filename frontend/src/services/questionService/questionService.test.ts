@@ -27,4 +27,24 @@ describe('getQuestionsByCategory', () => {
     expect(apiClient.get).toHaveBeenCalledWith('/questions?categoryId=1');
     expect(result).toEqual(questions);
   });
+
+  it('wraps the error with the response status when the request fails', async () => {
+    const error = { message: 'Request failed', response: { status: 500 } };
+    vi.mocked(apiClient.get).mockRejectedValue(error);
+
+    await expect(getQuestionsByCategory(1)).rejects.toThrow(
+      'Failed to fetch questions (status: 500): Request failed',
+    );
+    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({ status: 500 });
+  });
+
+  it('wraps the error as an unknown status when there is no response', async () => {
+    const error = { message: 'Network Error' };
+    vi.mocked(apiClient.get).mockRejectedValue(error);
+
+    await expect(getQuestionsByCategory(1)).rejects.toThrow(
+      'Failed to fetch questions (status: unknown): Network Error',
+    );
+    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({ status: 'unknown' });
+  });
 });

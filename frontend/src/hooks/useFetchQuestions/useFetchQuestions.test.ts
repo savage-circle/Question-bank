@@ -138,10 +138,7 @@ describe('fetchQuestions', () => {
     const { result } = renderHook(() => useFetchQuestions(1));
 
     await waitFor(() =>
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to fetch questions',
-        error,
-      ),
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error.message, undefined),
     );
     expect(result.current).toEqual([]);
   });

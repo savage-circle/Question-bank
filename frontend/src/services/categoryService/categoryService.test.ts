@@ -22,4 +22,24 @@ describe('getCategories', () => {
     expect(apiClient.get).toHaveBeenCalledWith('/categories');
     expect(result).toEqual(categories);
   });
+
+  it('wraps the error with the response status when the request fails', async () => {
+    const error = { message: 'Request failed', response: { status: 500 } };
+    vi.mocked(apiClient.get).mockRejectedValue(error);
+
+    await expect(getCategories()).rejects.toThrow(
+      'Failed to fetch categories (status: 500): Request failed',
+    );
+    await expect(getCategories()).rejects.toMatchObject({ status: 500 });
+  });
+
+  it('wraps the error as an unknown status when there is no response', async () => {
+    const error = { message: 'Network Error' };
+    vi.mocked(apiClient.get).mockRejectedValue(error);
+
+    await expect(getCategories()).rejects.toThrow(
+      'Failed to fetch categories (status: unknown): Network Error',
+    );
+    await expect(getCategories()).rejects.toMatchObject({ status: 'unknown' });
+  });
 });

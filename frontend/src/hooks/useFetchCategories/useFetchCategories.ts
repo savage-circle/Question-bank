@@ -13,7 +13,7 @@ export default function useFetchCategories() {
         if (!isStale) setCategories(data);
       })
       .catch((error) => {
-        if (!isStale) console.error('Failed to fetch categories', error);
+        if (!isStale) console.error(error.message, error.status);
       });
 
     return () => {

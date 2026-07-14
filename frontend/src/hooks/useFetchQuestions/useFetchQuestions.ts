@@ -15,7 +15,7 @@ export default function useFetchQuestions(categoryId: number | undefined) {
         if (!isStale) setQuestions(data);
       })
       .catch((error) => {
-        if (!isStale) console.error('Failed to fetch questions', error);
+        if (!isStale) console.error(error.message, error.status);
       });
 
     return () => {

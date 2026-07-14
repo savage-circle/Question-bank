@@ -38,10 +38,7 @@ describe('fetchCategories', () => {
     const { result } = renderHook(() => useFetchCategories());
 
     await waitFor(() =>
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to fetch categories',
-        error,
-      ),
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error.message, undefined),
     );
     expect(result.current).toEqual([]);
   });
