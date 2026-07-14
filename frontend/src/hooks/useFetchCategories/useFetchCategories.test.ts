@@ -42,4 +42,43 @@ describe('fetchCategories', () => {
     );
     expect(result.current).toEqual([]);
   });
+
+  it('ignores a resolved fetch once the component has unmounted', async () => {
+    const categories: Category[] = [{ id: 1, name: 'Algorithms' }];
+    let resolveFetch: (categories: Category[]) => void;
+    vi.mocked(getCategories).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+
+    const { result, unmount } = renderHook(() => useFetchCategories());
+    unmount();
+    resolveFetch!(categories);
+
+    await expect(
+      waitFor(() => expect(result.current).toEqual(categories)),
+    ).rejects.toThrow();
+  });
+
+  it('ignores a rejected fetch once the component has unmounted', async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let rejectFetch: (error: Error) => void;
+    vi.mocked(getCategories).mockImplementation(
+      () =>
+        new Promise((_, reject) => {
+          rejectFetch = reject;
+        }),
+    );
+
+    const { unmount } = renderHook(() => useFetchCategories());
+    unmount();
+    rejectFetch!(new Error('network error'));
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
 });

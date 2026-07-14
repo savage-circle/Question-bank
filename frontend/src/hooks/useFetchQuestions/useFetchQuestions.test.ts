@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import useFetchQuestions from './useFetchQuestions';
 import { getQuestionsByCategory } from '../../services/questionService/questionService';
 import { Question } from '../../types';
@@ -141,5 +141,35 @@ describe('fetchQuestions', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(error.message, undefined),
     );
     expect(result.current).toEqual([]);
+  });
+
+  it('ignores a rejected fetch once categoryId has changed', async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let rejectCategoryOne: (error: Error) => void;
+    vi.mocked(getQuestionsByCategory).mockImplementationOnce(
+      () =>
+        new Promise((_, reject) => {
+          rejectCategoryOne = reject;
+        }),
+    );
+
+    const { rerender } = renderHook(
+      ({ categoryId }) => useFetchQuestions(categoryId),
+      {
+        initialProps: { categoryId: 1 },
+      },
+    );
+
+    vi.mocked(getQuestionsByCategory).mockResolvedValue([]);
+    rerender({ categoryId: 2 });
+
+    await act(async () => {
+      rejectCategoryOne!(new Error('network error'));
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 });
