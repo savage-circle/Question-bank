@@ -1,9 +1,9 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import useFetchQuestions from './hooks/useFetchQuestions';
-import useFetchCategories from './hooks/useFetchCategories';
-import CategoryTabs from './components/CategoryTabs';
-import QuestionPanel from './components/QuestionPanel';
+import useFetchQuestions from './hooks/useFetchQuestions/useFetchQuestions';
+import useFetchCategories from './hooks/useFetchCategories/useFetchCategories';
+import CategoryTabs from './components/CategoryTabs/CategoryTabs';
+import QuestionPanel from './components/QuestionPanel/QuestionPanel';
 
 function App() {
   const categories = useFetchCategories();

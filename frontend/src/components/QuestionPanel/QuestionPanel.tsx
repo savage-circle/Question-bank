@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
-import { Category, Question } from "../types";
-import QuestionCard from './QuestionCard';
+import { Category, Question } from "../../types";
+import QuestionCard from '../QuestionCard/QuestionCard';
 
 interface QuestionPanelProps {
   categories: Category[];

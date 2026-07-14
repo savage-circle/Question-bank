@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getQuestionsByCategory } from '../services/questionService';
-import { Question } from "../types";
+import { getQuestionsByCategory } from '../../services/questionService/questionService';
+import { Question } from "../../types";
 
 export default function useFetchQuestions(categoryId: number | undefined) {
   const [questions, setQuestions] = React.useState<Question[]>([]);

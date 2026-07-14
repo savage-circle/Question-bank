@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import QuestionCard from './QuestionCard';
-import { Question } from "../types";
+import { Question } from "../../types";
 
 describe('QuestionCard', () => {
   const baseQuestion: Question = {

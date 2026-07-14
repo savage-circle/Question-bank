@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import useFetchCategories from './useFetchCategories';
-import { getCategories } from '../services/categoryService';
-import { Category } from "../types";
+import { getCategories } from '../../services/categoryService/categoryService';
+import { Category } from "../../types";
 
-vi.mock('../services/categoryService');
+vi.mock('../../services/categoryService/categoryService');
 
 describe('fetchCategories', () => {
   afterEach(() => {

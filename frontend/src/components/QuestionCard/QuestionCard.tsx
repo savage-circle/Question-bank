@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Question } from "../types";
+import { Question } from "../../types";
 
 const difficultyStyles: Record<
   string,
