@@ -16,11 +16,11 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: './src/tests/setup.ts',
+      setupFiles: './src/test/setup.ts',
       coverage: {
         provider: 'v8',
         reporter: ['text', 'html', 'lcov'],
-        exclude: ['node_modules/', '**/*.test.{ts,tsx}', 'src/tests/setup.ts'],
+        exclude: ['node_modules/', '**/*.test.{ts,tsx}', 'src/test/setup.ts'],
         thresholds: {
           lines: 70,
           functions: 70,
