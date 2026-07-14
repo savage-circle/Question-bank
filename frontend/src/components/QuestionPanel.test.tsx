@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import QuestionPanel from '../../components/QuestionPanel';
-import { Category, Question } from "../../types";
+import QuestionPanel from './QuestionPanel';
+import { Category, Question } from "../types";
 
 describe('QuestionPanel', () => {
   const categories: Category[] = [

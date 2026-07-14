@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'v8',
         reporter: ['text', 'html', 'lcov'],
-        exclude: ['node_modules/', 'src/tests/'],
+        exclude: ['node_modules/', '**/*.test.{ts,tsx}', 'src/tests/setup.ts'],
         thresholds: {
           lines: 70,
           functions: 70,

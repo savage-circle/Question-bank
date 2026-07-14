@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import apiClient from '../../services/apiClient';
-import { getQuestionsByCategory } from '../../services/questionService';
-import { Question } from "../../types";
+import apiClient from './apiClient';
+import { getQuestionsByCategory } from './questionService';
+import { Question } from "../types";
 
-vi.mock('../../services/apiClient');
+vi.mock('./apiClient');
 
 describe('getQuestionsByCategory', () => {
   afterEach(() => {

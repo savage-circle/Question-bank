@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CategoryTabs from '../../components/CategoryTabs';
-import { Category } from "../../types";
+import CategoryTabs from './CategoryTabs';
+import { Category } from "../types";
 
 describe('CategoryTabs', () => {
   const categories: Category[] = [
