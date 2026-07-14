@@ -1,37 +1,23 @@
-import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
-import { Category, Question } from "../../types";
+import { Question } from "../../types";
 import QuestionCard from '../QuestionCard/QuestionCard';
 
 interface QuestionPanelProps {
-  categories: Category[];
-  questions: Question[];
   value: string;
+  questions: Question[];
 }
 
-export default function QuestionPanel({
-  categories,
-  questions,
-  value,
-}: QuestionPanelProps) {
+export default function QuestionPanel({ value, questions }: QuestionPanelProps) {
   return (
     <div
       data-testid="question-panel"
       className="flex-1 border-b border-gray-200 overflow-scroll h-[75vh]"
     >
-      <TabContext value={value}>
-        {categories.map((category) => (
-          <TabPanel
-            data-testid={`question-panel-${category.id}`}
-            value={String(category.id)}
-            key={category.id}
-          >
-            {questions.map((question) => (
-              <QuestionCard key={question.id} question={question} />
-            ))}
-          </TabPanel>
+      <TabPanel data-testid={`question-panel-${value}`} value={value}>
+        {questions.map((question) => (
+          <QuestionCard key={question.id} question={question} />
         ))}
-      </TabContext>
+      </TabPanel>
     </div>
   );
 }

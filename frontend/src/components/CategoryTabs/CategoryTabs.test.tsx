@@ -1,8 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import TabContext from '@mui/lab/TabContext';
 import CategoryTabs from './CategoryTabs';
 import { Category } from "../../types";
+
+function renderWithTabContext(value: string, ui: React.ReactElement) {
+  return render(<TabContext value={value}>{ui}</TabContext>);
+}
 
 describe('CategoryTabs', () => {
   const categories: Category[] = [
@@ -11,7 +16,7 @@ describe('CategoryTabs', () => {
   ];
 
   it('renders a tab for each category', () => {
-    render(<CategoryTabs categories={categories} value="1" onChange={vi.fn()} />);
+    renderWithTabContext('1', <CategoryTabs categories={categories} onChange={vi.fn()} />);
 
     expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
     expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
@@ -22,7 +27,7 @@ describe('CategoryTabs', () => {
   });
 
   it('marks the tab matching the selected value as selected', () => {
-    render(<CategoryTabs categories={categories} value="2" onChange={vi.fn()} />);
+    renderWithTabContext('2', <CategoryTabs categories={categories} onChange={vi.fn()} />);
 
     expect(screen.getByTestId('category-tab-2')).toHaveAttribute(
       'aria-selected',
@@ -36,7 +41,7 @@ describe('CategoryTabs', () => {
 
   it('calls onChange with the newly selected category value when a tab is clicked', async () => {
     const onChange = vi.fn();
-    render(<CategoryTabs categories={categories} value="1" onChange={onChange} />);
+    renderWithTabContext('1', <CategoryTabs categories={categories} onChange={onChange} />);
 
     await userEvent.click(screen.getByTestId('category-tab-2'));
 
@@ -44,7 +49,7 @@ describe('CategoryTabs', () => {
   });
 
   it('renders no tabs when there are no categories', () => {
-    render(<CategoryTabs categories={[]} value="" onChange={vi.fn()} />);
+    renderWithTabContext('', <CategoryTabs categories={[]} onChange={vi.fn()} />);
 
     expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
     expect(screen.queryAllByTestId(/^category-tab-\d+$/)).toHaveLength(0);
