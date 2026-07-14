@@ -2,22 +2,22 @@ import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { Category, Question } from "../types";
-import Card from './card';
+import QuestionCard from './QuestionCard';
 
-interface MainContentProps {
+interface QuestionPanelProps {
   categories: Category[];
   questions: Question[];
   value: string;
 }
 
-export default function MainContent({
+export default function QuestionPanel({
   categories,
   questions,
   value,
-}: MainContentProps) {
+}: QuestionPanelProps) {
   return (
     <Box
-      data-testid="main-content"
+      data-testid="question-panel"
       sx={{
         flex: 1,
         borderBottom: 1,
@@ -30,7 +30,7 @@ export default function MainContent({
         {categories.map((category) => (
           <TabPanel value={String(category.id)} key={category.id}>
             {questions.map((question) => (
-              <Card key={question.id} question={question} />
+              <QuestionCard key={question.id} question={question} />
             ))}
           </TabPanel>
         ))}

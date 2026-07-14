@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import MainContent from '../../components/mainContent';
+import QuestionPanel from '../../components/QuestionPanel';
 import { Category, Question } from "../../types";
 
-describe('MainContent', () => {
+describe('QuestionPanel', () => {
   const categories: Category[] = [
     { id: 1, name: 'Algorithms' },
     { id: 2, name: 'System Design' },
@@ -28,18 +28,18 @@ describe('MainContent', () => {
 
   it('renders a card for each question in the active category panel', () => {
     render(
-      <MainContent categories={categories} questions={questions} value="1" />,
+      <QuestionPanel categories={categories} questions={questions} value="1" />,
     );
 
-    expect(screen.getByTestId('main-content')).toBeInTheDocument();
+    expect(screen.getByTestId('question-panel')).toBeInTheDocument();
     expect(screen.getByText('Reverse a linked list')).toBeInTheDocument();
     expect(screen.getByText('Design a rate limiter')).toBeInTheDocument();
   });
 
   it('renders no cards when there are no questions', () => {
-    render(<MainContent categories={categories} questions={[]} value="1" />);
+    render(<QuestionPanel categories={categories} questions={[]} value="1" />);
 
-    expect(screen.getByTestId('main-content')).toBeInTheDocument();
+    expect(screen.getByTestId('question-panel')).toBeInTheDocument();
     expect(screen.queryByText('Reverse a linked list')).not.toBeInTheDocument();
   });
 });

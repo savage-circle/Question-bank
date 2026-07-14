@@ -2,8 +2,8 @@ import { Box } from '@mui/system';
 import React from 'react';
 import useFetchQuestions from './hooks/useFetchQuestions';
 import useFetchCategories from './hooks/useFetchCategories';
-import Toolbar from './components/toolbar';
-import MainContent from './components/mainContent';
+import CategoryTabs from './components/CategoryTabs';
+import QuestionPanel from './components/QuestionPanel';
 
 function App() {
   const categories = useFetchCategories();
@@ -47,7 +47,7 @@ function App() {
           }}
         />
 
-        <Toolbar
+        <CategoryTabs
           categories={categories}
           value={value}
           onChange={handleChange}
@@ -72,7 +72,7 @@ function App() {
             }}
           />
 
-          <MainContent
+          <QuestionPanel
             categories={categories}
             questions={questions}
             value={value}

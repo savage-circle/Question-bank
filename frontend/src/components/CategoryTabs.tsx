@@ -5,16 +5,16 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { Category } from "../types";
 
-interface ToolbarProps {
+interface CategoryTabsProps {
   categories: Category[];
   value: string;
   onChange: (event: React.SyntheticEvent, newValue: string) => void;
 }
 
-export default function Toolbar({ categories, value, onChange }: ToolbarProps) {
+export default function CategoryTabs({ categories, value, onChange }: CategoryTabsProps) {
   return (
     <Box
-      data-testid="toolbar"
+      data-testid="category-tabs"
       sx={{
         height: 55,
         borderBottom: '1px solid #BDBDBD',

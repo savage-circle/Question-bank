@@ -11,7 +11,7 @@ const difficultyStyles: Record<
   HARD: { color: '#BE123C', bgcolor: '#FFF1F2', borderColor: '#FFE4E6' },
 };
 
-const Card = ({ question }: { question: Question }) => {
+const QuestionCard = ({ question }: { question: Question }) => {
   const difficultyStyle = difficultyStyles[question.levelName] ?? {
     bgcolor: '#f1f5f9',
     color: '#475569',
@@ -67,4 +67,4 @@ const Card = ({ question }: { question: Question }) => {
   );
 };
 
-export default Card;
+export default QuestionCard;

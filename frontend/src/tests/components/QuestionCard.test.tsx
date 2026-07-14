@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import Card from '../../components/card';
+import QuestionCard from '../../components/QuestionCard';
 import { Question } from "../../types";
 
-describe('Card', () => {
+describe('QuestionCard', () => {
   const baseQuestion: Question = {
     id: 1,
     description: 'Reverse a linked list',
@@ -13,7 +13,7 @@ describe('Card', () => {
   };
 
   it('renders the question description and level', () => {
-    render(<Card question={baseQuestion} />);
+    render(<QuestionCard question={baseQuestion} />);
 
     expect(screen.getByText('Reverse a linked list')).toBeInTheDocument();
     expect(screen.getByText('EASY')).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe('Card', () => {
   ])(
     'applies the correct style for the %s difficulty level',
     (levelName, bgcolor, color, borderColor) => {
-      render(<Card question={{ ...baseQuestion, levelName }} />);
+      render(<QuestionCard question={{ ...baseQuestion, levelName }} />);
 
       expect(screen.getByText(levelName)).toHaveStyle({
         backgroundColor: bgcolor,
@@ -37,7 +37,7 @@ describe('Card', () => {
   );
 
   it('falls back to a default style for an unrecognized difficulty level', () => {
-    render(<Card question={{ ...baseQuestion, levelName: 'Unknown' }} />);
+    render(<QuestionCard question={{ ...baseQuestion, levelName: 'Unknown' }} />);
 
     expect(screen.getByText('Unknown')).toHaveStyle({
       backgroundColor: '#f1f5f9',
