@@ -14,20 +14,21 @@ describe('CategoryTabs', () => {
     render(<CategoryTabs categories={categories} value="1" onChange={vi.fn()} />);
 
     expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Algorithms' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('tab', { name: 'System Design' }),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-1')).toHaveTextContent('Algorithms');
+    expect(screen.getByTestId('category-tab-2')).toHaveTextContent(
+      'System Design',
+    );
   });
 
   it('marks the tab matching the selected value as selected', () => {
     render(<CategoryTabs categories={categories} value="2" onChange={vi.fn()} />);
 
-    expect(screen.getByRole('tab', { name: 'System Design' })).toHaveAttribute(
+    expect(screen.getByTestId('category-tab-2')).toHaveAttribute(
       'aria-selected',
       'true',
     );
-    expect(screen.getByRole('tab', { name: 'Algorithms' })).toHaveAttribute(
+    expect(screen.getByTestId('category-tab-1')).toHaveAttribute(
       'aria-selected',
       'false',
     );
@@ -37,7 +38,7 @@ describe('CategoryTabs', () => {
     const onChange = vi.fn();
     render(<CategoryTabs categories={categories} value="1" onChange={onChange} />);
 
-    await userEvent.click(screen.getByRole('tab', { name: 'System Design' }));
+    await userEvent.click(screen.getByTestId('category-tab-2'));
 
     expect(onChange).toHaveBeenCalledWith(expect.anything(), '2');
   });
@@ -46,6 +47,6 @@ describe('CategoryTabs', () => {
     render(<CategoryTabs categories={[]} value="" onChange={vi.fn()} />);
 
     expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
-    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+    expect(screen.queryAllByTestId(/^category-tab-\d+$/)).toHaveLength(0);
   });
 });

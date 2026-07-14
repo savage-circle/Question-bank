@@ -15,8 +15,11 @@ describe('QuestionCard', () => {
   it('renders the question description and level', () => {
     render(<QuestionCard question={baseQuestion} />);
 
-    expect(screen.getByText('Reverse a linked list')).toBeInTheDocument();
-    expect(screen.getByText('EASY')).toBeInTheDocument();
+    expect(screen.getByTestId('question-card-1')).toBeInTheDocument();
+    expect(screen.getByTestId('question-description')).toHaveTextContent(
+      'Reverse a linked list',
+    );
+    expect(screen.getByTestId('question-level')).toHaveTextContent('EASY');
   });
 
   it.each([
@@ -28,7 +31,7 @@ describe('QuestionCard', () => {
     (levelName, bgcolor, color, borderColor) => {
       render(<QuestionCard question={{ ...baseQuestion, levelName }} />);
 
-      expect(screen.getByText(levelName)).toHaveStyle({
+      expect(screen.getByTestId('question-level')).toHaveStyle({
         backgroundColor: bgcolor,
         color,
         borderColor,
@@ -39,7 +42,7 @@ describe('QuestionCard', () => {
   it('falls back to a default style for an unrecognized difficulty level', () => {
     render(<QuestionCard question={{ ...baseQuestion, levelName: 'Unknown' }} />);
 
-    expect(screen.getByText('Unknown')).toHaveStyle({
+    expect(screen.getByTestId('question-level')).toHaveStyle({
       backgroundColor: '#f1f5f9',
       color: '#475569',
       borderColor: '#e2e8f0',

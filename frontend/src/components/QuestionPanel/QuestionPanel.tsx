@@ -21,7 +21,11 @@ export default function QuestionPanel({
     >
       <TabContext value={value}>
         {categories.map((category) => (
-          <TabPanel value={String(category.id)} key={category.id}>
+          <TabPanel
+            data-testid={`question-panel-${category.id}`}
+            value={String(category.id)}
+            key={category.id}
+          >
             {questions.map((question) => (
               <QuestionCard key={question.id} question={question} />
             ))}
