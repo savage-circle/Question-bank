@@ -6,9 +6,19 @@ export default function useFetchCategories() {
   const [categories, setCategories] = React.useState<Category[]>([]);
 
   React.useEffect(() => {
+    let isStale = false;
+
     getCategories()
-      .then((data) => setCategories(data))
-      .catch((error) => console.error('Failed to fetch categories', error));
+      .then((data) => {
+        if (!isStale) setCategories(data);
+      })
+      .catch((error) => {
+        if (!isStale) console.error('Failed to fetch categories', error);
+      });
+
+    return () => {
+      isStale = true;
+    };
   }, []);
 
   return categories;

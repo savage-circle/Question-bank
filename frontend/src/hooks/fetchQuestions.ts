@@ -6,12 +6,21 @@ export default function useFetchQuestions(categoryId: number | undefined) {
   const [questions, setQuestions] = React.useState<Question[]>([]);
 
   React.useEffect(() => {
-    if (categoryId === undefined) {
-      return;
-    }
+    if (categoryId === undefined) return;
+    
+    let isStale = false;
+
     getQuestionsByCategory(categoryId)
-      .then((data) => setQuestions(data))
-      .catch((error) => console.error('Failed to fetch questions', error));
+      .then((data) => {
+        if (!isStale) setQuestions(data);
+      })
+      .catch((error) => {
+        if (!isStale) console.error('Failed to fetch questions', error);
+      });
+
+    return () => {
+      isStale = true;
+    };
   }, [categoryId]);
 
   return questions;
