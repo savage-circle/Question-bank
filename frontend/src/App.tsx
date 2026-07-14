@@ -1,7 +1,7 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import useFetchQuestions from './hooks/fetchQuestions';
-import useFetchCategories from './hooks/fetchCategories';
+import useFetchQuestions from './hooks/useFetchQuestions';
+import useFetchCategories from './hooks/useFetchCategories';
 import Toolbar from './components/toolbar';
 import MainContent from './components/mainContent';
 

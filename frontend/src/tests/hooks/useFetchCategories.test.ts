@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import useFetchCategories from '../../hooks/fetchCategories';
+import useFetchCategories from '../../hooks/useFetchCategories';
 import { getCategories } from '../../services/categoryService';
 import { Category } from "../../types";
 
