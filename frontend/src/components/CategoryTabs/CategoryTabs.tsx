@@ -1,14 +1,17 @@
 import * as React from 'react';
 import Tab from '@mui/material/Tab';
 import TabList from '@mui/lab/TabList';
-import { Category } from "../../types";
+import { Category } from '../../types';
 
 interface CategoryTabsProps {
   categories: Category[];
   onChange: (event: React.SyntheticEvent, newValue: string) => void;
 }
 
-export default function CategoryTabs({ categories, onChange }: CategoryTabsProps) {
+export default function CategoryTabs({
+  categories,
+  onChange,
+}: CategoryTabsProps) {
   return (
     <div
       data-testid="category-tabs"

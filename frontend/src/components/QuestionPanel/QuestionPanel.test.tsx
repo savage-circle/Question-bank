@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import TabContext from '@mui/lab/TabContext';
 import QuestionPanel from './QuestionPanel';
-import { Question } from "../../types";
+import { Question } from '../../types';
 
 function renderWithTabContext(value: string, ui: React.ReactElement) {
   return render(<TabContext value={value}>{ui}</TabContext>);
@@ -27,7 +27,10 @@ describe('QuestionPanel', () => {
   ];
 
   it('renders a card for each question', () => {
-    renderWithTabContext('1', <QuestionPanel value="1" questions={questions} />);
+    renderWithTabContext(
+      '1',
+      <QuestionPanel value="1" questions={questions} />,
+    );
 
     const activePanel = screen.getByTestId('question-panel-1');
     expect(
@@ -43,6 +46,8 @@ describe('QuestionPanel', () => {
 
     const activePanel = screen.getByTestId('question-panel-1');
     expect(screen.getByTestId('question-panel')).toBeInTheDocument();
-    expect(within(activePanel).queryByTestId(/^question-card-/)).not.toBeInTheDocument();
+    expect(
+      within(activePanel).queryByTestId(/^question-card-/),
+    ).not.toBeInTheDocument();
   });
 });

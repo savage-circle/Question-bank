@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import apiClient from '../apiClient/apiClient';
 import { getQuestionsByCategory } from './questionService';
-import { Question } from "../../types";
+import { Question } from '../../types';
 
 vi.mock('../apiClient/apiClient');
 
@@ -35,7 +35,9 @@ describe('getQuestionsByCategory', () => {
     await expect(getQuestionsByCategory(1)).rejects.toThrow(
       'Failed to fetch questions (status: 500): Request failed',
     );
-    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({ status: 500 });
+    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({
+      status: 500,
+    });
   });
 
   it('wraps the error as an unknown status when there is no response', async () => {
@@ -45,6 +47,8 @@ describe('getQuestionsByCategory', () => {
     await expect(getQuestionsByCategory(1)).rejects.toThrow(
       'Failed to fetch questions (status: unknown): Network Error',
     );
-    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({ status: 'unknown' });
+    await expect(getQuestionsByCategory(1)).rejects.toMatchObject({
+      status: 'unknown',
+    });
   });
 });

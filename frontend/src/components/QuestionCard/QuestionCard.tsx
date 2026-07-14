@@ -1,4 +1,4 @@
-import { Question } from "../../types";
+import { Question } from '../../types';
 
 const difficultyStyles: Record<
   string,

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import apiClient from '../apiClient/apiClient';
 import { getCategories } from './categoryService';
-import { Category } from "../../types";
+import { Category } from '../../types';
 
 vi.mock('../apiClient/apiClient');
 

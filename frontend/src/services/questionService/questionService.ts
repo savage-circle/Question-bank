@@ -1,5 +1,5 @@
 import apiClient from '../apiClient/apiClient';
-import { Question } from "../../types";
+import { Question } from '../../types';
 
 export async function getQuestionsByCategory(categoryId: number) {
   try {
@@ -7,10 +7,16 @@ export async function getQuestionsByCategory(categoryId: number) {
       `/questions?categoryId=${categoryId}`,
     );
     return response.data;
-  } catch (error: any) {
-    const status = error?.response?.status;
-    const wrappedError: any = new Error(`Failed to fetch questions (status: ${status ?? 'unknown'}): ${error?.message}`);
-    wrappedError.status = status ?? 'unknown';
+  } catch (error) {
+    const { response, message } = error as {
+      response?: { status?: number };
+      message?: string;
+    };
+    const status = response?.status ?? 'unknown';
+    const wrappedError = new Error(
+      `Failed to fetch questions (status: ${status}): ${message}`,
+    ) as Error & { status: number | string };
+    wrappedError.status = status;
     throw wrappedError;
   }
 }

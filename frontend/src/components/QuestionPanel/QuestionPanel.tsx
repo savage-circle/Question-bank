@@ -1,5 +1,5 @@
 import TabPanel from '@mui/lab/TabPanel';
-import { Question } from "../../types";
+import { Question } from '../../types';
 import QuestionCard from '../QuestionCard/QuestionCard';
 
 interface QuestionPanelProps {
@@ -7,7 +7,10 @@ interface QuestionPanelProps {
   questions: Question[];
 }
 
-export default function QuestionPanel({ value, questions }: QuestionPanelProps) {
+export default function QuestionPanel({
+  value,
+  questions,
+}: QuestionPanelProps) {
   return (
     <div
       data-testid="question-panel"
