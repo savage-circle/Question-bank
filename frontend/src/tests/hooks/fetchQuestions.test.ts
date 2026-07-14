@@ -76,6 +76,58 @@ describe('fetchQuestions', () => {
     );
   });
 
+  it('ignores a stale response that resolves after categoryId has changed', async () => {
+    const questionsForCategoryOne: Question[] = [
+      {
+        id: 1,
+        description: 'Reverse a linked list',
+        topicName: 'Linked List',
+        levelName: 'EASY',
+        extensions: null,
+      },
+    ];
+    const questionsForCategoryTwo: Question[] = [
+      {
+        id: 2,
+        description: 'Balance a binary tree',
+        topicName: 'Trees',
+        levelName: 'MEDIUM',
+        extensions: null,
+      },
+    ];
+
+    let resolveCategoryOne: (questions: Question[]) => void;
+    vi.mocked(getQuestionsByCategory).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveCategoryOne = resolve;
+        }),
+    );
+
+    const { result, rerender } = renderHook(
+      ({ categoryId }) => useFetchQuestions(categoryId),
+      {
+        initialProps: { categoryId: 1 },
+      },
+    );
+
+    vi.mocked(getQuestionsByCategory).mockResolvedValue(
+      questionsForCategoryTwo,
+    );
+    rerender({ categoryId: 2 });
+
+    await waitFor(() =>
+      expect(result.current).toEqual(questionsForCategoryTwo),
+    );
+
+    resolveCategoryOne!(questionsForCategoryOne);
+
+    await expect(
+      waitFor(() => expect(result.current).toEqual(questionsForCategoryOne)),
+    ).rejects.toThrow();
+    expect(result.current).toEqual(questionsForCategoryTwo);
+  });
+
   it('logs an error and keeps questions empty when the fetch fails', async () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
