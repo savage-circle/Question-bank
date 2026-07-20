@@ -1,77 +1,58 @@
-import { Box } from '@mui/system';
+import React from 'react';
+import TabContext from '@mui/lab/TabContext';
+import useFetchQuestions from './hooks/useFetchQuestions/useFetchQuestions';
+import useFetchCategories from './hooks/useFetchCategories/useFetchCategories';
+import CategoryTabs from './components/CategoryTabs/CategoryTabs';
+import QuestionPanel from './components/QuestionPanel/QuestionPanel';
 
 function App() {
+  const categories = useFetchCategories();
+
+  const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setSelectedValue(newValue);
+  };
+
+  const value =
+    selectedValue ?? (categories.length > 0 ? String(categories[0].id) : '');
+  const questions = useFetchQuestions(
+    value === '' ? undefined : parseInt(value),
+  );
+
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <div>
-      <Box
+      <div
         data-testid="app-layout"
-        sx={{
-          width: '100vw',
-          height: '100vh',
-          border: '1px solid #BDBDBD',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-          bgcolor: '#fff',
-        }}
+        className="w-screen h-screen border border-[#BDBDBD] box-border flex flex-col bg-[#F8FAFC]"
       >
-        {/* Header */}
-        <Box
+        <div
           data-testid="header"
-          sx={{
-            height: 70,
-            borderBottom: '1px solid #BDBDBD',
-          }}
+          className="h-[70px] border-b border-[#BDBDBD] bg-white"
         />
 
-        {/* Toolbar */}
-        <Box
-          data-testid="toolbar"
-          sx={{
-            height: 70,
-            borderBottom: '1px solid #BDBDBD',
-          }}
-        />
+        <TabContext value={value}>
+          <CategoryTabs categories={categories} onChange={handleChange} />
 
-        {/* Body */}
-        <Box
-          data-testid="body"
-          sx={{
-            flex: 1,
-            px: 3,
-            py: 4,
-            display: 'flex',
-            gap: 5,
-          }}
-        >
-          {/* Sidebar */}
-          <Box
-            data-testid="sidebar"
-            sx={{
-              width: 280,
-              border: '1px solid #BDBDBD',
-            }}
-          />
+          <div data-testid="body" className="flex-1 px-6 py-8 flex gap-10">
+            <div
+              data-testid="sidebar"
+              className="w-[280px] border border-[#BDBDBD] bg-white"
+            />
 
-          {/* Main Content */}
-          <Box
-            data-testid="main-content"
-            sx={{
-              flex: 1,
-              border: '1px solid #BDBDBD',
-            }}
-          />
-        </Box>
+            <QuestionPanel value={value} questions={questions} />
 
-        {/* Footer */}
-        <Box
-          data-testid="footer"
-          sx={{
-            height: 80,
-            borderTop: '1px solid #BDBDBD',
-          }}
-        />
-      </Box>
+            <div
+              data-testid="footer"
+              className="h-[80px] border-t border-[#BDBDBD]"
+            />
+          </div>
+        </TabContext>
+      </div>
     </div>
   );
 }
