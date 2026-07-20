@@ -1,5 +1,6 @@
 import {
   assertEquals,
+  assertRejects,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { QuestionService } from "../../src/services/QuestionService.ts";
@@ -243,20 +244,26 @@ describe("QuestionService", () => {
   });
 
   describe("deleteAsync", () => {
-    it("should delete a question", async () => {
-      // Arrange
+    it("Should delete a question when question id exists", async () => {
       const prisma = MockPrisma.create({
         question: {
           delete: () => Promise.resolve(),
         },
       });
+
       const questionService = new QuestionService(prisma);
-
-      // Act
       await questionService.deleteAsync(1);
+    });
 
-      // Assert
-      // No assertion needed, just checking that it doesn't throw
+    it("Should throw an error when question id does not exist", async () => {
+      const prisma = MockPrisma.create({
+        question: {
+          delete: () => Promise.reject(new Error("Question not found")),
+        },
+      });
+
+      const questionService = new QuestionService(prisma);
+      await assertRejects(() => questionService.deleteAsync(1), Error, "Question not found");
     });
   });
 });

@@ -19,6 +19,7 @@ export class QuestionHandler {
     this.getQuestions = this.getQuestions.bind(this);
     this.addQuestion = this.addQuestion.bind(this);
     this.updateQuestion = this.updateQuestion.bind(this);
+    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   async getQuestions(
@@ -125,6 +126,31 @@ export class QuestionHandler {
       return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
+    }
+  }
+
+  async deleteQuestion(
+    c: Context,
+  ): Promise<
+    TypedResponse<{ message: string }> | TypedResponse<{ error: string }>
+  > {
+    const id = c.req.param("id");
+    const questionId = Number(id);
+
+    try {
+      await this.questionService.deleteAsync(questionId);
+      return c.json({ message: "Question deleted successfully." });
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        error.code === "P2025"
+      ) {
+        return c.json({ error: "Question does not exist." }, 404);
+      }
+
+      return c.json({ error: "Failed to delete question" }, 500);
     }
   }
 }

@@ -76,11 +76,10 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
     });
   }
 
-  deleteAsync(id: number): Promise<void> {
-    return this.prisma.question
+  async deleteAsync(id: number): Promise<void> {
+    await this.prisma.question
       .delete({
         where: { id },
-      })
-      .then(() => {});
+      });
   }
 }

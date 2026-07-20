@@ -388,4 +388,69 @@ describe("QuestionHandler", () => {
       assertEquals(topicExistsAsyncSpy.calls.length, 1);
     });
   });
+
+  describe("deleteQuestion", () => {
+    it("should delete a question", async () => {
+      const deleteAsyncSpy = spy(() => Promise.resolve());
+      mockQuestionService.deleteAsync = deleteAsyncSpy;
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService
+      );
+      const app = new Hono();
+      app.delete("/:id", questionHandler.deleteQuestion);
+      const req = new Request("http://localhost/1", {
+        method: "DELETE",
+      });
+
+      const res = await app.request(req);
+      const result = await res.json();
+
+      assertEquals(result, { message: "Question deleted successfully." });
+      assertEquals(deleteAsyncSpy.calls.length, 1);
+    });
+
+    it("should return 404 if question does not exist", async () => {
+      mockQuestionService.deleteAsync = () => {
+        throw { code: "P2025" };
+      };
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService
+      );
+      const app = new Hono();
+      app.delete("/:id", questionHandler.deleteQuestion);
+      const req = new Request("http://localhost/1", {
+        method: "DELETE",
+      });
+
+      const res = await app.request(req);
+
+      assertEquals(res.status, 404);
+    });
+
+    it("should return 500 if deletion fails or connection failed", async () => {
+      const deleteAsyncSpy = spy(() => Promise.reject(new Error()));
+      mockQuestionService.deleteAsync = deleteAsyncSpy;
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService
+      );
+      const app = new Hono();
+      app.delete("/:id", questionHandler.deleteQuestion);
+      const req = new Request("http://localhost/1", {
+        method: "DELETE",
+      });
+
+      const res = await app.request(req);
+      const result = await res.json();
+
+      assertEquals(res.status, 500);
+      assertEquals(result, { error: "Failed to delete question" });
+      assertEquals(deleteAsyncSpy.calls.length, 1);
+    });
+  });
 });
