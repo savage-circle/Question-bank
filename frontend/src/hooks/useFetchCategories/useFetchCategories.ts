@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { getCategories } from '../../services/categoryService/categoryService';
 import { Category } from '../../types';
 
 export default function useFetchCategories() {
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isStale = false;
 
     getCategories()

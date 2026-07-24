@@ -1,26 +1,20 @@
-import TabPanel from '@mui/lab/TabPanel';
+import Box from '@mui/material/Box';
 import { Question } from '../../types';
 import QuestionCard from '../QuestionCard/QuestionCard';
 
 interface QuestionPanelProps {
-  value: string;
   questions: Question[];
 }
 
-export default function QuestionPanel({
-  value,
-  questions,
-}: QuestionPanelProps) {
+export default function QuestionPanel({ questions }: QuestionPanelProps) {
   return (
-    <div
+    <Box
       data-testid="question-panel"
-      className="flex-1 border-b border-gray-200 overflow-scroll h-[75vh]"
+      className="flex flex-col flex-1 gap-4 overflow-scroll"
     >
-      <TabPanel data-testid={`question-panel-${value}`} value={value}>
-        {questions.map((question) => (
-          <QuestionCard key={question.id} question={question} />
-        ))}
-      </TabPanel>
-    </div>
+      {questions.map((question) => (
+        <QuestionCard key={question.id} question={question} />
+      ))}
+    </Box>
   );
 }

@@ -1,40 +1,53 @@
-import * as React from 'react';
+import { SyntheticEvent } from 'react';
 import Tab from '@mui/material/Tab';
-import TabList from '@mui/lab/TabList';
+import Tabs from '@mui/material/Tabs';
 import { Category } from '../../types';
 
 interface CategoryTabsProps {
   categories: Category[];
-  onChange: (event: React.SyntheticEvent, newValue: string) => void;
+  selectedCategory: string;
+  onChange: (event: SyntheticEvent, newValue: string) => void;
 }
 
 export default function CategoryTabs({
   categories,
+  selectedCategory,
   onChange,
 }: CategoryTabsProps) {
   return (
     <div
       data-testid="category-tabs"
-      className="h-[55px] border-b border-[#BDBDBD] bg-white"
+      className="border-b-[1.6px] border-t-[1.6px] border-(--color-border)"
     >
-      <div data-testid="category-tabs-list" className="h-[55px]">
-        <TabList
-          onChange={onChange}
-          centered
-          data-testid="category-tab-list"
-          className="h-[55px] [&_.MuiTabs-indicator]:bg-[#2B3B4E]"
-        >
-          {categories.map((category) => (
-            <Tab
-              data-testid={`category-tab-${category.id}`}
-              className="h-[55px] w-[120px] font-[Inter] font-black text-[#64748B] [&.Mui-selected]:text-[#1E293B]"
-              label={category.name}
-              value={String(category.id)}
-              key={category.id}
-            />
-          ))}
-        </TabList>
-      </div>
+      <Tabs
+        value={selectedCategory}
+        onChange={onChange}
+        centered
+        data-testid="category-tab-list"
+        sx={{
+          '& .MuiTab-root': {
+            color: 'var(--color-disabled)',
+            px: 8,
+          },
+          '& .Mui-selected': {
+            color: 'var(--color-primary) !important',
+            fontWeight: 800,
+          },
+          '& .MuiTabs-indicator': {
+            backgroundColor: 'var(--color-primary)',
+            height: '3px',
+          },
+        }}
+      >
+        {categories.map((category) => (
+          <Tab
+            data-testid={`category-tab-${category.id}`}
+            label={category.name}
+            value={String(category.id)}
+            key={category.id}
+          />
+        ))}
+      </Tabs>
     </div>
   );
 }

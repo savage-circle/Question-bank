@@ -1,12 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
-import TabContext from '@mui/lab/TabContext';
 import QuestionPanel from './QuestionPanel';
 import { Question } from '../../types';
-
-function renderWithTabContext(value: string, ui: React.ReactElement) {
-  return render(<TabContext value={value}>{ui}</TabContext>);
-}
 
 describe('QuestionPanel', () => {
   const questions: Question[] = [
@@ -27,27 +22,24 @@ describe('QuestionPanel', () => {
   ];
 
   it('renders a card for each question', () => {
-    renderWithTabContext(
-      '1',
-      <QuestionPanel value="1" questions={questions} />,
-    );
+    render(<QuestionPanel questions={questions} />);
 
-    const activePanel = screen.getByTestId('question-panel-1');
+    const panel = screen.getByTestId('question-panel');
     expect(
-      within(activePanel).getByTestId('question-card-1'),
+      within(panel).getByTestId('question-card-1'),
     ).toBeInTheDocument();
     expect(
-      within(activePanel).getByTestId('question-card-2'),
+      within(panel).getByTestId('question-card-2'),
     ).toBeInTheDocument();
   });
 
   it('renders no cards when there are no questions', () => {
-    renderWithTabContext('1', <QuestionPanel value="1" questions={[]} />);
+    render(<QuestionPanel questions={[]} />);
 
-    const activePanel = screen.getByTestId('question-panel-1');
-    expect(screen.getByTestId('question-panel')).toBeInTheDocument();
+    const panel = screen.getByTestId('question-panel');
+    expect(panel).toBeInTheDocument();
     expect(
-      within(activePanel).queryByTestId(/^question-card-/),
+      within(panel).queryByTestId(/^question-card-/),
     ).not.toBeInTheDocument();
   });
 });
