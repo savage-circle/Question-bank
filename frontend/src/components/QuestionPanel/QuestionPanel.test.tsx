@@ -29,6 +29,16 @@ describe('QuestionPanel', () => {
     expect(within(panel).getByTestId('question-card-2')).toBeInTheDocument();
   });
 
+  it('renders a single card when there is one question', () => {
+    render(<QuestionPanel questions={[questions[0]]} />);
+
+    const panel = screen.getByTestId('question-panel');
+    expect(within(panel).getByTestId('question-card-1')).toBeInTheDocument();
+    expect(
+      within(panel).queryByTestId('question-card-2'),
+    ).not.toBeInTheDocument();
+  });
+
   it('renders no cards when there are no questions', () => {
     render(<QuestionPanel questions={[]} />);
 
