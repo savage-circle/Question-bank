@@ -19,7 +19,7 @@ describe('CategoryTabs', () => {
       />,
     );
 
-    expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.getByTestId('category-tab-1')).toHaveTextContent(
       'Algorithms',
@@ -68,7 +68,7 @@ describe('CategoryTabs', () => {
       <CategoryTabs categories={[]} selectedCategory="" onChange={vi.fn()} />,
     );
 
-    expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.queryAllByTestId(/^category-tab-\d+$/)).toHaveLength(0);
   });
 });
