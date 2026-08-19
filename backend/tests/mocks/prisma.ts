@@ -48,34 +48,21 @@ export class MockPrisma {
       followUps: {
         findMany: spy(() => Promise.resolve([])),
         findUnique: spy(() => Promise.resolve(null)),
+        findFirst: spy(() => Promise.resolve(null)),
         create: spy(() =>
           Promise.resolve({
             id: 1,
-            questionId: 1,
             levelId: 1,
             description: "Follow-up description",
             questionString: "What next?",
-            question: {
-              id: 1,
-              description: "Question 1",
-              topicId: 1,
-              levelId: 1,
-            },
           }),
         ),
         update: spy(() =>
           Promise.resolve({
             id: 1,
-            questionId: 1,
             levelId: 1,
             description: "Follow-up description",
             questionString: "What next?",
-            question: {
-              id: 1,
-              description: "Question 1",
-              topicId: 1,
-              levelId: 1,
-            },
           }),
         ),
         delete: spy(() => Promise.resolve()),

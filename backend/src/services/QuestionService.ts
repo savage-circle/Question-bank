@@ -1,18 +1,20 @@
 import { PrismaClient } from "../generated/prisma/client.ts";
 import { CreateQuestionDTO, Question } from "../types/question.ts";
-import { IService } from "./IService.ts";
+import { CreateFollowUpDTO, FollowUpSummary } from "../types/followUp.ts";
+import { IQuestionService } from "./IQuestionService.ts";
 
-export class QuestionService implements IService<Question, CreateQuestionDTO> {
+export class QuestionService implements IQuestionService {
   private prisma: PrismaClient;
+  private readonly followUpSelect = {
+    id: true,
+    levelId: true,
+    description: true,
+    questionString: true,
+  } as const;
   private readonly questionInclude = {
     topic: true,
     followUps: {
-      select: {
-        id: true,
-        levelId: true,
-        description: true,
-        questionString: true,
-      },
+      select: this.followUpSelect,
     },
   } as const;
 
@@ -82,5 +84,40 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
         where: { id },
       })
       .then(() => {});
+  }
+
+  getFollowUpsAsync(questionId: number): Promise<FollowUpSummary[]> {
+    return this.prisma.followUps.findMany({
+      where: { questionId },
+      select: this.followUpSelect,
+    });
+  }
+
+  async followUpExistsAsync(followUpId: number, questionId: number): Promise<boolean> {
+    const followUp = await this.prisma.followUps.findFirst({
+      where: { id: followUpId, questionId },
+      select: { id: true },
+    });
+
+    return followUp !== null;
+  }
+
+  addFollowUpAsync(questionId: number, data: CreateFollowUpDTO): Promise<FollowUpSummary> {
+    return this.prisma.followUps.create({
+      data: { questionId, ...data },
+      select: this.followUpSelect,
+    });
+  }
+
+  updateFollowUpAsync(followUpId: number, data: CreateFollowUpDTO): Promise<FollowUpSummary> {
+    return this.prisma.followUps.update({
+      where: { id: followUpId },
+      data,
+      select: this.followUpSelect,
+    });
+  }
+
+  deleteFollowUpAsync(followUpId: number): Promise<void> {
+    return this.prisma.followUps.delete({ where: { id: followUpId } }).then(() => {});
   }
 }

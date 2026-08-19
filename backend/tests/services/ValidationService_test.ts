@@ -143,27 +143,22 @@ describe("ValidationService", () => {
 
   describe("validateFollowUpUpsertInput", () => {
     it("should return valid for a valid request", () => {
-      const result = validationService.validateFollowUpUpsertInput({ questionId: 1, levelId: 1, description: "Follow up", questionString: "Next?" });
+      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "Follow up", questionString: "Next?" });
       assertEquals(result, { isValid: true });
     });
 
-    it("should return invalid if questionId is not a positive integer", () => {
-      const result = validationService.validateFollowUpUpsertInput({ questionId: 0, levelId: 1, description: "Follow up", questionString: "Next?" });
-      assertEquals(result, { isValid: false, error: "Invalid question id." });
-    });
-
     it("should return invalid if description is empty", () => {
-      const result = validationService.validateFollowUpUpsertInput({ questionId: 1, levelId: 1, description: "", questionString: "Next?" });
+      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "", questionString: "Next?" });
       assertEquals(result, { isValid: false, error: "Follow-up description is required." });
     });
 
     it("should return invalid if questionString is empty", () => {
-      const result = validationService.validateFollowUpUpsertInput({ questionId: 1, levelId: 1, description: "Follow up", questionString: "" });
+      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "Follow up", questionString: "" });
       assertEquals(result, { isValid: false, error: "Follow-up question is required." });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
-      const result = validationService.validateFollowUpUpsertInput({ questionId: 1, levelId: 99, description: "Follow up", questionString: "Next?" });
+      const result = validationService.validateFollowUpUpsertInput({ levelId: 99, description: "Follow up", questionString: "Next?" });
       assertEquals(result, { isValid: false, error: "LevelId should be valid enum value" });
     });
   });

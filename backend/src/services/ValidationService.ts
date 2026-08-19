@@ -90,11 +90,7 @@ export class ValidationService implements IValidationService{
     }
 
     validateFollowUpUpsertInput(data: CreateFollowUpDTO): { isValid: boolean; error?: string } {
-        const { questionId, description, questionString, levelId } = data;
-
-        if (!this.isValidPositiveInteger(questionId)) {
-            return { isValid: false, error: "Invalid question id." };
-        }
+        const { description, questionString, levelId } = data;
 
         if (!this.isNonEmptyString(description)) {
             return { isValid: false, error: "Follow-up description is required." };
