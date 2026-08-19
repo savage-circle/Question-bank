@@ -47,7 +47,7 @@ export class QuestionHandler {
         description: question.description,
         topicName: question.topic.name,
         levelName: this.getLevelName(question.levelId),
-        extensions: this.parseExtensions(question.extensions),
+        followUps: question.followUps,
       }));
 
       return c.json(response);
@@ -113,18 +113,5 @@ export class QuestionHandler {
 
   getLevelName(levelId: number): string {
     return LevelType[levelId] ?? "UNKNOWN";
-  }
-
-  parseExtensions(extensions: string | null): string[] {
-    if (!extensions) {
-      return [];
-    }
-
-    try {
-      const parsed = JSON.parse(extensions);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
   }
 }

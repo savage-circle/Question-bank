@@ -5,7 +5,6 @@ export interface IValidationService {
   isNonEmptyString(value: string | null | undefined): boolean;
   isValidPositiveInteger(value: number | string | undefined): boolean;
   isValidEnumValue(value: number | string, enumObj: object): boolean;
-  isStringArray(value: string[] | null | undefined): boolean;
   validateCreateCategoryInput(categoryName: string): { isValid: boolean; error?: string };
   validateUpdateCategoryInput(id: string | undefined, categoryName: string): { isValid: boolean; error?: string };
   validateQuestionUpsertInput(data: CreateQuestionDTO): { isValid: boolean; error?: string };

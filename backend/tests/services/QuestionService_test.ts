@@ -15,7 +15,6 @@ describe("QuestionService", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
         },
       ];
@@ -41,7 +40,6 @@ describe("QuestionService", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
         },
       ];
@@ -67,7 +65,6 @@ describe("QuestionService", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
         },
       ];
@@ -93,7 +90,6 @@ describe("QuestionService", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
         },
       ];
@@ -120,7 +116,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
       };
       const prisma = MockPrisma.create({
@@ -146,7 +141,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
       };
       const prisma = MockPrisma.create({
@@ -188,7 +182,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
       };
       const prisma = MockPrisma.create({
@@ -203,7 +196,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: [],
       });
 
       // Assert
@@ -219,7 +211,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
       };
       const prisma = MockPrisma.create({
@@ -234,7 +225,6 @@ describe("QuestionService", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: [],
       });
 
       // Assert

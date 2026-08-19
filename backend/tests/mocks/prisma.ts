@@ -2,9 +2,7 @@ import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { PrismaClient } from "../../src/generated/prisma/client.ts";
 
 export class MockPrisma {
-  static create(
-    data: Record<string, unknown> = {},
-  ): PrismaClient {
+  static create(data: Record<string, unknown> = {}): PrismaClient {
     const prisma = {
       category: {
         findMany: spy(() => Promise.resolve([])),
@@ -17,10 +15,10 @@ export class MockPrisma {
         findMany: spy(() => Promise.resolve([])),
         findUnique: spy(() => Promise.resolve(null)),
         create: spy(() =>
-          Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 })
+          Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 }),
         ),
         update: spy(() =>
-          Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 })
+          Promise.resolve({ id: 1, name: "Topic 1", categoryId: 1 }),
         ),
         delete: spy(() => Promise.resolve()),
       },
@@ -33,9 +31,8 @@ export class MockPrisma {
             description: "Question 1",
             topicId: 1,
             levelId: 1,
-            extensions: null,
             topic: { id: 1, name: "Topic 1", categoryId: 1 },
-          })
+          }),
         ),
         update: spy(() =>
           Promise.resolve({
@@ -43,9 +40,43 @@ export class MockPrisma {
             description: "Question 1",
             topicId: 1,
             levelId: 1,
-            extensions: null,
             topic: { id: 1, name: "Topic 1", categoryId: 1 },
-          })
+          }),
+        ),
+        delete: spy(() => Promise.resolve()),
+      },
+      followUps: {
+        findMany: spy(() => Promise.resolve([])),
+        findUnique: spy(() => Promise.resolve(null)),
+        create: spy(() =>
+          Promise.resolve({
+            id: 1,
+            questionId: 1,
+            levelId: 1,
+            description: "Follow-up description",
+            questionString: "What next?",
+            question: {
+              id: 1,
+              description: "Question 1",
+              topicId: 1,
+              levelId: 1,
+            },
+          }),
+        ),
+        update: spy(() =>
+          Promise.resolve({
+            id: 1,
+            questionId: 1,
+            levelId: 1,
+            description: "Follow-up description",
+            questionString: "What next?",
+            question: {
+              id: 1,
+              description: "Question 1",
+              topicId: 1,
+              levelId: 1,
+            },
+          }),
         ),
         delete: spy(() => Promise.resolve()),
       },

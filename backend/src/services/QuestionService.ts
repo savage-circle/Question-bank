@@ -19,6 +19,14 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
       },
       include: {
         topic: true,
+        followUps: {
+          select: {
+            id: true,
+            levelId: true,
+            description: true,
+            questionString: true,
+          },
+        },
       },
     });
   }
@@ -28,6 +36,14 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
       where: { id },
       include: {
         topic: true,
+        followUps: {
+          select: {
+            id: true,
+            levelId: true,
+            description: true,
+            questionString: true,
+          },
+        },
       },
     });
   }
@@ -42,25 +58,30 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
   }
 
   createAsync(data: CreateQuestionDTO): Promise<Question> {
-    const { description, topicId, levelId, extensions } = data;
-    const extensionsString = extensions ? JSON.stringify(extensions) : null;
+    const { description, topicId, levelId } = data;
 
     return this.prisma.question.create({
       data: {
         description,
         topicId,
         levelId,
-        extensions: extensionsString,
       },
       include: {
         topic: true,
+        followUps: {
+          select: {
+            id: true,
+            levelId: true,
+            description: true,
+            questionString: true,
+          },
+        },
       },
     });
   }
 
   updateAsync(id: number, data: CreateQuestionDTO): Promise<Question> {
-    const { description, topicId, levelId, extensions } = data;
-    const extensionsString = extensions ? JSON.stringify(extensions) : null;
+    const { description, topicId, levelId } = data;
 
     return this.prisma.question.update({
       where: { id },
@@ -68,10 +89,17 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
         description,
         topicId,
         levelId,
-        extensions: extensionsString,
       },
       include: {
         topic: true,
+        followUps: {
+          select: {
+            id: true,
+            levelId: true,
+            description: true,
+            questionString: true,
+          },
+        },
       },
     });
   }

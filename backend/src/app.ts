@@ -4,7 +4,8 @@ import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
-import {Handlers} from "./types/handler.ts";
+import { FollowUpHandler } from "./handlers/FollowUpHandler.ts";
+import { Handlers } from "./types/handler.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
@@ -44,6 +45,17 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
   return questionApp;
 };
 
+const createFollowUpRoute = (followUpHandler: FollowUpHandler) => {
+  const followUpApp = new Hono();
+
+  followUpApp.get("/", followUpHandler.getFollowUps);
+  followUpApp.post("/", followUpHandler.addFollowUp);
+  followUpApp.put("/:id", followUpHandler.updateFollowUp);
+  followUpApp.delete("/:id", followUpHandler.deleteFollowUp);
+
+  return followUpApp;
+};
+
 const createApiRoutes = (handlers: Handlers) => {
   const apiApp = new Hono();
 
@@ -51,6 +63,7 @@ const createApiRoutes = (handlers: Handlers) => {
   apiApp.route("/categories", createCategoryRoute(handlers.categoriesHandler));
   apiApp.route("/topics", createTopicRoute(handlers.topicHandler));
   apiApp.route("/questions", createQuestionRoute(handlers.questionHandler));
+  apiApp.route("/follow-ups", createFollowUpRoute(handlers.followUpHandler));
   return apiApp;
 };
 

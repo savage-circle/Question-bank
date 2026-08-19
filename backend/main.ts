@@ -3,12 +3,14 @@ import { CategoryHandler } from "./src/handlers/CategoryHandler.ts";
 import { LevelHandler } from "./src/handlers/LevelHandler.ts";
 import { TopicHandler } from "./src/handlers/TopicHandler.ts";
 import { QuestionHandler } from "./src/handlers/QuestionHandler.ts";
+import { FollowUpHandler } from "./src/handlers/FollowUpHandler.ts";
 import prisma from "./src/lib/prisma.ts";
 import { CategoryService } from "./src/services/CategoryService.ts";
 import { TopicService } from "./src/services/TopicService.ts";
 import { QuestionService } from "./src/services/QuestionService.ts";
+import { FollowUpService } from "./src/services/FollowUpService.ts";
 import { Handlers } from "./src/types/handler.ts";
-import {ValidationService} from "./src/services/ValidationService.ts";
+import { ValidationService } from "./src/services/ValidationService.ts";
 
 export const getHandlers = (): Handlers => {
   const levelsHandler = new LevelHandler();
@@ -34,11 +36,19 @@ export const getHandlers = (): Handlers => {
     validationService,
   );
 
+  const followUpService = new FollowUpService(prisma);
+  const followUpHandler = new FollowUpHandler(
+    followUpService,
+    questionService,
+    validationService,
+  );
+
   return {
     levelsHandler,
     categoriesHandler,
     topicHandler,
     questionHandler,
+    followUpHandler,
   };
 };
 
@@ -52,4 +62,3 @@ const main = () => {
 };
 
 main();
-

@@ -20,10 +20,6 @@ export class ValidationService implements IValidationService{
         return Object.values(enumObj).includes(Number(value));
     }
 
-    isStringArray(value: string[] | null | undefined): boolean {
-        return Array.isArray(value) && value.every((item) => typeof item === "string");
-    }
-
     validateCreateCategoryInput(categoryName: string): { isValid: boolean; error?: string } {
         if (!this.isNonEmptyString(categoryName)) {
             return { isValid: false, error: "Category name is required." };
@@ -75,7 +71,7 @@ export class ValidationService implements IValidationService{
     }
 
     validateQuestionUpsertInput(data: CreateQuestionDTO): { isValid: boolean; error?: string } {
-        const { description, topicId, levelId, extensions } = data;
+        const { description, topicId, levelId } = data;
 
         if (!this.isNonEmptyString(description)) {
             return { isValid: false, error: "Question description is required." };
@@ -87,10 +83,6 @@ export class ValidationService implements IValidationService{
 
         if (!this.isValidEnumValue(levelId, LevelType)) {
             return { isValid: false, error: "LevelId should be valid enum value" };
-        }
-
-        if (extensions && !this.isStringArray(extensions)) {
-            return { isValid: false, error: "Extensions should be an array of non-empty strings." };
         }
 
         return { isValid: true };

@@ -23,7 +23,6 @@ describe("CategoryHandler", () => {
     isNonEmptyString: () => true,
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
-    isStringArray: () => true,
     validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
     validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
     validateQuestionUpsertInput: () => ({ isValid: true }),

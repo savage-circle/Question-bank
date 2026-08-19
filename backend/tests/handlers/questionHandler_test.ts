@@ -21,8 +21,8 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       }),
     updateAsync: () =>
       Promise.resolve({
@@ -30,8 +30,8 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       }),
     deleteAsync: () => Promise.resolve(),
   };
@@ -52,7 +52,6 @@ describe("QuestionHandler", () => {
     isNonEmptyString: () => true,
     isValidPositiveInteger: () => true,
     isValidEnumValue: () => true,
-    isStringArray: () => true,
     validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
     validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
     validateQuestionUpsertInput: () => ({ isValid: true }),
@@ -70,8 +69,15 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
+          followUps: [
+            {
+              id: 1,
+              levelId: 1,
+              description: "Follow-up description",
+              questionString: "What next?",
+            },
+          ],
         },
       ];
       const getAllAsyncSpy = spy(() => Promise.resolve(questions));
@@ -96,7 +102,14 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicName: "Topic 1",
           levelName: "EASY",
-          extensions: [],
+          followUps: [
+            {
+              id: 1,
+              levelId: 1,
+              description: "Follow-up description",
+              questionString: "What next?",
+            },
+          ],
         },
       ]);
       assertEquals(getAllAsyncSpy.calls.length, 1);
@@ -166,8 +179,8 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       };
       const createAsyncSpy = spy(() => Promise.resolve(question));
       mockQuestionService.createAsync = createAsyncSpy;
@@ -186,7 +199,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -216,7 +228,6 @@ describe("QuestionHandler", () => {
           description: "",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -244,7 +255,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -266,8 +276,8 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
+          followUps: [],
         })
       );
       mockQuestionService.updateAsync = updateAsyncSpy;
@@ -287,7 +297,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -316,7 +325,6 @@ describe("QuestionHandler", () => {
           description: "",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -344,7 +352,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -375,7 +382,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 

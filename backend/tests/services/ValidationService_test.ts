@@ -119,48 +119,25 @@ describe("ValidationService", () => {
     });
   });
 
-  describe("isStringArray", () => {
-    it("should return true for an array of strings", () => {
-      assertEquals(validationService.isStringArray(["a", "b"]), true);
-    });
-
-    it("should return true for an empty array", () => {
-      assertEquals(validationService.isStringArray([]), true);
-    });
-
-    it("should return false for null", () => {
-      assertEquals(validationService.isStringArray(null), false);
-    });
-
-    it("should return false for undefined", () => {
-      assertEquals(validationService.isStringArray(undefined), false);
-    });
-  });
-
   describe("validateQuestionUpsertInput", () => {
     it("should return valid for a valid request", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 1, extensions: [] });
+      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 1 });
       assertEquals(result, { isValid: true });
     });
 
     it("should return invalid if description is empty", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "", topicId: 1, levelId: 1, extensions: [] });
+      const result = validationService.validateQuestionUpsertInput({ description: "", topicId: 1, levelId: 1 });
       assertEquals(result, { isValid: false, error: "Question description is required." });
     });
 
     it("should return invalid if topicId is not a positive integer", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 0, levelId: 1, extensions: [] });
+      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 0, levelId: 1 });
       assertEquals(result, { isValid: false, error: "Invalid topic id." });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 99, extensions: [] });
+      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 99 });
       assertEquals(result, { isValid: false, error: "LevelId should be valid enum value" });
-    });
-
-    it("should return invalid if extensions is not a string array", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 1, extensions: [1, 2] as unknown as string[] });
-      assertEquals(result, { isValid: false, error: "Extensions should be an array of non-empty strings." });
     });
   });
 
