@@ -3,7 +3,7 @@ import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { Hono } from "@hono/hono";
 import { FollowUpHandler } from "../../src/handlers/FollowUpHandler.ts";
 import { IService } from "../../src/services/IService.ts";
-import { IValidationService } from "../../src/services/IValidationService.ts";
+import { createMockValidationService } from "../mocks/validationService.ts";
 import { CreateFollowUpDTO, FollowUp } from "../../src/types/followUp.ts";
 
 describe("FollowUpHandler", () => {
@@ -58,18 +58,7 @@ describe("FollowUpHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
-  const mockValidationService: IValidationService = {
-    isValidWhenProvided: () => true,
-    isNonEmptyString: () => true,
-    isValidPositiveInteger: () => true,
-    isValidEnumValue: () => true,
-    validateCreateCategoryInput: () => ({ isValid: true }),
-    validateUpdateCategoryInput: () => ({ isValid: true }),
-    validateQuestionUpsertInput: () => ({ isValid: true }),
-    validateGetQuestionInput: () => ({ isValid: true }),
-    validateGetTopicsInput: () => ({ isValid: true }),
-    validateAddTopicInput: () => ({ isValid: true }),
-  };
+  const mockValidationService = createMockValidationService();
 
   it("should create a follow-up", async () => {
     const followUpHandler = new FollowUpHandler(

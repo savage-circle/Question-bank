@@ -1,4 +1,5 @@
 import { CreateQuestionDTO } from "../types/question.ts";
+import { CreateFollowUpDTO } from "../types/followUp.ts";
 
 export interface IValidationService {
   isValidWhenProvided(value: number | string | undefined): boolean;
@@ -8,6 +9,7 @@ export interface IValidationService {
   validateCreateCategoryInput(categoryName: string): { isValid: boolean; error?: string };
   validateUpdateCategoryInput(id: string | undefined, categoryName: string): { isValid: boolean; error?: string };
   validateQuestionUpsertInput(data: CreateQuestionDTO): { isValid: boolean; error?: string };
+  validateFollowUpUpsertInput(data: CreateFollowUpDTO): { isValid: boolean; error?: string };
   validateGetQuestionInput(categoryId: string | undefined, topicId: string | undefined, levelId: string | undefined): { isValid: boolean; error?: string };
   validateGetTopicsInput(categoryId: string | undefined): { isValid: boolean; error?: string };
   validateAddTopicInput(name: string, categoryId: string | undefined): { isValid: boolean; error?: string };

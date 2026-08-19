@@ -1,5 +1,5 @@
 import { Context, TypedResponse } from "@hono/hono";
-import _ from "lodash";
+import { normalizeName } from "../utils/normalizeName.ts";
 import { Category } from "../types/category.ts";
 import { ICategoryService } from "../services/ICategoryService.ts";
 import { IValidationService } from "../services/IValidationService.ts";
@@ -38,7 +38,7 @@ export class CategoryHandler {
     }
 
     try {
-      const normalizedName = _.capitalize(categoryName.trim());
+      const normalizedName = normalizeName(categoryName);
       const duplicateExists =
         await this.categoriesService.existsByNameAsync(normalizedName);
       if (duplicateExists) {
@@ -76,7 +76,7 @@ export class CategoryHandler {
         return c.json({ error: "Category does not exist." }, 404);
       }
 
-      const normalizedName = _.capitalize(categoryName.trim());
+      const normalizedName = normalizeName(categoryName);
       const duplicateExists = await this.categoriesService.existsByNameAsync(
         normalizedName,
         categoryId,

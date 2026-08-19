@@ -4,6 +4,18 @@ import { IService } from "./IService.ts";
 
 export class QuestionService implements IService<Question, CreateQuestionDTO> {
   private prisma: PrismaClient;
+  private readonly questionInclude = {
+    topic: true,
+    followUps: {
+      select: {
+        id: true,
+        levelId: true,
+        description: true,
+        questionString: true,
+      },
+    },
+  } as const;
+
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
@@ -17,34 +29,14 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
         ...(levelId !== undefined ? { levelId } : {}),
         ...(categoryId !== undefined ? { topic: { categoryId } } : {}),
       },
-      include: {
-        topic: true,
-        followUps: {
-          select: {
-            id: true,
-            levelId: true,
-            description: true,
-            questionString: true,
-          },
-        },
-      },
+      include: this.questionInclude,
     });
   }
 
   getByIdAsync(id: number): Promise<Question | null> {
     return this.prisma.question.findUnique({
       where: { id },
-      include: {
-        topic: true,
-        followUps: {
-          select: {
-            id: true,
-            levelId: true,
-            description: true,
-            questionString: true,
-          },
-        },
-      },
+      include: this.questionInclude,
     });
   }
 
@@ -66,17 +58,7 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
         topicId,
         levelId,
       },
-      include: {
-        topic: true,
-        followUps: {
-          select: {
-            id: true,
-            levelId: true,
-            description: true,
-            questionString: true,
-          },
-        },
-      },
+      include: this.questionInclude,
     });
   }
 
@@ -90,17 +72,7 @@ export class QuestionService implements IService<Question, CreateQuestionDTO> {
         topicId,
         levelId,
       },
-      include: {
-        topic: true,
-        followUps: {
-          select: {
-            id: true,
-            levelId: true,
-            description: true,
-            questionString: true,
-          },
-        },
-      },
+      include: this.questionInclude,
     });
   }
 

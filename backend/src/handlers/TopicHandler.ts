@@ -1,6 +1,6 @@
 import { Context, TypedResponse } from "@hono/hono";
 import { Topic, CreateTopicDTO } from "../types/topic.ts";
-import _ from "lodash";
+import { normalizeName } from "../utils/normalizeName.ts";
 import { IService } from "../services/IService.ts";
 import { Category, CreateCategoryDTO } from "../types/category.ts";
 import { IValidationService } from "../services/IValidationService.ts";
@@ -70,7 +70,7 @@ export class TopicHandler {
 
       const existingTopics = await this.topicService.getAllAsync({ categoryId: categoryId ? Number(categoryId) : undefined });
       const topicExists = existingTopics.some(
-        (topic: Topic) => topic.name === _.capitalize(name.trim()),
+        (topic: Topic) => topic.name === normalizeName(name),
       );
 
       if (topicExists) {
@@ -78,7 +78,7 @@ export class TopicHandler {
       }
 
       const createTopicDTO: CreateTopicDTO = {
-        name: _.capitalize(name.trim()),
+        name: normalizeName(name),
         categoryId: Number(categoryId),
       };
 

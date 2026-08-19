@@ -1,5 +1,6 @@
 import { IValidationService } from "./IValidationService.ts";
 import { CreateQuestionDTO } from "../types/question.ts";
+import { CreateFollowUpDTO } from "../types/followUp.ts";
 import LevelType from "../enums/levelType.ts";
 
 export class ValidationService implements IValidationService{
@@ -79,6 +80,28 @@ export class ValidationService implements IValidationService{
 
         if (!this.isValidPositiveInteger(topicId)) {
             return { isValid: false, error: "Invalid topic id." };
+        }
+
+        if (!this.isValidEnumValue(levelId, LevelType)) {
+            return { isValid: false, error: "LevelId should be valid enum value" };
+        }
+
+        return { isValid: true };
+    }
+
+    validateFollowUpUpsertInput(data: CreateFollowUpDTO): { isValid: boolean; error?: string } {
+        const { questionId, description, questionString, levelId } = data;
+
+        if (!this.isValidPositiveInteger(questionId)) {
+            return { isValid: false, error: "Invalid question id." };
+        }
+
+        if (!this.isNonEmptyString(description)) {
+            return { isValid: false, error: "Follow-up description is required." };
+        }
+
+        if (!this.isNonEmptyString(questionString)) {
+            return { isValid: false, error: "Follow-up question is required." };
         }
 
         if (!this.isValidEnumValue(levelId, LevelType)) {

@@ -8,7 +8,7 @@ import { QuestionHandler } from "../../src/handlers/QuestionHandler.ts";
 import { IService } from "../../src/services/IService.ts";
 import { Question, CreateQuestionDTO } from "../../src/types/question.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
-import { IValidationService } from "../../src/services/IValidationService.ts";
+import { createMockValidationService } from "../mocks/validationService.ts";
 
 describe("QuestionHandler", () => {
   const mockQuestionService: IService<Question, CreateQuestionDTO> = {
@@ -47,18 +47,7 @@ describe("QuestionHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
-  const mockValidationService: IValidationService = {
-    isValidWhenProvided: () => true,
-    isNonEmptyString: () => true,
-    isValidPositiveInteger: () => true,
-    isValidEnumValue: () => true,
-    validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
-    validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
-    validateQuestionUpsertInput: () => ({ isValid: true }),
-    validateGetQuestionInput: () => ({ isValid: true }),
-    validateGetTopicsInput: () => ({ isValid: true }),
-    validateAddTopicInput: () => ({ isValid: true }),
-  };
+  const mockValidationService = createMockValidationService();
 
   describe("getQuestions", () => {
     it("should return all questions", async () => {
@@ -120,7 +109,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid categoryId" }) }
+        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid categoryId" }) })
       );
 
       const app = new Hono();
@@ -139,7 +128,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid topicId" }) }
+        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid topicId" }) })
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -157,7 +146,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid levelId" }) }
+        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid levelId" }) })
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -218,7 +207,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
+        createMockValidationService({ validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) })
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -315,7 +304,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
+        createMockValidationService({ validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) })
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);

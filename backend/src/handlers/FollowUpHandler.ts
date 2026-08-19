@@ -47,27 +47,10 @@ export class FollowUpHandler {
     c: Context,
   ): Promise<TypedResponse<FollowUp> | TypedResponse<{ error: string }>> {
     const data: CreateFollowUpDTO = await c.req.json();
+    const validation = this.validationService.validateFollowUpUpsertInput(data);
 
-    if (!this.validationService.isValidPositiveInteger(data.questionId)) {
-      return c.json({ error: "Invalid question id." }, 400);
-    }
-
-    if (!this.validationService.isNonEmptyString(data.description)) {
-      return c.json({ error: "Follow-up description is required." }, 400);
-    }
-
-    if (!this.validationService.isNonEmptyString(data.questionString)) {
-      return c.json({ error: "Follow-up question is required." }, 400);
-    }
-
-    if (
-      !this.validationService.isValidEnumValue(data.levelId, {
-        1: 1,
-        2: 2,
-        3: 3,
-      })
-    ) {
-      return c.json({ error: "LevelId should be valid enum value" }, 400);
+    if (!validation.isValid) {
+      return c.json({ error: validation.error! }, 400);
     }
 
     try {
@@ -95,26 +78,9 @@ export class FollowUpHandler {
       return c.json({ error: "Invalid follow-up id." }, 400);
     }
 
-    if (!this.validationService.isValidPositiveInteger(data.questionId)) {
-      return c.json({ error: "Invalid question id." }, 400);
-    }
-
-    if (!this.validationService.isNonEmptyString(data.description)) {
-      return c.json({ error: "Follow-up description is required." }, 400);
-    }
-
-    if (!this.validationService.isNonEmptyString(data.questionString)) {
-      return c.json({ error: "Follow-up question is required." }, 400);
-    }
-
-    if (
-      !this.validationService.isValidEnumValue(data.levelId, {
-        1: 1,
-        2: 2,
-        3: 3,
-      })
-    ) {
-      return c.json({ error: "LevelId should be valid enum value" }, 400);
+    const validation = this.validationService.validateFollowUpUpsertInput(data);
+    if (!validation.isValid) {
+      return c.json({ error: validation.error! }, 400);
     }
 
     try {
