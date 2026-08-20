@@ -2,6 +2,7 @@ import { IValidationService } from "./IValidationService.ts";
 import { CreateQuestionDTO } from "../types/question.ts";
 import { CreateFollowUpDTO } from "../types/followUp.ts";
 import LevelType from "../enums/levelType.ts";
+import { Messages } from "../constants.ts";
 
 export class ValidationService implements IValidationService {
   isValidWhenProvided(value: number | string | undefined): boolean {
@@ -26,7 +27,7 @@ export class ValidationService implements IValidationService {
     error?: string;
   } {
     if (!this.isNonEmptyString(categoryName)) {
-      return { isValid: false, error: "Category name is required." };
+      return { isValid: false, error: Messages.CategoryNameRequired };
     }
 
     return { isValid: true };
@@ -37,11 +38,11 @@ export class ValidationService implements IValidationService {
     categoryName: string,
   ): { isValid: boolean; error?: string } {
     if (!this.isValidPositiveInteger(id)) {
-      return { isValid: false, error: "Invalid category id." };
+      return { isValid: false, error: Messages.InvalidCategoryId };
     }
 
     if (!this.isNonEmptyString(categoryName)) {
-      return { isValid: false, error: "Category name is required." };
+      return { isValid: false, error: Messages.CategoryNameRequired };
     }
 
     return { isValid: true };
@@ -52,7 +53,7 @@ export class ValidationService implements IValidationService {
     error?: string;
   } {
     if (!this.isValidWhenProvided(categoryId)) {
-      return { isValid: false, error: "Invalid categoryId" };
+      return { isValid: false, error: Messages.InvalidCategoryIdParam };
     }
     return { isValid: true };
   }
@@ -62,10 +63,10 @@ export class ValidationService implements IValidationService {
     categoryId: string | undefined,
   ): { isValid: boolean; error?: string } {
     if (!this.isValidWhenProvided(categoryId)) {
-      return { isValid: false, error: "Invalid categoryId" };
+      return { isValid: false, error: Messages.InvalidCategoryIdParam };
     }
     if (!this.isNonEmptyString(name)) {
-      return { isValid: false, error: "Invalid topic name" };
+      return { isValid: false, error: Messages.InvalidTopicName };
     }
     return { isValid: true };
   }
@@ -76,13 +77,13 @@ export class ValidationService implements IValidationService {
     levelId: string | undefined,
   ): { isValid: boolean; error?: string } {
     if (!this.isValidWhenProvided(categoryId)) {
-      return { isValid: false, error: "Invalid categoryId" };
+      return { isValid: false, error: Messages.InvalidCategoryIdParam };
     }
     if (!this.isValidWhenProvided(topicId)) {
-      return { isValid: false, error: "Invalid topicId" };
+      return { isValid: false, error: Messages.InvalidTopicIdParam };
     }
     if (!this.isValidWhenProvided(levelId)) {
-      return { isValid: false, error: "Invalid levelId" };
+      return { isValid: false, error: Messages.InvalidLevelIdParam };
     }
     return { isValid: true };
   }
@@ -94,15 +95,15 @@ export class ValidationService implements IValidationService {
     const { description, topicId, levelId } = data;
 
     if (!this.isNonEmptyString(description)) {
-      return { isValid: false, error: "Question description is required." };
+      return { isValid: false, error: Messages.QuestionDescriptionRequired };
     }
 
     if (!this.isValidPositiveInteger(topicId)) {
-      return { isValid: false, error: "Invalid topic id." };
+      return { isValid: false, error: Messages.InvalidTopicId };
     }
 
     if (!this.isValidEnumValue(levelId, LevelType)) {
-      return { isValid: false, error: "LevelId should be valid enum value" };
+      return { isValid: false, error: Messages.InvalidLevelId };
     }
 
     return { isValid: true };
@@ -115,15 +116,15 @@ export class ValidationService implements IValidationService {
     const { description, question, levelId } = data;
 
     if (!this.isNonEmptyString(description)) {
-      return { isValid: false, error: "Follow-up description is required." };
+      return { isValid: false, error: Messages.FollowUpDescriptionRequired };
     }
 
     if (!this.isNonEmptyString(question)) {
-      return { isValid: false, error: "Follow-up question is required." };
+      return { isValid: false, error: Messages.FollowUpQuestionRequired };
     }
 
     if (!this.isValidEnumValue(levelId, LevelType)) {
-      return { isValid: false, error: "LevelId should be valid enum value" };
+      return { isValid: false, error: Messages.InvalidLevelId };
     }
 
     return { isValid: true };

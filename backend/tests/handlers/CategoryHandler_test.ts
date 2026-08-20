@@ -1,12 +1,11 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
 import { CategoryHandler } from "../../src/handlers/CategoryHandler.ts";
 import { ICategoryService } from "../../src/services/ICategoryService.ts";
 import { createMockValidationService } from "../mocks/validationService.ts";
+import { Messages } from "../../src/constants.ts";
 describe("CategoryHandler", () => {
   const mockCategoryService: ICategoryService = {
     getAllAsync: () => Promise.resolve([]),
@@ -79,7 +78,7 @@ describe("CategoryHandler", () => {
         createMockValidationService({
           validateCreateCategoryInput: () => ({
             isValid: false,
-            error: "Category name is required.",
+            error: Messages.CategoryNameRequired,
           }),
         }),
       );
@@ -96,7 +95,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 400);
-      assertEquals(result, { error: "Category name is required." });
+      assertEquals(result, { error: Messages.CategoryNameRequired });
     });
 
     it("should return 409 if category name already exists", async () => {
@@ -119,7 +118,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 409);
-      assertEquals(result, { error: "Category name already exists." });
+      assertEquals(result, { error: Messages.CategoryAlreadyExists });
     });
   });
 
@@ -157,7 +156,7 @@ describe("CategoryHandler", () => {
         createMockValidationService({
           validateUpdateCategoryInput: () => ({
             isValid: false,
-            error: "Invalid category id.",
+            error: Messages.InvalidCategoryId,
           }),
         }),
       );
@@ -174,7 +173,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 400);
-      assertEquals(result, { error: "Invalid category id." });
+      assertEquals(result, { error: Messages.InvalidCategoryId });
     });
 
     it("should return 400 if categoryName is empty", async () => {
@@ -183,7 +182,7 @@ describe("CategoryHandler", () => {
         createMockValidationService({
           validateUpdateCategoryInput: () => ({
             isValid: false,
-            error: "Category name is required.",
+            error: Messages.CategoryNameRequired,
           }),
         }),
       );
@@ -223,7 +222,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 404);
-      assertEquals(result, { error: "Category does not exist." });
+      assertEquals(result, { error: Messages.CategoryNotFound });
     });
 
     it("should return 409 if category name already exists", async () => {
@@ -247,7 +246,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 409);
-      assertEquals(result, { error: "Category name already exists." });
+      assertEquals(result, { error: Messages.CategoryAlreadyExists });
     });
   });
 });

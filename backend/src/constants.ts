@@ -2,6 +2,18 @@ export const Messages = {
   InvalidQuestionId: "Invalid question id.",
   InvalidFollowUpId: "Invalid follow-up id.",
   InvalidTopicId: "Invalid topic id.",
+  InvalidCategoryId: "Invalid category id.",
+
+  InvalidCategoryIdParam: "Invalid categoryId",
+  InvalidTopicIdParam: "Invalid topicId",
+  InvalidLevelIdParam: "Invalid levelId",
+
+  CategoryNameRequired: "Category name is required.",
+  QuestionDescriptionRequired: "Question description is required.",
+  FollowUpDescriptionRequired: "Follow-up description is required.",
+  FollowUpQuestionRequired: "Follow-up question is required.",
+  InvalidTopicName: "Invalid topic name",
+  InvalidLevelId: "LevelId should be valid enum value",
 
   QuestionNotFound: "Question does not exist.",
   TopicNotFound: "Topic does not exist.",

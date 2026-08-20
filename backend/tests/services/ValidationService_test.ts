@@ -2,6 +2,7 @@ import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { ValidationService } from "../../src/services/ValidationService.ts";
 import LevelType from "../../src/enums/levelType.ts";
+import { Messages } from "../../src/constants.ts";
 
 describe("ValidationService", () => {
   const validationService = new ValidationService();
@@ -133,10 +134,7 @@ describe("ValidationService", () => {
         topicId: 1,
         levelId: 1,
       });
-      assertEquals(result, {
-        isValid: false,
-        error: "Question description is required.",
-      });
+      assertEquals(result, { isValid: false, error: Messages.QuestionDescriptionRequired });
     });
 
     it("should return invalid if topicId is not a positive integer", () => {
@@ -145,7 +143,7 @@ describe("ValidationService", () => {
         topicId: 0,
         levelId: 1,
       });
-      assertEquals(result, { isValid: false, error: "Invalid topic id." });
+      assertEquals(result, { isValid: false, error: Messages.InvalidTopicId });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
@@ -154,10 +152,7 @@ describe("ValidationService", () => {
         topicId: 1,
         levelId: 99,
       });
-      assertEquals(result, {
-        isValid: false,
-        error: "LevelId should be valid enum value",
-      });
+      assertEquals(result, { isValid: false, error: Messages.InvalidLevelId });
     });
   });
 
@@ -177,10 +172,7 @@ describe("ValidationService", () => {
         description: "",
         question: "Next?",
       });
-      assertEquals(result, {
-        isValid: false,
-        error: "Follow-up description is required.",
-      });
+      assertEquals(result, { isValid: false, error: Messages.FollowUpDescriptionRequired });
     });
 
     it("should return invalid if question is empty", () => {
@@ -189,10 +181,7 @@ describe("ValidationService", () => {
         description: "Follow up",
         question: "",
       });
-      assertEquals(result, {
-        isValid: false,
-        error: "Follow-up question is required.",
-      });
+      assertEquals(result, { isValid: false, error: Messages.FollowUpQuestionRequired });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
@@ -201,10 +190,7 @@ describe("ValidationService", () => {
         description: "Follow up",
         question: "Next?",
       });
-      assertEquals(result, {
-        isValid: false,
-        error: "LevelId should be valid enum value",
-      });
+      assertEquals(result, { isValid: false, error: Messages.InvalidLevelId });
     });
   });
 
@@ -236,84 +222,84 @@ describe("ValidationService", () => {
     it("should return invalid if categoryId is zero", () => {
       assertEquals(
         validationService.validateGetQuestionInput("0", undefined, undefined),
-        { isValid: false, error: "Invalid categoryId" },
+        { isValid: false, error: Messages.InvalidCategoryIdParam },
       );
     });
 
     it("should return invalid if categoryId is negative", () => {
       assertEquals(
         validationService.validateGetQuestionInput("-1", undefined, undefined),
-        { isValid: false, error: "Invalid categoryId" },
+        { isValid: false, error: Messages.InvalidCategoryIdParam },
       );
     });
 
     it("should return invalid if categoryId is non-numeric", () => {
       assertEquals(
         validationService.validateGetQuestionInput("abc", undefined, undefined),
-        { isValid: false, error: "Invalid categoryId" },
+        { isValid: false, error: Messages.InvalidCategoryIdParam },
       );
     });
 
     it("should return invalid if topicId is zero when categoryId is valid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("1", "0", undefined),
-        { isValid: false, error: "Invalid topicId" },
+        { isValid: false, error: Messages.InvalidTopicIdParam },
       );
     });
 
     it("should return invalid if topicId is negative when categoryId is valid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("1", "-1", undefined),
-        { isValid: false, error: "Invalid topicId" },
+        { isValid: false, error: Messages.InvalidTopicIdParam },
       );
     });
 
     it("should return invalid if topicId is non-numeric when categoryId is valid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("1", "abc", undefined),
-        { isValid: false, error: "Invalid topicId" },
+        { isValid: false, error: Messages.InvalidTopicIdParam },
       );
     });
 
     it("should return invalid if levelId is zero when categoryId and topicId are valid", () => {
       assertEquals(validationService.validateGetQuestionInput("1", "2", "0"), {
         isValid: false,
-        error: "Invalid levelId",
+        error: Messages.InvalidLevelIdParam,
       });
     });
 
     it("should return invalid if levelId is negative when categoryId and topicId are valid", () => {
       assertEquals(validationService.validateGetQuestionInput("1", "2", "-1"), {
         isValid: false,
-        error: "Invalid levelId",
+        error: Messages.InvalidLevelIdParam,
       });
     });
 
     it("should return invalid if levelId is non-numeric when categoryId and topicId are valid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("1", "2", "abc"),
-        { isValid: false, error: "Invalid levelId" },
+        { isValid: false, error: Messages.InvalidLevelIdParam },
       );
     });
 
     it("should return categoryId error first when both categoryId and topicId are invalid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("abc", "abc", undefined),
-        { isValid: false, error: "Invalid categoryId" },
+        { isValid: false, error: Messages.InvalidCategoryIdParam },
       );
     });
 
     it("should return categoryId error first when all params are invalid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("abc", "abc", "abc"),
-        { isValid: false, error: "Invalid categoryId" },
+        { isValid: false, error: Messages.InvalidCategoryIdParam },
       );
     });
 
     it("should return topicId error first when categoryId is valid but topicId and levelId are invalid", () => {
       assertEquals(
         validationService.validateGetQuestionInput("1", "abc", "abc"),
-        { isValid: false, error: "Invalid topicId" },
+        { isValid: false, error: Messages.InvalidTopicIdParam },
       );
     });
   });
@@ -334,21 +320,21 @@ describe("ValidationService", () => {
     it("should return invalid when categoryId is zero", () => {
       assertEquals(validationService.validateGetTopicsInput("0"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
 
     it("should return invalid when categoryId is negative", () => {
       assertEquals(validationService.validateGetTopicsInput("-1"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
 
     it("should return invalid when categoryId is non-numeric", () => {
       assertEquals(validationService.validateGetTopicsInput("abc"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
   });
@@ -370,42 +356,42 @@ describe("ValidationService", () => {
     it("should return invalid when categoryId is zero", () => {
       assertEquals(validationService.validateAddTopicInput("Topic 1", "0"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
 
     it("should return invalid when categoryId is negative", () => {
       assertEquals(validationService.validateAddTopicInput("Topic 1", "-1"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
 
     it("should return invalid when categoryId is non-numeric", () => {
       assertEquals(validationService.validateAddTopicInput("Topic 1", "abc"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
 
     it("should return invalid when name is empty", () => {
       assertEquals(validationService.validateAddTopicInput("", "1"), {
         isValid: false,
-        error: "Invalid topic name",
+        error: Messages.InvalidTopicName,
       });
     });
 
     it("should return invalid when name is whitespace only", () => {
       assertEquals(validationService.validateAddTopicInput("   ", "1"), {
         isValid: false,
-        error: "Invalid topic name",
+        error: Messages.InvalidTopicName,
       });
     });
 
     it("should return categoryId error first when both are invalid", () => {
       assertEquals(validationService.validateAddTopicInput("", "abc"), {
         isValid: false,
-        error: "Invalid categoryId",
+        error: Messages.InvalidCategoryIdParam,
       });
     });
   });
@@ -421,14 +407,14 @@ describe("ValidationService", () => {
     it("should return invalid when name is empty", () => {
       assertEquals(validationService.validateCreateCategoryInput(""), {
         isValid: false,
-        error: "Category name is required.",
+        error: Messages.CategoryNameRequired,
       });
     });
 
     it("should return invalid when name is whitespace only", () => {
       assertEquals(validationService.validateCreateCategoryInput("   "), {
         isValid: false,
-        error: "Category name is required.",
+        error: Messages.CategoryNameRequired,
       });
     });
   });

@@ -8,6 +8,7 @@ import { IQuestionService } from "../../src/services/IQuestionService.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
 import { createMockValidationService } from "../mocks/validationService.ts";
 import { Prisma } from "../../src/generated/prisma/client.ts";
+import { Messages } from "../../src/constants.ts";
 
 describe("QuestionHandler", () => {
   const mockQuestionService: IQuestionService = {
@@ -128,7 +129,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateGetQuestionInput: () => ({
             isValid: false,
-            error: "Invalid categoryId",
+            error: Messages.InvalidCategoryIdParam,
           }),
         }),
       );
@@ -152,7 +153,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateGetQuestionInput: () => ({
             isValid: false,
-            error: "Invalid topicId",
+            error: Messages.InvalidTopicIdParam,
           }),
         }),
       );
@@ -175,7 +176,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateGetQuestionInput: () => ({
             isValid: false,
-            error: "Invalid levelId",
+            error: Messages.InvalidLevelIdParam,
           }),
         }),
       );
@@ -241,7 +242,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateQuestionUpsertInput: () => ({
             isValid: false,
-            error: "Question description is required.",
+            error: Messages.QuestionDescriptionRequired,
           }),
         }),
       );
@@ -330,7 +331,7 @@ describe("QuestionHandler", () => {
       const result = await res.json();
 
       // Assert
-      assertEquals(result, { message: "Question updated successfully." });
+      assertEquals(result, { message: Messages.QuestionUpdated });
       assertEquals(updateAsyncSpy.calls.length, 1);
       assertEquals(existsAsyncSpy.calls.length, 2);
     });
@@ -343,7 +344,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateQuestionUpsertInput: () => ({
             isValid: false,
-            error: "Question description is required.",
+            error: Messages.QuestionDescriptionRequired,
           }),
         }),
       );
@@ -512,7 +513,7 @@ describe("QuestionHandler", () => {
         createMockValidationService({
           validateFollowUpUpsertInput: () => ({
             isValid: false,
-            error: "Follow-up description is required.",
+            error: Messages.FollowUpDescriptionRequired,
           }),
         }),
       );
@@ -597,7 +598,7 @@ describe("QuestionHandler", () => {
       const result = await res.json();
 
       // Assert
-      assertEquals(result, { message: "Follow-up updated successfully." });
+      assertEquals(result, { message: Messages.FollowUpUpdated });
       assertEquals(updateFollowUpAsyncSpy.calls.length, 1);
     });
 
@@ -661,7 +662,7 @@ describe("QuestionHandler", () => {
       const result = await res.json();
 
       // Assert
-      assertEquals(result, { message: "Follow-up deleted successfully." });
+      assertEquals(result, { message: Messages.FollowUpDeleted });
       assertEquals(deleteFollowUpAsyncSpy.calls.length, 1);
     });
 
