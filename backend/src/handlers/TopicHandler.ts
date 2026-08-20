@@ -4,6 +4,7 @@ import { normalizeName } from "../utils/normalizeName.ts";
 import { IService } from "../services/IService.ts";
 import { Category, CreateCategoryDTO } from "../types/category.ts";
 import { IValidationService } from "../services/IValidationService.ts";
+import { Messages } from "../constants.ts";
 
 export class TopicHandler {
   private topicService: IService<Topic, CreateTopicDTO>;
@@ -46,7 +47,7 @@ export class TopicHandler {
 
       return c.json(topics);
     } catch (_error) {
-      return c.json({ error: "Failed to fetch topics" }, 500);
+      return c.json({ error: Messages.FetchTopicsFailed }, 500);
     }
   }
 
@@ -74,7 +75,7 @@ export class TopicHandler {
       );
 
       if (topicExists) {
-        return c.json({ error: "Topic already exists" }, 400);
+        return c.json({ error: Messages.TopicAlreadyExists }, 400);
       }
 
       const createTopicDTO: CreateTopicDTO = {
@@ -85,7 +86,7 @@ export class TopicHandler {
       const newTopic = await this.topicService.createAsync(createTopicDTO);
       return c.json(newTopic, 201);
     } catch (_error) {
-      return c.json({ error: "Failed to add topic" }, 500);
+      return c.json({ error: Messages.AddTopicFailed }, 500);
     }
   }
 
@@ -97,21 +98,21 @@ export class TopicHandler {
     const id = c.req.param("id");
 
     if (!this.validationService.isValidPositiveInteger(id)) {
-      return c.json({ error: "Invalid topic id." }, 400);
+      return c.json({ error: Messages.InvalidTopicId }, 400);
     }
 
     const topicId = Number(id);
 
     try {
       if (!(await this.topicService.existsAsync(topicId))) {
-        return c.json({ error: "Topic does not exist." }, 404);
+        return c.json({ error: Messages.TopicNotFound }, 404);
       }
 
       await this.topicService.deleteAsync(topicId);
 
-      return c.json({ message: "Topic deleted successfully." });
+      return c.json({ message: Messages.TopicDeleted });
     } catch {
-      return c.json({ error: "Failed to delete topic" }, 500);
+      return c.json({ error: Messages.DeleteTopicFailed }, 500);
     }
   }
 }

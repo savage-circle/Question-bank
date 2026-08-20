@@ -45,7 +45,7 @@ model FollowUps {
   questionId     Int
   levelId        Int
   description    String
-  questionString String
+  question       String
 
-  question Question @relation(fields: [questionId], references: [id])
+  parentQuestion Question @relation(fields: [questionId], references: [id])
 }

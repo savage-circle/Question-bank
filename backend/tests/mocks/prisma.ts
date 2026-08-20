@@ -54,7 +54,7 @@ export class MockPrisma {
             id: 1,
             levelId: 1,
             description: "Follow-up description",
-            questionString: "What next?",
+            question: "What next?",
           }),
         ),
         update: spy(() =>
@@ -62,7 +62,7 @@ export class MockPrisma {
             id: 1,
             levelId: 1,
             description: "Follow-up description",
-            questionString: "What next?",
+            question: "What next?",
           }),
         ),
         delete: spy(() => Promise.resolve()),

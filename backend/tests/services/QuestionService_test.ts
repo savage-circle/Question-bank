@@ -1,6 +1,4 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { QuestionService } from "../../src/services/QuestionService.ts";
 import { MockPrisma } from "../mocks/prisma.ts";
@@ -258,7 +256,7 @@ describe("QuestionService", () => {
           id: 1,
           levelId: 1,
           description: "Follow-up description",
-          questionString: "What next?",
+          question: "What next?",
         },
       ];
       const prisma = MockPrisma.create({
@@ -317,7 +315,7 @@ describe("QuestionService", () => {
         id: 1,
         levelId: 1,
         description: "Follow-up description",
-        questionString: "What next?",
+        question: "What next?",
       };
       const prisma = MockPrisma.create({
         followUps: {
@@ -330,7 +328,7 @@ describe("QuestionService", () => {
       const result = await questionService.addFollowUpAsync(2, {
         levelId: 1,
         description: "Follow-up description",
-        questionString: "What next?",
+        question: "What next?",
       });
 
       // Assert
@@ -345,7 +343,7 @@ describe("QuestionService", () => {
         id: 1,
         levelId: 2,
         description: "Updated description",
-        questionString: "Updated question",
+        question: "Updated question",
       };
       const prisma = MockPrisma.create({
         followUps: {
@@ -358,7 +356,7 @@ describe("QuestionService", () => {
       const result = await questionService.updateFollowUpAsync(1, {
         levelId: 2,
         description: "Updated description",
-        questionString: "Updated question",
+        question: "Updated question",
       });
 
       // Assert

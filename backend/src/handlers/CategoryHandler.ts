@@ -3,6 +3,7 @@ import { normalizeName } from "../utils/normalizeName.ts";
 import { Category } from "../types/category.ts";
 import { ICategoryService } from "../services/ICategoryService.ts";
 import { IValidationService } from "../services/IValidationService.ts";
+import { Messages } from "../constants.ts";
 
 export class CategoryHandler {
   private readonly categoriesService: ICategoryService;
@@ -42,7 +43,7 @@ export class CategoryHandler {
       const duplicateExists =
         await this.categoriesService.existsByNameAsync(normalizedName);
       if (duplicateExists) {
-        return c.json({ error: "Category name already exists." }, 409);
+        return c.json({ error: Messages.CategoryAlreadyExists }, 409);
       }
 
       const created = await this.categoriesService.createAsync({
@@ -51,7 +52,7 @@ export class CategoryHandler {
 
       return c.json(created, 201);
     } catch {
-      return c.json({ error: "Failed to create category" }, 500);
+      return c.json({ error: Messages.CreateCategoryFailed }, 500);
     }
   }
 
@@ -73,7 +74,7 @@ export class CategoryHandler {
 
     try {
       if (!(await this.categoriesService.existsAsync(categoryId))) {
-        return c.json({ error: "Category does not exist." }, 404);
+        return c.json({ error: Messages.CategoryNotFound }, 404);
       }
 
       const normalizedName = normalizeName(categoryName);
@@ -83,7 +84,7 @@ export class CategoryHandler {
       );
 
       if (duplicateExists) {
-        return c.json({ error: "Category name already exists." }, 409);
+        return c.json({ error: Messages.CategoryAlreadyExists }, 409);
       }
 
       const updated = await this.categoriesService.updateAsync(categoryId, {
@@ -92,7 +93,7 @@ export class CategoryHandler {
 
       return c.json(updated);
     } catch {
-      return c.json({ error: "Failed to update category" }, 500);
+      return c.json({ error: Messages.UpdateCategoryFailed }, 500);
     }
   }
 }

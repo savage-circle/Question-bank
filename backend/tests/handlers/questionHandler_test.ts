@@ -1,6 +1,4 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
@@ -9,6 +7,7 @@ import { IService } from "../../src/services/IService.ts";
 import { IQuestionService } from "../../src/services/IQuestionService.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
 import { createMockValidationService } from "../mocks/validationService.ts";
+import { Prisma } from "../../src/generated/prisma/client.ts";
 
 describe("QuestionHandler", () => {
   const mockQuestionService: IQuestionService = {
@@ -41,14 +40,14 @@ describe("QuestionHandler", () => {
         id: 1,
         levelId: 1,
         description: "Follow up",
-        questionString: "Next?",
+        question: "Next?",
       }),
     updateFollowUpAsync: () =>
       Promise.resolve({
         id: 1,
         levelId: 1,
         description: "Follow up",
-        questionString: "Next?",
+        question: "Next?",
       }),
     deleteFollowUpAsync: () => Promise.resolve(),
   };
@@ -81,7 +80,7 @@ describe("QuestionHandler", () => {
               id: 1,
               levelId: 1,
               description: "Follow-up description",
-              questionString: "What next?",
+              question: "What next?",
             },
           ],
         },
@@ -91,7 +90,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -113,7 +112,7 @@ describe("QuestionHandler", () => {
               id: 1,
               levelId: 1,
               description: "Follow-up description",
-              questionString: "What next?",
+              question: "What next?",
             },
           ],
         },
@@ -126,7 +125,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid categoryId" }) })
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: "Invalid categoryId",
+          }),
+        }),
       );
 
       const app = new Hono();
@@ -145,7 +149,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid topicId" }) })
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: "Invalid topicId",
+          }),
+        }),
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -163,7 +172,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        createMockValidationService({ validateGetQuestionInput: () => ({ isValid: false, error: "Invalid levelId" }) })
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: "Invalid levelId",
+          }),
+        }),
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -195,7 +209,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -224,7 +238,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        createMockValidationService({ validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) })
+        createMockValidationService({
+          validateQuestionUpsertInput: () => ({
+            isValid: false,
+            error: "Question description is required.",
+          }),
+        }),
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -251,7 +270,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -284,7 +303,7 @@ describe("QuestionHandler", () => {
           levelId: 1,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
           followUps: [],
-        })
+        }),
       );
       mockQuestionService.updateAsync = updateAsyncSpy;
       const existsAsyncSpy = spy(() => Promise.resolve(true));
@@ -293,7 +312,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -321,7 +340,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        createMockValidationService({ validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) })
+        createMockValidationService({
+          validateQuestionUpsertInput: () => ({
+            isValid: false,
+            error: "Question description is required.",
+          }),
+        }),
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -348,7 +372,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -378,7 +402,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -409,7 +433,7 @@ describe("QuestionHandler", () => {
           id: 1,
           levelId: 1,
           description: "Follow up",
-          questionString: "Next?",
+          question: "Next?",
         },
       ];
       mockQuestionService.existsAsync = () => Promise.resolve(true);
@@ -469,7 +493,7 @@ describe("QuestionHandler", () => {
         body: JSON.stringify({
           levelId: 1,
           description: "Follow up",
-          questionString: "Next?",
+          question: "Next?",
         }),
       });
 
@@ -486,14 +510,21 @@ describe("QuestionHandler", () => {
         mockQuestionService,
         mockTopicService,
         createMockValidationService({
-          validateFollowUpUpsertInput: () => ({ isValid: false, error: "Follow-up description is required." }),
+          validateFollowUpUpsertInput: () => ({
+            isValid: false,
+            error: "Follow-up description is required.",
+          }),
         }),
       );
       const app = new Hono();
       app.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
       const req = new Request("http://localhost/1/follow-ups", {
         method: "POST",
-        body: JSON.stringify({ levelId: 1, description: "", questionString: "Next?" }),
+        body: JSON.stringify({
+          levelId: 1,
+          description: "",
+          question: "Next?",
+        }),
       });
 
       // Act
@@ -518,7 +549,7 @@ describe("QuestionHandler", () => {
         body: JSON.stringify({
           levelId: 1,
           description: "Follow up",
-          questionString: "Next?",
+          question: "Next?",
         }),
       });
 
@@ -533,14 +564,13 @@ describe("QuestionHandler", () => {
   describe("updateQuestionFollowUp", () => {
     it("should update a follow-up", async () => {
       // Arrange
-      mockQuestionService.followUpExistsAsync = () => Promise.resolve(true);
       const updateFollowUpAsyncSpy = spy(() =>
         Promise.resolve({
           id: 1,
           levelId: 1,
           description: "Updated",
-          questionString: "Updated?",
-        })
+          question: "Updated?",
+        }),
       );
       mockQuestionService.updateFollowUpAsync = updateFollowUpAsyncSpy;
       const questionHandler = new QuestionHandler(
@@ -549,13 +579,16 @@ describe("QuestionHandler", () => {
         mockValidationService,
       );
       const app = new Hono();
-      app.put("/:id/follow-ups/:followUpId", questionHandler.updateQuestionFollowUp);
+      app.put(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.updateQuestionFollowUp,
+      );
       const req = new Request("http://localhost/1/follow-ups/1", {
         method: "PUT",
         body: JSON.stringify({
           levelId: 1,
           description: "Updated",
-          questionString: "Updated?",
+          question: "Updated?",
         }),
       });
 
@@ -570,20 +603,29 @@ describe("QuestionHandler", () => {
 
     it("should return 404 if follow-up does not exist", async () => {
       // Arrange
-      mockQuestionService.followUpExistsAsync = () => Promise.resolve(false);
+      mockQuestionService.updateFollowUpAsync = () =>
+        Promise.reject(
+          new Prisma.PrismaClientKnownRequestError("Record not found", {
+            code: "P2025",
+            clientVersion: "1.0",
+          }),
+        );
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
         mockValidationService,
       );
       const app = new Hono();
-      app.put("/:id/follow-ups/:followUpId", questionHandler.updateQuestionFollowUp);
+      app.put(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.updateQuestionFollowUp,
+      );
       const req = new Request("http://localhost/1/follow-ups/1", {
         method: "PUT",
         body: JSON.stringify({
           levelId: 1,
           description: "Updated",
-          questionString: "Updated?",
+          question: "Updated?",
         }),
       });
 
@@ -598,7 +640,6 @@ describe("QuestionHandler", () => {
   describe("deleteQuestionFollowUp", () => {
     it("should delete a follow-up", async () => {
       // Arrange
-      mockQuestionService.followUpExistsAsync = () => Promise.resolve(true);
       const deleteFollowUpAsyncSpy = spy(() => Promise.resolve());
       mockQuestionService.deleteFollowUpAsync = deleteFollowUpAsyncSpy;
       const questionHandler = new QuestionHandler(
@@ -607,7 +648,10 @@ describe("QuestionHandler", () => {
         mockValidationService,
       );
       const app = new Hono();
-      app.delete("/:id/follow-ups/:followUpId", questionHandler.deleteQuestionFollowUp);
+      app.delete(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.deleteQuestionFollowUp,
+      );
       const req = new Request("http://localhost/1/follow-ups/1", {
         method: "DELETE",
       });
@@ -623,14 +667,23 @@ describe("QuestionHandler", () => {
 
     it("should return 404 if follow-up does not exist", async () => {
       // Arrange
-      mockQuestionService.followUpExistsAsync = () => Promise.resolve(false);
+      mockQuestionService.deleteFollowUpAsync = () =>
+        Promise.reject(
+          new Prisma.PrismaClientKnownRequestError("Record not found", {
+            code: "P2025",
+            clientVersion: "1.0",
+          }),
+        );
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
         mockValidationService,
       );
       const app = new Hono();
-      app.delete("/:id/follow-ups/:followUpId", questionHandler.deleteQuestionFollowUp);
+      app.delete(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.deleteQuestionFollowUp,
+      );
       const req = new Request("http://localhost/1/follow-ups/1", {
         method: "DELETE",
       });

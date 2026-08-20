@@ -4,7 +4,7 @@ CREATE TABLE "FollowUps" (
     "questionId" INTEGER NOT NULL,
     "levelId" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
-    "questionString" TEXT NOT NULL,
+    "question" TEXT NOT NULL,
 
     CONSTRAINT "FollowUps_pkey" PRIMARY KEY ("id")
 );

@@ -6,43 +6,48 @@ const followUpSeedData = [
     questionDescription: "Explain the concept of polymorphism.",
     levelId: LevelType.EASY,
     description: "Can you compare runtime and compile-time polymorphism?",
-    questionString: "What is a simple real-world example of polymorphism?",
+    question: "What is a simple real-world example of polymorphism?",
   },
   {
     questionDescription: "What is encapsulation?",
     levelId: LevelType.EASY,
     description: "How does encapsulation improve maintainability?",
-    questionString: "Why is data hiding important in OOP?",
+    question: "Why is data hiding important in OOP?",
   },
   {
     questionDescription: "How does a hash map handle collisions?",
     levelId: LevelType.MEDIUM,
     description: "What are the trade-offs between chaining and probing?",
-    questionString: "How would you explain collision resolution to a beginner?",
+    question: "How would you explain collision resolution to a beginner?",
   },
   {
     questionDescription: "Solve for x: 2x + 3 = 7.",
     levelId: LevelType.EASY,
     description: "Can you show the step-by-step solution?",
-    questionString: "What is the value of x in this equation?",
+    question: "What is the value of x in this equation?",
   },
   {
     questionDescription: "Explain virtual inheritance and the diamond problem.",
     levelId: LevelType.HARD,
-    description: "What does the compiler generate differently for a virtual base class?",
-    questionString: "How would you demonstrate the diamond problem with a small class hierarchy?",
+    description:
+      "What does the compiler generate differently for a virtual base class?",
+    question:
+      "How would you demonstrate the diamond problem with a small class hierarchy?",
   },
   {
     questionDescription: "What is a stack?",
     levelId: LevelType.EASY,
     description: "Can you name real-world use cases for a stack?",
-    questionString: "How is a stack different from a queue?",
+    question: "How is a stack different from a queue?",
   },
   {
-    questionDescription: "Prove the quadratic formula by completing the square.",
+    questionDescription:
+      "Prove the quadratic formula by completing the square.",
     levelId: LevelType.HARD,
-    description: "What is the discriminant and what does it tell you about the roots?",
-    questionString: "Can you walk through completing the square for ax^2 + bx + c = 0?",
+    description:
+      "What is the discriminant and what does it tell you about the roots?",
+    question:
+      "Can you walk through completing the square for ax^2 + bx + c = 0?",
   },
 ];
 
@@ -72,7 +77,7 @@ export const seedFollowUps = async (prisma: PrismaClient) => {
     const existingFollowUp = await prisma.followUps.findFirst({
       where: {
         questionId,
-        questionString: item.questionString,
+        question: item.question,
       },
     });
 
@@ -82,7 +87,7 @@ export const seedFollowUps = async (prisma: PrismaClient) => {
           questionId,
           levelId: item.levelId,
           description: item.description,
-          questionString: item.questionString,
+          question: item.question,
         },
       });
     }

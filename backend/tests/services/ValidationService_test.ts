@@ -1,6 +1,4 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { ValidationService } from "../../src/services/ValidationService.ts";
 import LevelType from "../../src/enums/levelType.ts";
@@ -121,178 +119,317 @@ describe("ValidationService", () => {
 
   describe("validateQuestionUpsertInput", () => {
     it("should return valid for a valid request", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 1 });
+      const result = validationService.validateQuestionUpsertInput({
+        description: "Q1",
+        topicId: 1,
+        levelId: 1,
+      });
       assertEquals(result, { isValid: true });
     });
 
     it("should return invalid if description is empty", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "", topicId: 1, levelId: 1 });
-      assertEquals(result, { isValid: false, error: "Question description is required." });
+      const result = validationService.validateQuestionUpsertInput({
+        description: "",
+        topicId: 1,
+        levelId: 1,
+      });
+      assertEquals(result, {
+        isValid: false,
+        error: "Question description is required.",
+      });
     });
 
     it("should return invalid if topicId is not a positive integer", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 0, levelId: 1 });
+      const result = validationService.validateQuestionUpsertInput({
+        description: "Q1",
+        topicId: 0,
+        levelId: 1,
+      });
       assertEquals(result, { isValid: false, error: "Invalid topic id." });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
-      const result = validationService.validateQuestionUpsertInput({ description: "Q1", topicId: 1, levelId: 99 });
-      assertEquals(result, { isValid: false, error: "LevelId should be valid enum value" });
+      const result = validationService.validateQuestionUpsertInput({
+        description: "Q1",
+        topicId: 1,
+        levelId: 99,
+      });
+      assertEquals(result, {
+        isValid: false,
+        error: "LevelId should be valid enum value",
+      });
     });
   });
 
   describe("validateFollowUpUpsertInput", () => {
     it("should return valid for a valid request", () => {
-      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "Follow up", questionString: "Next?" });
+      const result = validationService.validateFollowUpUpsertInput({
+        levelId: 1,
+        description: "Follow up",
+        question: "Next?",
+      });
       assertEquals(result, { isValid: true });
     });
 
     it("should return invalid if description is empty", () => {
-      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "", questionString: "Next?" });
-      assertEquals(result, { isValid: false, error: "Follow-up description is required." });
+      const result = validationService.validateFollowUpUpsertInput({
+        levelId: 1,
+        description: "",
+        question: "Next?",
+      });
+      assertEquals(result, {
+        isValid: false,
+        error: "Follow-up description is required.",
+      });
     });
 
-    it("should return invalid if questionString is empty", () => {
-      const result = validationService.validateFollowUpUpsertInput({ levelId: 1, description: "Follow up", questionString: "" });
-      assertEquals(result, { isValid: false, error: "Follow-up question is required." });
+    it("should return invalid if question is empty", () => {
+      const result = validationService.validateFollowUpUpsertInput({
+        levelId: 1,
+        description: "Follow up",
+        question: "",
+      });
+      assertEquals(result, {
+        isValid: false,
+        error: "Follow-up question is required.",
+      });
     });
 
     it("should return invalid if levelId is not a valid enum value", () => {
-      const result = validationService.validateFollowUpUpsertInput({ levelId: 99, description: "Follow up", questionString: "Next?" });
-      assertEquals(result, { isValid: false, error: "LevelId should be valid enum value" });
+      const result = validationService.validateFollowUpUpsertInput({
+        levelId: 99,
+        description: "Follow up",
+        question: "Next?",
+      });
+      assertEquals(result, {
+        isValid: false,
+        error: "LevelId should be valid enum value",
+      });
     });
   });
 
   describe("validateGetQuestionInput", () => {
     it("should return valid when all params are undefined", () => {
-      assertEquals(validationService.validateGetQuestionInput(undefined, undefined, undefined), { isValid: true });
+      assertEquals(
+        validationService.validateGetQuestionInput(
+          undefined,
+          undefined,
+          undefined,
+        ),
+        { isValid: true },
+      );
     });
 
     it("should return valid when all params are valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "2", "1"), { isValid: true });
+      assertEquals(validationService.validateGetQuestionInput("1", "2", "1"), {
+        isValid: true,
+      });
     });
 
     it("should return valid when only categoryId is provided and valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", undefined, undefined), { isValid: true });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", undefined, undefined),
+        { isValid: true },
+      );
     });
 
     it("should return invalid if categoryId is zero", () => {
-      assertEquals(validationService.validateGetQuestionInput("0", undefined, undefined), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("0", undefined, undefined),
+        { isValid: false, error: "Invalid categoryId" },
+      );
     });
 
     it("should return invalid if categoryId is negative", () => {
-      assertEquals(validationService.validateGetQuestionInput("-1", undefined, undefined), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("-1", undefined, undefined),
+        { isValid: false, error: "Invalid categoryId" },
+      );
     });
 
     it("should return invalid if categoryId is non-numeric", () => {
-      assertEquals(validationService.validateGetQuestionInput("abc", undefined, undefined), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("abc", undefined, undefined),
+        { isValid: false, error: "Invalid categoryId" },
+      );
     });
 
     it("should return invalid if topicId is zero when categoryId is valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "0", undefined), { isValid: false, error: "Invalid topicId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", "0", undefined),
+        { isValid: false, error: "Invalid topicId" },
+      );
     });
 
     it("should return invalid if topicId is negative when categoryId is valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "-1", undefined), { isValid: false, error: "Invalid topicId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", "-1", undefined),
+        { isValid: false, error: "Invalid topicId" },
+      );
     });
 
     it("should return invalid if topicId is non-numeric when categoryId is valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "abc", undefined), { isValid: false, error: "Invalid topicId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", "abc", undefined),
+        { isValid: false, error: "Invalid topicId" },
+      );
     });
 
     it("should return invalid if levelId is zero when categoryId and topicId are valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "2", "0"), { isValid: false, error: "Invalid levelId" });
+      assertEquals(validationService.validateGetQuestionInput("1", "2", "0"), {
+        isValid: false,
+        error: "Invalid levelId",
+      });
     });
 
     it("should return invalid if levelId is negative when categoryId and topicId are valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "2", "-1"), { isValid: false, error: "Invalid levelId" });
+      assertEquals(validationService.validateGetQuestionInput("1", "2", "-1"), {
+        isValid: false,
+        error: "Invalid levelId",
+      });
     });
 
     it("should return invalid if levelId is non-numeric when categoryId and topicId are valid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "2", "abc"), { isValid: false, error: "Invalid levelId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", "2", "abc"),
+        { isValid: false, error: "Invalid levelId" },
+      );
     });
 
     it("should return categoryId error first when both categoryId and topicId are invalid", () => {
-      assertEquals(validationService.validateGetQuestionInput("abc", "abc", undefined), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("abc", "abc", undefined),
+        { isValid: false, error: "Invalid categoryId" },
+      );
     });
 
     it("should return categoryId error first when all params are invalid", () => {
-      assertEquals(validationService.validateGetQuestionInput("abc", "abc", "abc"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("abc", "abc", "abc"),
+        { isValid: false, error: "Invalid categoryId" },
+      );
     });
 
     it("should return topicId error first when categoryId is valid but topicId and levelId are invalid", () => {
-      assertEquals(validationService.validateGetQuestionInput("1", "abc", "abc"), { isValid: false, error: "Invalid topicId" });
+      assertEquals(
+        validationService.validateGetQuestionInput("1", "abc", "abc"),
+        { isValid: false, error: "Invalid topicId" },
+      );
     });
   });
 
   describe("validateGetTopicsInput", () => {
     it("should return valid when categoryId is undefined", () => {
-      assertEquals(validationService.validateGetTopicsInput(undefined), { isValid: true });
+      assertEquals(validationService.validateGetTopicsInput(undefined), {
+        isValid: true,
+      });
     });
 
     it("should return valid when categoryId is a valid positive integer", () => {
-      assertEquals(validationService.validateGetTopicsInput("1"), { isValid: true });
+      assertEquals(validationService.validateGetTopicsInput("1"), {
+        isValid: true,
+      });
     });
 
     it("should return invalid when categoryId is zero", () => {
-      assertEquals(validationService.validateGetTopicsInput("0"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateGetTopicsInput("0"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
 
     it("should return invalid when categoryId is negative", () => {
-      assertEquals(validationService.validateGetTopicsInput("-1"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateGetTopicsInput("-1"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
 
     it("should return invalid when categoryId is non-numeric", () => {
-      assertEquals(validationService.validateGetTopicsInput("abc"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateGetTopicsInput("abc"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
   });
 
   describe("validateAddTopicInput", () => {
     it("should return valid for a valid name and categoryId", () => {
-      assertEquals(validationService.validateAddTopicInput("Topic 1", "1"), { isValid: true });
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "1"), {
+        isValid: true,
+      });
     });
 
     it("should return valid when categoryId is undefined", () => {
-      assertEquals(validationService.validateAddTopicInput("Topic 1", undefined), { isValid: true });
+      assertEquals(
+        validationService.validateAddTopicInput("Topic 1", undefined),
+        { isValid: true },
+      );
     });
 
     it("should return invalid when categoryId is zero", () => {
-      assertEquals(validationService.validateAddTopicInput("Topic 1", "0"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "0"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
 
     it("should return invalid when categoryId is negative", () => {
-      assertEquals(validationService.validateAddTopicInput("Topic 1", "-1"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "-1"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
 
     it("should return invalid when categoryId is non-numeric", () => {
-      assertEquals(validationService.validateAddTopicInput("Topic 1", "abc"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateAddTopicInput("Topic 1", "abc"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
 
     it("should return invalid when name is empty", () => {
-      assertEquals(validationService.validateAddTopicInput("", "1"), { isValid: false, error: "Invalid topic name" });
+      assertEquals(validationService.validateAddTopicInput("", "1"), {
+        isValid: false,
+        error: "Invalid topic name",
+      });
     });
 
     it("should return invalid when name is whitespace only", () => {
-      assertEquals(validationService.validateAddTopicInput("   ", "1"), { isValid: false, error: "Invalid topic name" });
+      assertEquals(validationService.validateAddTopicInput("   ", "1"), {
+        isValid: false,
+        error: "Invalid topic name",
+      });
     });
 
     it("should return categoryId error first when both are invalid", () => {
-      assertEquals(validationService.validateAddTopicInput("", "abc"), { isValid: false, error: "Invalid categoryId" });
+      assertEquals(validationService.validateAddTopicInput("", "abc"), {
+        isValid: false,
+        error: "Invalid categoryId",
+      });
     });
   });
 
   describe("validateCreateCategoryInput", () => {
     it("should return valid for a non-empty name", () => {
-      assertEquals(validationService.validateCreateCategoryInput("Mathematics"), { isValid: true });
+      assertEquals(
+        validationService.validateCreateCategoryInput("Mathematics"),
+        { isValid: true },
+      );
     });
 
     it("should return invalid when name is empty", () => {
-      assertEquals(validationService.validateCreateCategoryInput(""), { isValid: false, error: "Category name is required." });
+      assertEquals(validationService.validateCreateCategoryInput(""), {
+        isValid: false,
+        error: "Category name is required.",
+      });
     });
 
     it("should return invalid when name is whitespace only", () => {
-      assertEquals(validationService.validateCreateCategoryInput("   "), { isValid: false, error: "Category name is required." });
+      assertEquals(validationService.validateCreateCategoryInput("   "), {
+        isValid: false,
+        error: "Category name is required.",
+      });
     });
   });
-}
-);
+});
