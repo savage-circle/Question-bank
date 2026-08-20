@@ -7,12 +7,12 @@ const Header = () => {
       <Box className=" bg-(--color-primary) p-3 pt-2 rounded-2xl">
         <MenuBookSharpIcon className="text-white" />
       </Box>
-      <header
+      <p
         className="text-(--color-primary) text-2xl font-bold"
         data-testid="header"
       >
         Question Bank
-      </header>
+      </p>
     </Box>
   );
 };
