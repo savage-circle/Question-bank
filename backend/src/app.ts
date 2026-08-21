@@ -1,10 +1,12 @@
 import { Context, Hono } from "@hono/hono";
 import { logger } from "@hono/logger";
+import { swaggerUI } from "@hono/swagger-ui";
 import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
 import { Handlers } from "./types/handler.ts";
+import { buildOpenApiSpec } from "./docs/openapi.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
@@ -43,8 +45,14 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
 
   questionApp.get("/:id/follow-ups", questionHandler.getQuestionFollowUps);
   questionApp.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
-  questionApp.put("/:id/follow-ups/:followUpId", questionHandler.updateQuestionFollowUp);
-  questionApp.delete("/:id/follow-ups/:followUpId", questionHandler.deleteQuestionFollowUp);
+  questionApp.put(
+    "/:id/follow-ups/:followUpId",
+    questionHandler.updateQuestionFollowUp,
+  );
+  questionApp.delete(
+    "/:id/follow-ups/:followUpId",
+    questionHandler.deleteQuestionFollowUp,
+  );
 
   return questionApp;
 };
@@ -69,6 +77,13 @@ export const createApp = (handlers: Handlers) => {
 
   // Register Routes
   app.route("/api", createApiRoutes(handlers));
+
+  // API Documentation (auto-generated from the routes registered above)
+  app.get("/api-docs.json", (c: Context) => c.json(buildOpenApiSpec(app)));
+  app.get(
+    "/api-docs",
+    swaggerUI({ url: "/api-docs.json", title: "Question Bank API Docs" }),
+  );
 
   return app;
 };
