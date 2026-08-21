@@ -1,6 +1,4 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
@@ -8,7 +6,8 @@ import { TopicHandler } from "../../src/handlers/TopicHandler.ts";
 import { IService } from "../../src/services/IService.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
 import { Category, CreateCategoryDTO } from "../../src/types/category.ts";
-import { IValidationService } from "../../src/services/IValidationService.ts";
+import { createMockValidationService } from "../mocks/validationService.ts";
+import { Messages } from "../../src/constants.ts";
 
 describe("TopicHandler", () => {
   const mockTopicService: IService<Topic, CreateTopicDTO> = {
@@ -31,19 +30,7 @@ describe("TopicHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
-  const mockValidationService: IValidationService = {
-    isValidWhenProvided: () => true,
-    isNonEmptyString: () => true,
-    isValidPositiveInteger: () => true,
-    isValidEnumValue: () => true,
-    isStringArray: () => true,
-    validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
-    validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
-    validateQuestionUpsertInput: () => ({ isValid: true }),
-    validateGetQuestionInput: () => ({ isValid: true }),
-    validateGetTopicsInput: () => ({ isValid: true }),
-    validateAddTopicInput: () => ({ isValid: true }),
-  };
+  const mockValidationService = createMockValidationService();
 
   describe("getTopics", () => {
     it("should return all topics", async () => {
@@ -100,7 +87,12 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, validateGetTopicsInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
+        createMockValidationService({
+          validateGetTopicsInput: () => ({
+            isValid: false,
+            error: Messages.InvalidCategoryIdParam,
+          }),
+        }),
       );
       const app = new Hono();
       app.get("/", topicHandler.getTopics);
@@ -174,7 +166,12 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid categoryId" }) },
+        createMockValidationService({
+          validateAddTopicInput: () => ({
+            isValid: false,
+            error: Messages.InvalidCategoryIdParam,
+          }),
+        }),
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -195,7 +192,12 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, validateAddTopicInput: () => ({ isValid: false, error: "Invalid topic name" }) },
+        createMockValidationService({
+          validateAddTopicInput: () => ({
+            isValid: false,
+            error: Messages.InvalidTopicName,
+          }),
+        }),
       );
       const app = new Hono();
       app.post("/", topicHandler.addTopic);
@@ -240,7 +242,7 @@ describe("TopicHandler", () => {
       const existsAsyncSpy = spy(() => Promise.resolve(true));
       mockCategoryService.existsAsync = existsAsyncSpy;
       const getAllAsyncSpy = spy(() =>
-        Promise.resolve([{ id: 1, name: "Topic 1", categoryId: 1 }])
+        Promise.resolve([{ id: 1, name: "Topic 1", categoryId: 1 }]),
       );
       mockTopicService.getAllAsync = getAllAsyncSpy;
       const topicHandler = new TopicHandler(
@@ -288,7 +290,7 @@ describe("TopicHandler", () => {
       const result = await res.json();
 
       // Assert
-      assertEquals(result, { message: "Topic deleted successfully." });
+      assertEquals(result, { message: Messages.TopicDeleted });
       assertEquals(deleteAsyncSpy.calls.length, 1);
       assertEquals(existsAsyncSpy.calls.length, 1);
     });
@@ -298,7 +300,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        { ...mockValidationService, isValidPositiveInteger: () => false }
+        createMockValidationService({ isValidPositiveInteger: () => false }),
       );
       const app = new Hono();
       app.delete("/:id", topicHandler.deleteTopic);
@@ -320,7 +322,7 @@ describe("TopicHandler", () => {
       const topicHandler = new TopicHandler(
         mockTopicService,
         mockCategoryService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.delete("/:id", topicHandler.deleteTopic);

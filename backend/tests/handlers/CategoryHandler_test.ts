@@ -1,12 +1,11 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
 import { CategoryHandler } from "../../src/handlers/CategoryHandler.ts";
 import { ICategoryService } from "../../src/services/ICategoryService.ts";
-import { IValidationService } from "../../src/services/IValidationService.ts";
+import { createMockValidationService } from "../mocks/validationService.ts";
+import { Messages } from "../../src/constants.ts";
 describe("CategoryHandler", () => {
   const mockCategoryService: ICategoryService = {
     getAllAsync: () => Promise.resolve([]),
@@ -18,19 +17,7 @@ describe("CategoryHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
-  const mockValidationService: IValidationService = {
-    isValidWhenProvided: () => true,
-    isNonEmptyString: () => true,
-    isValidPositiveInteger: () => true,
-    isValidEnumValue: () => true,
-    isStringArray: () => true,
-    validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
-    validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
-    validateQuestionUpsertInput: () => ({ isValid: true }),
-    validateGetQuestionInput: () => ({ isValid: true }),
-    validateGetTopicsInput: () => ({ isValid: true }),
-    validateAddTopicInput: () => ({ isValid: true }),
-  };
+  const mockValidationService = createMockValidationService();
 
   describe("getCategories", () => {
     it("should return all categories", async () => {
@@ -88,13 +75,12 @@ describe("CategoryHandler", () => {
     it("should return 400 if categoryName is empty", async () => {
       const categoryHandler = new CategoryHandler(
         mockCategoryService,
-        {
-          ...mockValidationService,
-          validateCreateCategoryInput: (_categoryName: string) => ({
+        createMockValidationService({
+          validateCreateCategoryInput: () => ({
             isValid: false,
-            error: "Category name is required.",
+            error: Messages.CategoryNameRequired,
           }),
-        },
+        }),
       );
       const app = new Hono();
       app.post("/", categoryHandler.createCategory);
@@ -109,7 +95,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 400);
-      assertEquals(result, { error: "Category name is required." });
+      assertEquals(result, { error: Messages.CategoryNameRequired });
     });
 
     it("should return 409 if category name already exists", async () => {
@@ -132,7 +118,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 409);
-      assertEquals(result, { error: "Category name already exists." });
+      assertEquals(result, { error: Messages.CategoryAlreadyExists });
     });
   });
 
@@ -167,13 +153,12 @@ describe("CategoryHandler", () => {
     it("should return 400 if id is invalid", async () => {
       const categoryHandler = new CategoryHandler(
         mockCategoryService,
-        {
-          ...mockValidationService,
-          validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({
+        createMockValidationService({
+          validateUpdateCategoryInput: () => ({
             isValid: false,
-            error: "Invalid category id.",
+            error: Messages.InvalidCategoryId,
           }),
-        },
+        }),
       );
       const app = new Hono();
       app.put("/:id", categoryHandler.updateCategory);
@@ -188,19 +173,18 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 400);
-      assertEquals(result, { error: "Invalid category id." });
+      assertEquals(result, { error: Messages.InvalidCategoryId });
     });
 
     it("should return 400 if categoryName is empty", async () => {
       const categoryHandler = new CategoryHandler(
         mockCategoryService,
-        {
-          ...mockValidationService,
-          validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({
+        createMockValidationService({
+          validateUpdateCategoryInput: () => ({
             isValid: false,
-            error: "Category name is required.",
+            error: Messages.CategoryNameRequired,
           }),
-        },
+        }),
       );
       const app = new Hono();
       app.put("/:id", categoryHandler.updateCategory);
@@ -238,7 +222,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 404);
-      assertEquals(result, { error: "Category does not exist." });
+      assertEquals(result, { error: Messages.CategoryNotFound });
     });
 
     it("should return 409 if category name already exists", async () => {
@@ -262,7 +246,7 @@ describe("CategoryHandler", () => {
       const result = await res.json();
 
       assertEquals(res.status, 409);
-      assertEquals(result, { error: "Category name already exists." });
+      assertEquals(result, { error: Messages.CategoryAlreadyExists });
     });
   });
 });

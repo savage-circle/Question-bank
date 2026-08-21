@@ -18,50 +18,36 @@ export const seedQuestions = async (prisma: PrismaClient) => {
         description: "Explain the concept of polymorphism.",
         topicId: oops.id,
         levelId: LevelType.MEDIUM,
-        extensions: JSON.stringify([
-          "Provide a real-world example.",
-          "Compare runtime and compile-time polymorphism.",
-        ]),
       },
       {
         description: "What is encapsulation?",
         topicId: oops.id,
         levelId: LevelType.EASY,
-        extensions: null,
       },
       {
         description: "Explain virtual inheritance and the diamond problem.",
         topicId: oops.id,
         levelId: LevelType.HARD,
-        extensions: JSON.stringify(["How do virtual base classes solve it?"]),
       },
       {
         description: "How does a hash map handle collisions?",
         topicId: dataStructures.id,
         levelId: LevelType.MEDIUM,
-        extensions: JSON.stringify([
-          "Compare separate chaining and open addressing.",
-        ]),
       },
       {
         description: "What is a stack?",
         topicId: dataStructures.id,
         levelId: LevelType.EASY,
-        extensions: null,
       },
       {
         description: "Solve for x: 2x + 3 = 7.",
         topicId: algebra.id,
         levelId: LevelType.EASY,
-        extensions: null,
       },
       {
         description: "Prove the quadratic formula by completing the square.",
         topicId: algebra.id,
         levelId: LevelType.HARD,
-        extensions: JSON.stringify([
-          "State the discriminant and what it tells you.",
-        ]),
       },
     ],
     skipDuplicates: true,

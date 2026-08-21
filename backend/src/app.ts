@@ -4,7 +4,7 @@ import { CategoryHandler } from "./handlers/CategoryHandler.ts";
 import { LevelHandler } from "./handlers/LevelHandler.ts";
 import { TopicHandler } from "./handlers/TopicHandler.ts";
 import { QuestionHandler } from "./handlers/QuestionHandler.ts";
-import {Handlers} from "./types/handler.ts";
+import { Handlers } from "./types/handler.ts";
 
 const createLevelRoutes = (levelsHandler: LevelHandler) => {
   const levelsApp = new Hono();
@@ -40,6 +40,11 @@ const createQuestionRoute = (questionHandler: QuestionHandler) => {
   questionApp.get("/", questionHandler.getQuestions);
   questionApp.post("/", questionHandler.addQuestion);
   questionApp.put("/:id", questionHandler.updateQuestion);
+
+  questionApp.get("/:id/follow-ups", questionHandler.getQuestionFollowUps);
+  questionApp.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
+  questionApp.put("/:id/follow-ups/:followUpId", questionHandler.updateQuestionFollowUp);
+  questionApp.delete("/:id/follow-ups/:followUpId", questionHandler.deleteQuestionFollowUp);
 
   return questionApp;
 };

@@ -8,7 +8,7 @@ import { CategoryService } from "./src/services/CategoryService.ts";
 import { TopicService } from "./src/services/TopicService.ts";
 import { QuestionService } from "./src/services/QuestionService.ts";
 import { Handlers } from "./src/types/handler.ts";
-import {ValidationService} from "./src/services/ValidationService.ts";
+import { ValidationService } from "./src/services/ValidationService.ts";
 
 export const getHandlers = (): Handlers => {
   const levelsHandler = new LevelHandler();
@@ -52,4 +52,3 @@ const main = () => {
 };
 
 main();
-

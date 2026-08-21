@@ -1,14 +1,16 @@
+import { FollowUpSummary } from "./followUp.ts";
+
 export type Question = {
   id: number;
   description: string;
   topicId: number;
   levelId: number;
-  extensions: string | null;
   topic: {
     id: number;
     name: string;
     categoryId: number;
   };
+  followUps: FollowUpSummary[];
 };
 
 export type QuestionResponse = {
@@ -16,12 +18,11 @@ export type QuestionResponse = {
   description: string;
   topicName: string;
   levelName: string;
-  extensions: string[];
+  followUps: FollowUpSummary[];
 };
 
 export type CreateQuestionDTO = {
   description: string;
   topicId: number;
   levelId: number;
-  extensions: string[] | null;
 }

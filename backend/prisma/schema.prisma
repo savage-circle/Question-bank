@@ -35,7 +35,17 @@ model Question {
   description String
   topicId     Int
   levelId     Int
-  extensions  String?
 
-  topic Topic @relation(fields: [topicId], references: [id])
+  topic     Topic      @relation(fields: [topicId], references: [id])
+  followUps FollowUps[]
+}
+
+model FollowUps {
+  id             Int    @id @default(autoincrement())
+  questionId     Int
+  levelId        Int
+  description    String
+  question       String
+
+  parentQuestion Question @relation(fields: [questionId], references: [id])
 }

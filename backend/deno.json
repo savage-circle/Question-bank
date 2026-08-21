@@ -13,7 +13,8 @@
     "db:generate": "deno run -A --env-file=.env npm:prisma generate",
     "db:migrate": "deno run -A --env-file=.env npm:prisma migrate dev",
     "db:apply": "deno run -A --env-file=.env npm:prisma migrate deploy",
-    "db:seed": "deno run -A --env-file=.env ./prisma/seed.ts"
+    "db:seed": "deno run -A --env-file=.env ./prisma/seed.ts",
+    "db:seed:reset": "deno run -A --env-file=.env ./prisma/seed.ts --reset"
   },
   "imports": {
     "@hono/hono": "jsr:@hono/hono@^4.12.23",

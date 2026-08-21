@@ -167,3 +167,17 @@ If you have existing migrations that need to be applied, for example when we pul
 ```bash
 deno task db:apply
 ```
+
+**Seed the Database:**
+To populate the database with sample categories, topics, questions, and follow-ups:
+
+```bash
+deno task db:seed
+```
+
+**Reset & Reseed the Database:**
+Running `db:seed` more than once can create duplicate rows. To wipe all seeded data (follow-ups, questions, topics, categories) and reseed from a clean slate:
+
+```bash
+deno task db:seed:reset
+```

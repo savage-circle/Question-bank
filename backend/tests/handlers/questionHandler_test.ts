@@ -1,17 +1,17 @@
-import {
-  assertEquals,
-} from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
 import { spy } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { Hono } from "@hono/hono";
 import { QuestionHandler } from "../../src/handlers/QuestionHandler.ts";
 import { IService } from "../../src/services/IService.ts";
-import { Question, CreateQuestionDTO } from "../../src/types/question.ts";
+import { IQuestionService } from "../../src/services/IQuestionService.ts";
 import { Topic, CreateTopicDTO } from "../../src/types/topic.ts";
-import { IValidationService } from "../../src/services/IValidationService.ts";
+import { createMockValidationService } from "../mocks/validationService.ts";
+import { Prisma } from "../../src/generated/prisma/client.ts";
+import { Messages } from "../../src/constants.ts";
 
 describe("QuestionHandler", () => {
-  const mockQuestionService: IService<Question, CreateQuestionDTO> = {
+  const mockQuestionService: IQuestionService = {
     getAllAsync: () => Promise.resolve([]),
     getByIdAsync: () => Promise.resolve(null),
     existsAsync: () => Promise.resolve(false),
@@ -21,8 +21,8 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       }),
     updateAsync: () =>
       Promise.resolve({
@@ -30,10 +30,27 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       }),
     deleteAsync: () => Promise.resolve(),
+    getFollowUpsAsync: () => Promise.resolve([]),
+    followUpExistsAsync: () => Promise.resolve(true),
+    addFollowUpAsync: () =>
+      Promise.resolve({
+        id: 1,
+        levelId: 1,
+        description: "Follow up",
+        question: "Next?",
+      }),
+    updateFollowUpAsync: () =>
+      Promise.resolve({
+        id: 1,
+        levelId: 1,
+        description: "Follow up",
+        question: "Next?",
+      }),
+    deleteFollowUpAsync: () => Promise.resolve(),
   };
 
   const mockTopicService: IService<Topic, CreateTopicDTO> = {
@@ -47,19 +64,7 @@ describe("QuestionHandler", () => {
     deleteAsync: () => Promise.resolve(),
   };
 
-  const mockValidationService: IValidationService = {
-    isValidWhenProvided: () => true,
-    isNonEmptyString: () => true,
-    isValidPositiveInteger: () => true,
-    isValidEnumValue: () => true,
-    isStringArray: () => true,
-    validateCreateCategoryInput: (_categoryName: string) => ({ isValid: true }),
-    validateUpdateCategoryInput: (_id: string | undefined, _categoryName: string) => ({ isValid: true }),
-    validateQuestionUpsertInput: () => ({ isValid: true }),
-    validateGetQuestionInput: () => ({ isValid: true }),
-    validateGetTopicsInput: () => ({ isValid: true }),
-    validateAddTopicInput: () => ({ isValid: true }),
-  };
+  const mockValidationService = createMockValidationService();
 
   describe("getQuestions", () => {
     it("should return all questions", async () => {
@@ -70,8 +75,15 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
+          followUps: [
+            {
+              id: 1,
+              levelId: 1,
+              description: "Follow-up description",
+              question: "What next?",
+            },
+          ],
         },
       ];
       const getAllAsyncSpy = spy(() => Promise.resolve(questions));
@@ -79,7 +91,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -96,7 +108,14 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicName: "Topic 1",
           levelName: "EASY",
-          extensions: [],
+          followUps: [
+            {
+              id: 1,
+              levelId: 1,
+              description: "Follow-up description",
+              question: "What next?",
+            },
+          ],
         },
       ]);
       assertEquals(getAllAsyncSpy.calls.length, 1);
@@ -107,7 +126,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid categoryId" }) }
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: Messages.InvalidCategoryIdParam,
+          }),
+        }),
       );
 
       const app = new Hono();
@@ -126,7 +150,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid topicId" }) }
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: Messages.InvalidTopicIdParam,
+          }),
+        }),
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -144,7 +173,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateGetQuestionInput: () => ({ isValid: false, error: "Invalid levelId" }) }
+        createMockValidationService({
+          validateGetQuestionInput: () => ({
+            isValid: false,
+            error: Messages.InvalidLevelIdParam,
+          }),
+        }),
       );
       const app = new Hono();
       app.get("/", questionHandler.getQuestions);
@@ -166,8 +200,8 @@ describe("QuestionHandler", () => {
         description: "Question 1",
         topicId: 1,
         levelId: 1,
-        extensions: null,
         topic: { id: 1, name: "Topic 1", categoryId: 1 },
+        followUps: [],
       };
       const createAsyncSpy = spy(() => Promise.resolve(question));
       mockQuestionService.createAsync = createAsyncSpy;
@@ -176,7 +210,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -186,7 +220,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -206,7 +239,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
+        createMockValidationService({
+          validateQuestionUpsertInput: () => ({
+            isValid: false,
+            error: Messages.QuestionDescriptionRequired,
+          }),
+        }),
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -216,7 +254,6 @@ describe("QuestionHandler", () => {
           description: "",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -234,7 +271,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.post("/", questionHandler.addQuestion);
@@ -244,7 +281,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -266,9 +302,9 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: null,
           topic: { id: 1, name: "Topic 1", categoryId: 1 },
-        })
+          followUps: [],
+        }),
       );
       mockQuestionService.updateAsync = updateAsyncSpy;
       const existsAsyncSpy = spy(() => Promise.resolve(true));
@@ -277,7 +313,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -287,7 +323,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -296,7 +331,7 @@ describe("QuestionHandler", () => {
       const result = await res.json();
 
       // Assert
-      assertEquals(result, { message: "Question updated successfully." });
+      assertEquals(result, { message: Messages.QuestionUpdated });
       assertEquals(updateAsyncSpy.calls.length, 1);
       assertEquals(existsAsyncSpy.calls.length, 2);
     });
@@ -306,7 +341,12 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        { ...mockValidationService, validateQuestionUpsertInput: () => ({ isValid: false, error: "Question description is required." }) }
+        createMockValidationService({
+          validateQuestionUpsertInput: () => ({
+            isValid: false,
+            error: Messages.QuestionDescriptionRequired,
+          }),
+        }),
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -316,7 +356,6 @@ describe("QuestionHandler", () => {
           description: "",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -334,7 +373,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -344,7 +383,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -365,7 +403,7 @@ describe("QuestionHandler", () => {
       const questionHandler = new QuestionHandler(
         mockQuestionService,
         mockTopicService,
-        mockValidationService
+        mockValidationService,
       );
       const app = new Hono();
       app.put("/:id", questionHandler.updateQuestion);
@@ -375,7 +413,6 @@ describe("QuestionHandler", () => {
           description: "Question 1",
           topicId: 1,
           levelId: 1,
-          extensions: [],
         }),
       });
 
@@ -386,6 +423,277 @@ describe("QuestionHandler", () => {
       assertEquals(res.status, 404);
       assertEquals(questionExistsAsyncSpy.calls.length, 1);
       assertEquals(topicExistsAsyncSpy.calls.length, 1);
+    });
+  });
+
+  describe("getQuestionFollowUps", () => {
+    it("should return follow-ups for a question", async () => {
+      // Arrange
+      const followUps = [
+        {
+          id: 1,
+          levelId: 1,
+          description: "Follow up",
+          question: "Next?",
+        },
+      ];
+      mockQuestionService.existsAsync = () => Promise.resolve(true);
+      const getFollowUpsAsyncSpy = spy(() => Promise.resolve(followUps));
+      mockQuestionService.getFollowUpsAsync = getFollowUpsAsyncSpy;
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.get("/:id/follow-ups", questionHandler.getQuestionFollowUps);
+      const req = new Request("http://localhost/1/follow-ups");
+
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
+
+      // Assert
+      assertEquals(result, followUps);
+      assertEquals(getFollowUpsAsyncSpy.calls.length, 1);
+    });
+
+    it("should return 404 if question does not exist", async () => {
+      // Arrange
+      mockQuestionService.existsAsync = () => Promise.resolve(false);
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.get("/:id/follow-ups", questionHandler.getQuestionFollowUps);
+      const req = new Request("http://localhost/1/follow-ups");
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 404);
+    });
+  });
+
+  describe("addQuestionFollowUp", () => {
+    it("should create a follow-up", async () => {
+      // Arrange
+      mockQuestionService.existsAsync = () => Promise.resolve(true);
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
+      const req = new Request("http://localhost/1/follow-ups", {
+        method: "POST",
+        body: JSON.stringify({
+          levelId: 1,
+          description: "Follow up",
+          question: "Next?",
+        }),
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 201);
+    });
+
+    it("should return 400 if validation fails", async () => {
+      // Arrange
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        createMockValidationService({
+          validateFollowUpUpsertInput: () => ({
+            isValid: false,
+            error: Messages.FollowUpDescriptionRequired,
+          }),
+        }),
+      );
+      const app = new Hono();
+      app.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
+      const req = new Request("http://localhost/1/follow-ups", {
+        method: "POST",
+        body: JSON.stringify({
+          levelId: 1,
+          description: "",
+          question: "Next?",
+        }),
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 400);
+    });
+
+    it("should return 404 when question does not exist", async () => {
+      // Arrange
+      mockQuestionService.existsAsync = () => Promise.resolve(false);
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.post("/:id/follow-ups", questionHandler.addQuestionFollowUp);
+      const req = new Request("http://localhost/1/follow-ups", {
+        method: "POST",
+        body: JSON.stringify({
+          levelId: 1,
+          description: "Follow up",
+          question: "Next?",
+        }),
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 404);
+    });
+  });
+
+  describe("updateQuestionFollowUp", () => {
+    it("should update a follow-up", async () => {
+      // Arrange
+      const updateFollowUpAsyncSpy = spy(() =>
+        Promise.resolve({
+          id: 1,
+          levelId: 1,
+          description: "Updated",
+          question: "Updated?",
+        }),
+      );
+      mockQuestionService.updateFollowUpAsync = updateFollowUpAsyncSpy;
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.put(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.updateQuestionFollowUp,
+      );
+      const req = new Request("http://localhost/1/follow-ups/1", {
+        method: "PUT",
+        body: JSON.stringify({
+          levelId: 1,
+          description: "Updated",
+          question: "Updated?",
+        }),
+      });
+
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
+
+      // Assert
+      assertEquals(result, { message: Messages.FollowUpUpdated });
+      assertEquals(updateFollowUpAsyncSpy.calls.length, 1);
+    });
+
+    it("should return 404 if follow-up does not exist", async () => {
+      // Arrange
+      mockQuestionService.updateFollowUpAsync = () =>
+        Promise.reject(
+          new Prisma.PrismaClientKnownRequestError("Record not found", {
+            code: "P2025",
+            clientVersion: "1.0",
+          }),
+        );
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.put(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.updateQuestionFollowUp,
+      );
+      const req = new Request("http://localhost/1/follow-ups/1", {
+        method: "PUT",
+        body: JSON.stringify({
+          levelId: 1,
+          description: "Updated",
+          question: "Updated?",
+        }),
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 404);
+    });
+  });
+
+  describe("deleteQuestionFollowUp", () => {
+    it("should delete a follow-up", async () => {
+      // Arrange
+      const deleteFollowUpAsyncSpy = spy(() => Promise.resolve());
+      mockQuestionService.deleteFollowUpAsync = deleteFollowUpAsyncSpy;
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.delete(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.deleteQuestionFollowUp,
+      );
+      const req = new Request("http://localhost/1/follow-ups/1", {
+        method: "DELETE",
+      });
+
+      // Act
+      const res = await app.request(req);
+      const result = await res.json();
+
+      // Assert
+      assertEquals(result, { message: Messages.FollowUpDeleted });
+      assertEquals(deleteFollowUpAsyncSpy.calls.length, 1);
+    });
+
+    it("should return 404 if follow-up does not exist", async () => {
+      // Arrange
+      mockQuestionService.deleteFollowUpAsync = () =>
+        Promise.reject(
+          new Prisma.PrismaClientKnownRequestError("Record not found", {
+            code: "P2025",
+            clientVersion: "1.0",
+          }),
+        );
+      const questionHandler = new QuestionHandler(
+        mockQuestionService,
+        mockTopicService,
+        mockValidationService,
+      );
+      const app = new Hono();
+      app.delete(
+        "/:id/follow-ups/:followUpId",
+        questionHandler.deleteQuestionFollowUp,
+      );
+      const req = new Request("http://localhost/1/follow-ups/1", {
+        method: "DELETE",
+      });
+
+      // Act
+      const res = await app.request(req);
+
+      // Assert
+      assertEquals(res.status, 404);
     });
   });
 });
