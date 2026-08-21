@@ -1,13 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TabContext from '@mui/lab/TabContext';
 import CategoryTabs from './CategoryTabs';
 import { Category } from '../../types';
-
-function renderWithTabContext(value: string, ui: React.ReactElement) {
-  return render(<TabContext value={value}>{ui}</TabContext>);
-}
 
 describe('CategoryTabs', () => {
   const categories: Category[] = [
@@ -16,12 +11,15 @@ describe('CategoryTabs', () => {
   ];
 
   it('renders a tab for each category', () => {
-    renderWithTabContext(
-      '1',
-      <CategoryTabs categories={categories} onChange={vi.fn()} />,
+    render(
+      <CategoryTabs
+        categories={categories}
+        selectedCategory="1"
+        onChange={vi.fn()}
+      />,
     );
 
-    expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.getByTestId('category-tab-1')).toHaveTextContent(
       'Algorithms',
@@ -32,9 +30,12 @@ describe('CategoryTabs', () => {
   });
 
   it('marks the tab matching the selected value as selected', () => {
-    renderWithTabContext(
-      '2',
-      <CategoryTabs categories={categories} onChange={vi.fn()} />,
+    render(
+      <CategoryTabs
+        categories={categories}
+        selectedCategory="2"
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByTestId('category-tab-2')).toHaveAttribute(
@@ -49,9 +50,12 @@ describe('CategoryTabs', () => {
 
   it('calls onChange with the newly selected category value when a tab is clicked', async () => {
     const onChange = vi.fn();
-    renderWithTabContext(
-      '1',
-      <CategoryTabs categories={categories} onChange={onChange} />,
+    render(
+      <CategoryTabs
+        categories={categories}
+        selectedCategory="1"
+        onChange={onChange}
+      />,
     );
 
     await userEvent.click(screen.getByTestId('category-tab-2'));
@@ -60,12 +64,11 @@ describe('CategoryTabs', () => {
   });
 
   it('renders no tabs when there are no categories', () => {
-    renderWithTabContext(
-      '',
-      <CategoryTabs categories={[]} onChange={vi.fn()} />,
+    render(
+      <CategoryTabs categories={[]} selectedCategory="" onChange={vi.fn()} />,
     );
 
-    expect(screen.getByTestId('category-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('category-tab-list')).toBeInTheDocument();
     expect(screen.queryAllByTestId(/^category-tab-\d+$/)).toHaveLength(0);
   });
 });

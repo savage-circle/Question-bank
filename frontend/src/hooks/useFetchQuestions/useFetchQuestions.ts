@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { getQuestionsByCategory } from '../../services/questionService/questionService';
 import { Question } from '../../types';
 
 export default function useFetchQuestions(categoryId: number | undefined) {
-  const [questions, setQuestions] = React.useState<Question[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (categoryId === undefined) return;
 
     let isStale = false;
