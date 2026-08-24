@@ -1,20 +1,8 @@
 import { Question } from '../../types';
-
-const difficultyStyles: Record<
-  string,
-  { bgcolor: string; color: string; borderColor: string }
-> = {
-  EASY: { color: '#047857', bgcolor: '#ECFDF5', borderColor: '#D1FAE5' },
-  MEDIUM: { color: '#C2410C', bgcolor: '#FFF7ED', borderColor: '#FFEDD5' },
-  HARD: { color: '#BE123C', bgcolor: '#FFF1F2', borderColor: '#FFE4E6' },
-};
+import { getDifficultyStyle } from '../../constants/difficulty';
 
 const QuestionCard = ({ question }: { question: Question }) => {
-  const difficultyStyle = difficultyStyles[question.levelName] ?? {
-    bgcolor: '#f1f5f9',
-    color: '#475569',
-    borderColor: '#e2e8f0',
-  };
+  const difficultyStyle = getDifficultyStyle(question.levelName);
 
   return (
     <div
