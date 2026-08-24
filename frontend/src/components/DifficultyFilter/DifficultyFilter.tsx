@@ -39,7 +39,9 @@ export default function DifficultyFilter({
               className="px-4 py-2 font-[Inter] font-medium text-[14px] capitalize cursor-pointer transition-colors"
               style={{
                 backgroundColor: isSelected ? style.bgcolor : '#FFFFFF',
-                color: isSelected ? style.color : DEFAULT_DIFFICULTY_STYLE.color,
+                color: isSelected
+                  ? style.color
+                  : DEFAULT_DIFFICULTY_STYLE.color,
               }}
             >
               {difficulty.toLowerCase()}

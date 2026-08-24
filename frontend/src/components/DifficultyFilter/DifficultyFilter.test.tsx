@@ -5,7 +5,7 @@ import DifficultyFilter from './DifficultyFilter';
 import {
   ALL_DIFFICULTIES,
   DIFFICULTY_LEVELS,
-  getDifficultyStyle, 
+  getDifficultyStyle,
 } from '../../constants/difficulty';
 
 describe('DifficultyFilter', () => {
@@ -31,10 +31,7 @@ describe('DifficultyFilter', () => {
       DIFFICULTY_LEVELS.forEach((difficulty) => {
         expect(
           screen.getByTestId(`difficulty-${difficulty.toLowerCase()}`),
-        ).toHaveAttribute(
-          'aria-pressed',
-          String(difficulty === selected),
-        );
+        ).toHaveAttribute('aria-pressed', String(difficulty === selected));
       });
     },
   );
